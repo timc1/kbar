@@ -46,7 +46,9 @@ export const KBar: React.FC<KBarProps> = (props) => {
       }
 
       if (event.key === "Escape") {
-        setVisualState(VisualState.animatingOut);
+        setVisualState((vs) =>
+          vs === VisualState.hidden ? vs : VisualState.animatingOut
+        );
       }
     }
     window.addEventListener("keydown", handleKeyDown);

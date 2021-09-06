@@ -10,5 +10,14 @@ export default function RenderActions(props: RenderActionsProps) {
     return null;
   }
 
-  return <div>RenderActions {props.actions.length}</div>;
+  return (
+    <div>
+      <p>RenderActions</p>
+      <div>
+        {props.actions.map((action) => (
+          <div key={action.id}>{action.name}</div>
+        ))}
+      </div>
+    </div>
+  );
 }
