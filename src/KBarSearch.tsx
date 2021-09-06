@@ -7,6 +7,7 @@ import { swallowEvent } from "./utils";
 export interface KBarSearchProps {
   actions: Record<string, Action>;
   onRequestClose: () => void;
+  onRequestParentAction: (actionId: ActionId) => void;
   onUpdateRootAction: (actionId: ActionId) => void;
 }
 
@@ -26,6 +27,13 @@ const KBarSearch: React.FC<KBarSearchProps> = (props) => {
       <input
         value={search}
         onChange={(event) => setSearch(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Backspace" && !search) {
+            const currentParent =
+              props.actions[Object.keys(props.actions)[0]].parent;
+            props.onRequestParentAction(currentParent);
+          }
+        }}
         placeholder="Type a command or search…"
         autoFocus
       />

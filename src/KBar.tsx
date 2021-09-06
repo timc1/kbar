@@ -3,7 +3,7 @@ import * as React from "react";
 import KbarAnimator from "./KBarAnimator";
 import KBarSearch from "./KBarSearch";
 import KeyboardShortcuts from "./KeyboardShortcuts";
-import { Action, VisualState } from "./types";
+import { Action, ActionId, VisualState } from "./types";
 
 const DEFAULT_ANIMATION_MS = 200;
 
@@ -132,6 +132,25 @@ export const KBar: React.FC<KBarProps> = (props) => {
     []
   );
 
+  const setRootAction = React.useCallback(
+    (actionId: ActionId) => {
+      if (actionId === "root") {
+        setActions(rootActions);
+        return;
+      }
+
+      const newRoot = props.actions[actionId];
+      const newActions = newRoot.children?.reduce((acc, curr) => {
+        const action = props.actions[curr];
+        acc[action.id] = action;
+        return acc;
+      }, {}) as Record<string, Action>;
+
+      setActions(newActions);
+    },
+    [props.actions, rootActions]
+  );
+
   return (
     <>
       <KeyboardShortcuts actions={props.actions} />
@@ -149,18 +168,11 @@ export const KBar: React.FC<KBarProps> = (props) => {
               <KBarSearch
                 actions={actions}
                 onRequestClose={close}
-                onUpdateRootAction={(actionId) => {
-                  const newRoot = props.actions[actionId];
-                  const newActions = newRoot.children?.reduce((acc, curr) => {
-                    const action = props.actions[curr];
-                    acc[action.id] = action;
-                    return acc;
-                  }, {}) as Record<string, Action>;
-
-                  console.log({ newActions });
-
-                  setActions(newActions);
+                onRequestParentAction={(actionId) => {
+                  const parent = props.actions[actionId].parent;
+                  setRootAction(parent);
                 }}
+                onUpdateRootAction={setRootAction}
               />
             </KbarAnimator>
           </div>
