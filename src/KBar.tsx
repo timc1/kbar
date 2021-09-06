@@ -2,6 +2,7 @@ import Portal from "@reach/portal";
 import * as React from "react";
 import KbarAnimator from "./KBarAnimator";
 import KBarSearch from "./KBarSearch";
+import KeyboardShortcuts from "./KeyboardShortcuts";
 import { Action, VisualState } from "./types";
 
 const DEFAULT_ANIMATION_MS = 200;
@@ -50,6 +51,19 @@ export const KBar: React.FC<KBarProps> = (props) => {
 
   const [visualState, setVisualState] =
     React.useState<VisualState>(memoryState);
+
+  const rootActions = React.useMemo(() => {
+    return Object.keys(props.actions).reduce((acc, curr) => {
+      const action = props.actions[curr];
+      if (action.parent === "root") {
+        acc[action.id] = action;
+      }
+      return acc;
+    }, {});
+  }, []);
+
+  const [actions, setActions] =
+    React.useState<Record<string, Action>>(rootActions);
 
   React.useEffect(() => {
     listener = setVisualState;
@@ -106,7 +120,11 @@ export const KBar: React.FC<KBarProps> = (props) => {
       case VisualState.animatingOut:
         animate(VisualState.animatingOut);
         break;
+      case VisualState.hidden:
+        setActions(rootActions);
+        break;
     }
+    // no need to set props.actions as a dep as it's never going to change
   }, [visualState]);
 
   const close = React.useCallback(
@@ -114,24 +132,40 @@ export const KBar: React.FC<KBarProps> = (props) => {
     []
   );
 
-  if (visualState === VisualState.hidden) {
-    return null;
-  }
-
   return (
-    <Portal>
-      <div
-        style={outerWrapperStyle}
-        onClick={close}
-        // @ts-ignore
-        disabled={[VisualState.animatingOut || VisualState.hidden].includes(
-          visualState
-        )}
-      >
-        <KbarAnimator visualState={visualState} animationMs={animationMs}>
-          <KBarSearch actions={props.actions} onRequestClose={close} />
-        </KbarAnimator>
-      </div>
-    </Portal>
+    <>
+      <KeyboardShortcuts actions={props.actions} />
+      {visualState === VisualState.hidden ? null : (
+        <Portal>
+          <div
+            style={outerWrapperStyle}
+            onClick={close}
+            // @ts-ignore
+            disabled={[VisualState.animatingOut || VisualState.hidden].includes(
+              visualState
+            )}
+          >
+            <KbarAnimator visualState={visualState} animationMs={animationMs}>
+              <KBarSearch
+                actions={actions}
+                onRequestClose={close}
+                onUpdateRootAction={(actionId) => {
+                  const newRoot = props.actions[actionId];
+                  const newActions = newRoot.children?.reduce((acc, curr) => {
+                    const action = props.actions[curr];
+                    acc[action.id] = action;
+                    return acc;
+                  }, {}) as Record<string, Action>;
+
+                  console.log({ newActions });
+
+                  setActions(newActions);
+                }}
+              />
+            </KbarAnimator>
+          </div>
+        </Portal>
+      )}
+    </>
   );
 };

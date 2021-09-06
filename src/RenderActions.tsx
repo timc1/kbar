@@ -1,22 +1,24 @@
 import * as React from "react";
-import type { Action } from "./types";
+import type { Action, ActionId } from "./types";
 
 export interface RenderActionsProps {
   actions: Action[];
   onRequestClose: () => void;
+  onUpdateRootAction: (actionId: ActionId) => void;
 }
 
 export default function RenderActions(props: RenderActionsProps) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const select = React.useCallback(() => {
-    setCurrentIndex((index) => {
-      const action = props.actions[index];
-      action.perform({});
+    const action = props.actions[currentIndex];
+    if (action.perform) {
+      action.perform();
       props.onRequestClose();
-      return index;
-    });
-  }, []);
+    } else if (action.children) {
+      props.onUpdateRootAction(action.id);
+    }
+  }, [currentIndex, props.actions]);
 
   React.useEffect(() => {
     function handleKeyDown(event) {
@@ -47,13 +49,17 @@ export default function RenderActions(props: RenderActionsProps) {
       }
     }
 
-    setCurrentIndex(0);
-
+    // TODO: clean up – we're adding/removing this event very frequently; ideally this would be
+    // added/removed once.
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [props.actions.length, props.onRequestClose, select]);
+
+  React.useEffect(() => {
+    setCurrentIndex(0);
+  }, [props.actions.length]);
 
   if (!props.actions.length) {
     return null;

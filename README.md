@@ -30,12 +30,8 @@ Action
   - shortcut
   - keywords
   - perform
-  - group
-```
-
-```
-ActionContext
-  - router
+  - parent
+  - children
 ```
 
 #### API
@@ -50,21 +46,52 @@ return (
   <>
     <KBar
       actions={{
+        root: {
+          children: ["navBlogAction", "contactAction", "searchBlog"],
+        },
         navBlogAction: {
-          id: randomId(),
+          id: "navBlogAction",
           name: "Blog",
           shortcut: ["b"],
           keywords: "blog writing work",
-          group: "Navigation",
-          perform: (ctx: ActionContext) => router.push("/blog"),
+          section: "Navigation",
+          perform: () => router.push("/blog"),
+          parent: "root",
         },
         contactAction: {
-          id: randomId(),
+          id: "contactAction",
           name: "Contact",
           shortcut: ["c"],
           keywords: "email contact hello",
-          group: "Navigation",
-          perform: (ctx: ActionContext) => router.push("/contact"),
+          section: "Navigation",
+          perform: () => router.push("/contact"),
+          parent: "root",
+        },
+        searchBlogAction: {
+          id: "searchBlogAction",
+          name: "Search blog…",
+          shortcut: [],
+          keywords: "blog writing",
+          parent: "root",
+          children: ["blogPost1", "blogPost2"],
+        },
+        blogPost1: {
+          id: "blogPost1",
+          name: "Blog post 1",
+          shortcut: [],
+          keywords: "Blog post 1",
+          section: "",
+          perform: () => console.log("nav -> blog post 1"),
+          parent: "searchBlogAction",
+        },
+        blogPost2: {
+          id: "blogPost2",
+          name: "Blog post 2",
+          shortcut: [],
+          keywords: "Blog post 2",
+          section: "",
+          perform: () => console.log("nav -> blog post 2"),
+          parent: "searchBlogAction",
         },
       }}
     />

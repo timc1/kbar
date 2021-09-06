@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export enum VisualState {
   animatingIn = "animating-in",
   showing = "showing",
@@ -5,13 +7,15 @@ export enum VisualState {
   hidden = "hidden",
 }
 
+export type ActionId = string;
+
 export interface Action {
   id: string;
   name: string;
   shortcut: string[];
   keywords: string;
-  perform: (context: ActionContext) => void;
-  group?: string;
+  perform?: () => void;
+  section?: string;
+  parent: ActionId;
+  children?: ActionId[];
 }
-
-export interface ActionContext {}
