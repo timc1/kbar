@@ -16,8 +16,8 @@
   "scripts": {
     "build": "node esbuild.js",
     "dev": "node esbuild.js -w",
-    "build:example": "",
-    "dev:example": "webpack-dev-server --config ./example/webpack.config.cjs --mode development --hot"
+    "build:example": "webpack --config ./example/webpack.prod.cjs",
+    "dev:example": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
   },
   "keywords": [],
   "author": "Tim Chang <timchang.tcc@gmail.com>",

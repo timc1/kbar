@@ -2,7 +2,7 @@ const path = require("path");
 const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
@@ -10,10 +10,6 @@ module.exports = {
   output: {
     filename: "index.js",
     path: path.resolve(__dirname, "src/dist"),
-  },
-  devServer: {
-    static: path.resolve(__dirname, "src/dist"),
-    hot: true,
   },
   optimization: {
     minimizer: [
