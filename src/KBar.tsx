@@ -1,36 +1,20 @@
 import Portal from "@reach/portal";
 import * as React from "react";
+import KbarAnimator from "./KBarAnimator";
+import KBarSearch from "./KBarSearch";
+import { Action, VisualState } from "./types";
 
-const DEFAULT_ANIMATION_MS = 100;
-
-export interface ActionContext {}
+const DEFAULT_ANIMATION_MS = 200;
 
 type Timeout = ReturnType<typeof setTimeout>;
 
-export interface Action {
-  id: string;
-  name: string;
-  shortcut: string[];
-  keywords: string;
-  perform: (context: ActionContext) => void;
-  group?: string;
+export interface KBarProps {
+  actions: Record<string, Action>;
+  options?: Options;
 }
 
 export interface Options {
   animationMs?: number;
-}
-
-export interface KBarProps {
-  router: any;
-  actions: Record<string, Action>;
-  options: Options;
-}
-
-enum VisualState {
-  animatingIn = "animating-in",
-  showing = "showing",
-  animatingOut = "animatingOut",
-  hidden = "hidden",
 }
 
 const outerWrapperStyle: React.CSSProperties = {
@@ -41,21 +25,6 @@ const outerWrapperStyle: React.CSSProperties = {
   width: "100%",
   inset: "0px",
   padding: "calc(13vh - 0.48px) 16px 16px",
-};
-
-const animationKeyframes = [
-  {
-    opacity: 0,
-    transform: "scale(0.9)",
-  },
-  { opacity: 0.75, transform: "scale(1.1)" },
-  { opacity: 1, transform: "scale(1)" },
-];
-
-const contentStyle: React.CSSProperties = {
-  maxWidth: "640px",
-  width: "min-content",
-  ...animationKeyframes[0],
 };
 
 export const KBar: React.FC<KBarProps> = (props) => {
@@ -74,6 +43,10 @@ export const KBar: React.FC<KBarProps> = (props) => {
           }
           return VisualState.animatingOut;
         });
+      }
+
+      if (event.key === "Escape") {
+        setVisualState(VisualState.animatingOut);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -121,42 +94,10 @@ export const KBar: React.FC<KBarProps> = (props) => {
   return (
     <Portal>
       <div style={outerWrapperStyle}>
-        <KBarContent visualState={visualState} animationMs={animationMs}>
-          hiiii
-        </KBarContent>
+        <KbarAnimator visualState={visualState} animationMs={animationMs}>
+          <KBarSearch actions={props.actions} />
+        </KbarAnimator>
       </div>
     </Portal>
-  );
-};
-
-export interface KBarContentProps {
-  visualState: Omit<VisualState, "hidden">;
-  animationMs: number;
-}
-
-const KBarContent: React.FC<KBarContentProps> = (props) => {
-  const ownRef = React.useRef<HTMLDivElement>(null);
-
-  React.useLayoutEffect(() => {
-    // No need to force an animation when showing
-    if (props.visualState === VisualState.showing) {
-      return;
-    }
-
-    const element = ownRef.current;
-
-    element?.animate(animationKeyframes, {
-      duration: props.animationMs,
-      easing: "ease-out",
-      direction:
-        props.visualState === VisualState.animatingOut ? "reverse" : "normal",
-      fill: "forwards",
-    });
-  }, [props.visualState, props.animationMs]);
-
-  return (
-    <div ref={ownRef} style={contentStyle}>
-      {props.children}
-    </div>
   );
 };

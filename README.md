@@ -56,7 +56,15 @@ return (
           shortcut: ["b"],
           keywords: "blog writing work",
           group: "Navigation",
-          perform: (ctx: ActionContext) => ctx.router.push("/blog"),
+          perform: (ctx: ActionContext) => router.push("/blog"),
+        },
+        contactAction: {
+          id: randomId(),
+          name: "Contact",
+          shortcut: ["c"],
+          keywords: "email contact hello",
+          group: "Navigation",
+          perform: (ctx: ActionContext) => router.push("/contact"),
         },
       }}
     />
