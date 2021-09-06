@@ -27,12 +27,36 @@ const outerWrapperStyle: React.CSSProperties = {
   padding: "calc(13vh - 0.48px) 16px 16px",
 };
 
+let listener: ((state: VisualState) => void) | null = null;
+
+let memoryState: VisualState = VisualState.hidden;
+
+export function toggle() {
+  let state = memoryState;
+
+  if (state === VisualState.showing) {
+    state = VisualState.animatingOut;
+  } else {
+    state = VisualState.animatingIn;
+  }
+
+  memoryState = state;
+
+  listener?.(memoryState);
+}
+
 export const KBar: React.FC<KBarProps> = (props) => {
   const animationMs = props.options?.animationMs || DEFAULT_ANIMATION_MS;
 
-  const [visualState, setVisualState] = React.useState<VisualState>(
-    VisualState.hidden
-  );
+  const [visualState, setVisualState] =
+    React.useState<VisualState>(memoryState);
+
+  React.useEffect(() => {
+    listener = setVisualState;
+    return () => {
+      listener = null;
+    };
+  }, [visualState]);
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -59,7 +83,7 @@ export const KBar: React.FC<KBarProps> = (props) => {
   const animate = React.useCallback(
     (
       type: VisualState.animatingIn | VisualState.animatingOut,
-      onSuccess: () => void
+      onSuccess?: () => void
     ) => {
       clearTimeout(timeoutRef.current as Timeout);
       timeoutRef.current = setTimeout(() => {
@@ -68,7 +92,7 @@ export const KBar: React.FC<KBarProps> = (props) => {
             ? VisualState.showing
             : VisualState.hidden;
         setVisualState(finalType);
-        onSuccess();
+        onSuccess?.();
       }, animationMs);
     },
     []
@@ -77,17 +101,18 @@ export const KBar: React.FC<KBarProps> = (props) => {
   React.useEffect(() => {
     switch (visualState) {
       case VisualState.animatingIn:
-        animate(VisualState.animatingIn, () => {
-          console.log("hello");
-        });
+        animate(VisualState.animatingIn);
         break;
       case VisualState.animatingOut:
-        animate(VisualState.animatingOut, () => {
-          console.log("goodbye");
-        });
+        animate(VisualState.animatingOut);
         break;
     }
   }, [visualState]);
+
+  const close = React.useCallback(
+    () => setVisualState(VisualState.animatingOut),
+    []
+  );
 
   if (visualState === VisualState.hidden) {
     return null;
@@ -97,10 +122,14 @@ export const KBar: React.FC<KBarProps> = (props) => {
     <Portal>
       <div
         style={outerWrapperStyle}
-        onClick={() => setVisualState(VisualState.animatingOut)}
+        onClick={close}
+        // @ts-ignore
+        disabled={[VisualState.animatingOut || VisualState.hidden].includes(
+          visualState
+        )}
       >
         <KbarAnimator visualState={visualState} animationMs={animationMs}>
-          <KBarSearch actions={props.actions} />
+          <KBarSearch actions={props.actions} onRequestClose={close} />
         </KbarAnimator>
       </div>
     </Portal>

@@ -6,6 +6,7 @@ import { swallowEvent } from "./utils";
 
 export interface KBarSearchProps {
   actions: Record<string, Action>;
+  onRequestClose: () => void;
 }
 
 const KBarSearch: React.FC<KBarSearchProps> = (props) => {
@@ -27,7 +28,7 @@ const KBarSearch: React.FC<KBarSearchProps> = (props) => {
         placeholder="Type a command or search…"
         autoFocus
       />
-      <RenderActions actions={matches} />
+      <RenderActions actions={matches} onRequestClose={props.onRequestClose} />
     </div>
   );
 };

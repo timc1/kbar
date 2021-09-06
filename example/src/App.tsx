@@ -1,5 +1,5 @@
 import * as React from "react";
-import { KBar } from "../../src/index";
+import { KBar, toggle } from "../../src/index";
 
 const App = () => {
   return (
@@ -33,6 +33,7 @@ const App = () => {
           },
         }}
       />
+      <button onClick={toggle}>Toggle</button>
     </>
   );
 };
