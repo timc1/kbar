@@ -6,6 +6,8 @@ export interface RenderActionsProps {
 }
 
 export default function RenderActions(props: RenderActionsProps) {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
   if (!props.actions.length) {
     return null;
   }
@@ -14,8 +16,15 @@ export default function RenderActions(props: RenderActionsProps) {
     <div>
       <p>RenderActions</p>
       <div>
-        {props.actions.map((action) => (
-          <div key={action.id}>{action.name}</div>
+        {props.actions.map((action, index) => (
+          <div
+            key={action.id}
+            style={{
+              background: currentIndex === index ? "#eee" : "#fff",
+            }}
+          >
+            {action.name}
+          </div>
         ))}
       </div>
     </div>

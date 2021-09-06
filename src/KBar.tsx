@@ -95,7 +95,10 @@ export const KBar: React.FC<KBarProps> = (props) => {
 
   return (
     <Portal>
-      <div style={outerWrapperStyle}>
+      <div
+        style={outerWrapperStyle}
+        onClick={() => setVisualState(VisualState.animatingOut)}
+      >
         <KbarAnimator visualState={visualState} animationMs={animationMs}>
           <KBarSearch actions={props.actions} />
         </KbarAnimator>

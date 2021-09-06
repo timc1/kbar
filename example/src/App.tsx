@@ -4,7 +4,7 @@ import { KBar } from "../../src/index";
 const App = () => {
   return (
     <>
-      <h1>Wuzgood</h1>
+      <h1>kbar</h1>
       <KBar
         actions={{
           navBlogAction: {
@@ -22,6 +22,14 @@ const App = () => {
             keywords: "email contact hello",
             group: "Navigation",
             perform: (ctx) => console.log("nav -> contact"),
+          },
+          workAction: {
+            id: "3",
+            name: "Work",
+            shortcut: ["w"],
+            keywords: "work projects",
+            group: "Navigation",
+            perform: (ctx) => console.log("nav -> work"),
           },
         }}
       />

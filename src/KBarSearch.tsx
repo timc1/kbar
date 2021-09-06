@@ -2,6 +2,7 @@ import { matchSorter } from "match-sorter";
 import RenderActions from "./RenderActions";
 import * as React from "react";
 import { Action } from "./types";
+import { swallowEvent } from "./utils";
 
 export interface KBarSearchProps {
   actions: Record<string, Action>;
@@ -19,7 +20,7 @@ const KBarSearch: React.FC<KBarSearchProps> = (props) => {
   const matches = useMatches(search, actionsList);
 
   return (
-    <div>
+    <div onClick={swallowEvent}>
       <input
         value={search}
         onChange={(event) => setSearch(event.target.value)}
