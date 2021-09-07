@@ -1,4 +1,35 @@
 {
   "name": "kbar",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "devDependencies": {
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "esbuild": "^0.12.24",
+    "esbuild-loader": "^2.15.1",
+    "typescript": "^4.4.2",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.1.0"
+  },
+  "main": "lib/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.js",
+    "dev": "node esbuild.js -w",
+    "build:example": "webpack --config ./example/webpack.prod.cjs",
+    "dev:example": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
+  },
+  "keywords": [],
+  "author": "Tim Chang <timchang.tcc@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timc1/kbar.git"
+  },
+  "peerDependencies": {
+    "@reach/portal": "^0.16.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "match-sorter": "^6.3.0"
+  }
 }
