@@ -7,6 +7,7 @@ import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory } from "react-router-dom";
 import Layout from "./Layout";
 import Blog from "./Blog";
+import Home from "./Home";
 
 const searchStyles = {
   padding: "12px 16px",
@@ -168,18 +169,7 @@ const App = () => {
             <div>Work</div>
           </Route>
           <Route path="/">
-            <h1>kbar</h1>
-            <ul>
-              <li>cmd+k to toggle menu</li>
-              <li>
-                backspace when in a nested path to navigate back to previous
-                path; e.g. search blog
-              </li>
-              <li>
-                keyboard shortcuts registered; e.g. hit `t` when kbar is hidden
-                to trigger the Twitter action
-              </li>
-            </ul>
+            <Home />
           </Route>
         </Switch>
       </KBarProvider>
