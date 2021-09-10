@@ -30,7 +30,7 @@ export interface KBarQuery {
   setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
-  registerActions: (actions: Action[]) => void;
+  registerActions: (actions: Action[]) => () => void;
 }
 
 export interface IKBarContext {

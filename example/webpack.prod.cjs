@@ -29,6 +29,10 @@ module.exports = {
           loader: "tsx",
         },
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
 };

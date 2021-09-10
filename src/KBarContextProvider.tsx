@@ -67,8 +67,8 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
     };
   }, []);
 
-  const contextValue = React.useMemo(
-    () => ({
+  const contextValue = React.useMemo(() => {
+    return {
       getState,
       query: {
         setCurrentRootAction: (actionId: ActionId | null | undefined) => {
@@ -97,9 +97,8 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
         collector: <C>(state: KBarState) => C,
         cb: <C>(collected: C) => void
       ) => publisher.subscribe(collector, cb),
-    }),
-    [getState, publisher]
-  );
+    };
+  }, [getState, publisher]);
 
   return (
     <KBarContext.Provider value={contextValue}>

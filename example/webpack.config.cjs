@@ -12,6 +12,7 @@ module.exports = {
     path: path.resolve(__dirname, "src/dist"),
   },
   devServer: {
+    historyApiFallback: true,
     static: path.resolve(__dirname, "dist"),
     hot: true,
   },
@@ -32,6 +33,10 @@ module.exports = {
         options: {
           loader: "tsx",
         },
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
