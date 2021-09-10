@@ -1,12 +1,3 @@
-import * as React from "react";
-
-export enum VisualState {
-  animatingIn = "animating-in",
-  showing = "showing",
-  animatingOut = "animating-out",
-  hidden = "hidden",
-}
-
 export type ActionId = string;
 
 export interface Action {
@@ -16,6 +7,44 @@ export interface Action {
   keywords: string;
   perform?: () => void;
   section?: string;
-  parent: ActionId;
+  parent?: ActionId | null | undefined;
   children?: ActionId[];
+}
+
+export type ActionTree = Record<string, Action>;
+
+export interface KBarProviderProps {
+  actions: ActionTree;
+  options: any;
+}
+
+export interface KBarState {
+  searchQuery: string;
+  // TODO: simplify type
+  currentRootActionId: ActionId | null | undefined;
+  visualState: VisualState;
+}
+
+export interface KBarQuery {
+  setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
+  setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
+  setSearch: (search: string) => void;
+}
+
+export interface IKBarContext {
+  getState: () => KBarState;
+  query: KBarQuery;
+  actions: ActionTree;
+  subscribe: (
+    collector: <C>(state: KBarState) => C,
+    cb: <C>(collected: C) => void
+  ) => void;
+  options: any;
+}
+
+export enum VisualState {
+  animatingIn = "animating-in",
+  showing = "showing",
+  animatingOut = "animating-out",
+  hidden = "hidden",
 }

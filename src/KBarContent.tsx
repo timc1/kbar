@@ -1,10 +1,13 @@
 import Portal from "@reach/portal";
 import React from "react";
+import { useOuterClick } from "./utils";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
 
 interface KBarContentProps {
   children: React.ReactNode;
+  backgroundStyle?: React.CSSProperties;
+  contentStyle?: React.CSSProperties;
 }
 
 export const KBarContent = (props: KBarContentProps) => {
@@ -18,7 +21,7 @@ export const KBarContent = (props: KBarContentProps) => {
 
   return (
     <Portal>
-      <Animator visualState={visualState}>{props.children}</Animator>
+      <Animator visualState={visualState} {...props} />
     </Portal>
   );
 };
@@ -32,14 +35,15 @@ const animationKeyframes = [
   { opacity: 1, transform: "scale(1)" },
 ];
 
-const backgroundSyle: React.CSSProperties = {
+const backgroundStyle: React.CSSProperties = {
   position: "fixed",
   display: "flex",
   alignItems: "flex-start",
   justifyContent: "center",
   width: "100%",
   inset: "0px",
-  padding: "calc(13vh - 0.48px) 16px 16px",
+  padding: "14vh 16px 16px",
+  boxSizing: "border-box",
 };
 
 const contentStyle: React.CSSProperties = {
@@ -49,14 +53,15 @@ const contentStyle: React.CSSProperties = {
   ...animationKeyframes[0],
 };
 
-const Animator: React.FC<{
-  visualState: Omit<VisualState, "hidden">;
-  maxHeight?: number;
-}> = (props) => {
+const Animator: React.FC<
+  {
+    visualState: Omit<VisualState, "hidden">;
+  } & KBarContentProps
+> = (props) => {
   const outerRef = React.useRef<HTMLDivElement>(null);
   const innerRef = React.useRef<HTMLDivElement>(null);
-  const maxHeight = props.maxHeight || 400;
-  const { options } = useKBar();
+
+  const { options, query } = useKBar();
 
   // Show/hide animation
   React.useEffect(() => {
@@ -107,7 +112,7 @@ const Animator: React.FC<{
                 height: `${previousHeight.current}px`,
               },
               {
-                height: `${cr.height > maxHeight ? maxHeight : cr.height}px`,
+                height: `${cr.height}px`,
               },
             ],
             {
@@ -130,10 +135,14 @@ const Animator: React.FC<{
     }
   }, [props.visualState, options]);
 
+  useOuterClick(outerRef, () => {
+    query.setVisualState(VisualState.animatingOut);
+  });
+
   return (
-    // TODO: expose styling for wrappers
-    <div style={backgroundSyle}>
-      <div ref={outerRef} style={contentStyle}>
+    // TODO: improve here; no need for spreading
+    <div style={{ ...backgroundStyle, ...props.backgroundStyle }}>
+      <div ref={outerRef} style={{ ...contentStyle, ...props.contentStyle }}>
         <div ref={innerRef}>{props.children}</div>
       </div>
     </div>

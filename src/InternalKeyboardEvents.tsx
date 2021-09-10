@@ -5,13 +5,14 @@ import useKBar from "./useKBar";
 type Timeout = ReturnType<typeof setTimeout>;
 
 export default function InternalKeyboardEvents() {
-  const { query, options, visualState } = useKBar((state) => ({
+  const { query, options, visualState, actions } = useKBar((state) => ({
     visualState: state.visualState,
   }));
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.metaKey && event.key === "k") {
+        event.preventDefault();
         query.setVisualState((vs) => {
           if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
             return VisualState.animatingIn;
@@ -32,6 +33,49 @@ export default function InternalKeyboardEvents() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [query]);
+
+  // Shortcuts
+  React.useEffect(() => {
+    const actionsList = Object.keys(actions).map((key) => actions[key]);
+
+    const charList = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const inputs = ["input", "select", "button", "textarea"];
+
+    let buffer: string[] = [];
+    let lastKeyStrokeTime = Date.now();
+
+    function handleKeyDown(event) {
+      const key = event.key.toLowerCase();
+
+      const activeElement = document.activeElement;
+      const ignoreStrokes =
+        activeElement &&
+        inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1;
+
+      if (ignoreStrokes || event.metaKey || charList.indexOf(key) === -1) {
+        return;
+      }
+
+      const currentTime = Date.now();
+
+      if (currentTime - lastKeyStrokeTime > 1000) {
+        buffer = [];
+      }
+
+      buffer.push(key);
+      lastKeyStrokeTime = currentTime;
+
+      for (let action of actionsList) {
+        if (JSON.stringify(action.shortcut) === JSON.stringify(buffer)) {
+          action.perform?.();
+          break;
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(
@@ -66,9 +110,6 @@ export default function InternalKeyboardEvents() {
       case VisualState.animatingIn:
       case VisualState.animatingOut:
         runAnimateTimer(visualState);
-        break;
-      case VisualState.hidden:
-        console.log("set root actions");
         break;
     }
   }, [visualState]);

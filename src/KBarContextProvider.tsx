@@ -45,10 +45,12 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
             currentRootActionId: actionId,
           }));
         },
-        setVisualState: (cb: (vs: VisualState) => VisualState) => {
+        setVisualState: (
+          cb: ((vs: VisualState) => VisualState) | VisualState
+        ) => {
           setState((state) => ({
             ...state,
-            visualState: cb(state.visualState),
+            visualState: typeof cb === "function" ? cb(state.visualState) : cb,
           }));
         },
         setSearch: (searchQuery: string) =>
