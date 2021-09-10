@@ -26,6 +26,7 @@ export default function KBarResults(props: KBarResultsProps) {
     (state) => ({
       search: state.searchQuery,
       currentRootActionId: state.currentRootActionId,
+      actions: state.actions,
     })
   );
 

@@ -7,6 +7,7 @@ type Timeout = ReturnType<typeof setTimeout>;
 export default function InternalKeyboardEvents() {
   const { query, options, visualState, actions } = useKBar((state) => ({
     visualState: state.visualState,
+    actions: state.actions,
   }));
 
   React.useEffect(() => {
@@ -21,6 +22,7 @@ export default function InternalKeyboardEvents() {
         });
       }
       if (event.key === "Escape") {
+        event.preventDefault();
         query.setVisualState((vs) => {
           if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
             return vs;

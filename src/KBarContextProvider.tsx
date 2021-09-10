@@ -2,7 +2,9 @@ import { deepEqual } from "fast-equals";
 import React from "react";
 import InternalKeyboardEvents from "./InternalKeyboardEvents";
 import {
+  Action,
   ActionId,
+  ActionTree,
   IKBarContext,
   KBarProviderProps,
   KBarState,
@@ -14,10 +16,12 @@ export const KBarContext = React.createContext<IKBarContext>(
 );
 
 export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
+  // TODO: at this point useReducer might be a better approach to managing state.
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
+    actions: props.actions,
   });
 
   const currState = React.useRef(state);
@@ -32,12 +36,40 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
   }, [state]);
 
   const optionsRef = React.useRef(props.options || {});
-  const actionsRef = React.useRef(props.actions || {});
+
+  const registerActions = React.useCallback((actions: Action[]) => {
+    const actionsByKey: ActionTree = actions.reduce((acc, curr) => {
+      acc[curr.id] = curr;
+      return acc;
+    }, {});
+
+    setState((state) => ({
+      ...state,
+      actions: {
+        ...state.actions,
+        ...actionsByKey,
+      },
+    }));
+
+    return function unregister() {
+      setState((state) => {
+        const actions = state.actions;
+        const removeActionIds = Object.keys(actionsByKey);
+        removeActionIds.forEach((actionId) => delete actions[actionId]);
+        return {
+          ...state,
+          actions: {
+            ...state.actions,
+            ...actions,
+          },
+        };
+      });
+    };
+  }, []);
 
   const contextValue = React.useMemo(
     () => ({
       getState,
-      actions: actionsRef.current,
       query: {
         setCurrentRootAction: (actionId: ActionId | null | undefined) => {
           setState((state) => ({
@@ -58,6 +90,7 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
             ...state,
             searchQuery,
           })),
+        registerActions,
       },
       options: optionsRef.current,
       subscribe: (

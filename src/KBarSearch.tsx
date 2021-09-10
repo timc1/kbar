@@ -7,6 +7,7 @@ export default function KBarSearch(
   const { query, search, actions, currentRootActionId } = useKBar((state) => ({
     search: state.searchQuery,
     currentRootActionId: state.currentRootActionId,
+    actions: state.actions,
   }));
 
   React.useEffect(() => {

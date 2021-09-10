@@ -23,18 +23,19 @@ export interface KBarState {
   // TODO: simplify type
   currentRootActionId: ActionId | null | undefined;
   visualState: VisualState;
+  actions: ActionTree;
 }
 
 export interface KBarQuery {
   setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
+  registerActions: (actions: Action[]) => void;
 }
 
 export interface IKBarContext {
   getState: () => KBarState;
   query: KBarQuery;
-  actions: ActionTree;
   subscribe: (
     collector: <C>(state: KBarState) => C,
     cb: <C>(collected: C) => void
