@@ -28,8 +28,9 @@
   },
   "peerDependencies": {
     "@reach/portal": "^0.16.0",
+    "match-sorter": "^6.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "match-sorter": "^6.3.0"
+    "fast-equals": "^2.0.3"
   }
 }
