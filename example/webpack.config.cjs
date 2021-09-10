@@ -9,7 +9,7 @@ module.exports = {
   entry: path.resolve(__dirname, "src/index.tsx"),
   output: {
     filename: "index.js",
-    path: path.resolve(__dirname, "src/dist"),
+    path: path.resolve(__dirname, "dist"),
   },
   devServer: {
     historyApiFallback: true,
@@ -35,8 +35,12 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /\.s[ac]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: "asset/resource",
       },
     ],
   },
