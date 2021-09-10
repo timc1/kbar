@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals";
-import React from "react";
+import * as React from "react";
 import InternalKeyboardEvents from "./InternalKeyboardEvents";
 import {
   Action,

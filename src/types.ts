@@ -13,9 +13,17 @@ export interface Action {
 
 export type ActionTree = Record<string, Action>;
 
+export interface KBarOptions {
+  animations: {
+    enterMs?: number;
+    exitMs?: number;
+    maxContentHeight?: number;
+  };
+}
+
 export interface KBarProviderProps {
   actions: ActionTree;
-  options: any;
+  options: KBarOptions;
 }
 
 export interface KBarState {

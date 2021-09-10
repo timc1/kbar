@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import useKBar from "./useKBar";
 
 export default function KBarSearch(

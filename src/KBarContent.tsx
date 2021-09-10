@@ -1,5 +1,5 @@
 import Portal from "@reach/portal";
-import React from "react";
+import * as React from "react";
 import { useOuterClick } from "./utils";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";

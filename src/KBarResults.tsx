@@ -1,5 +1,5 @@
 import { matchSorter } from "match-sorter";
-import React from "react";
+import * as React from "react";
 import { Action, VisualState } from "./types";
 import useKBar from "./useKBar";
 
