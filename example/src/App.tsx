@@ -1,15 +1,10 @@
+import "./index.scss";
 import * as React from "react";
 import { KBarContent } from "../../src/KBarContent";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
 import KBarSearch from "../../src/KBarSearch";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
+import { Switch, Route, useHistory } from "react-router-dom";
 import Layout from "./Layout";
 import Blog from "./Blog";
 
