@@ -5,9 +5,14 @@ import KBarResults from "../../src/KBarResults";
 import KBarSearch from "../../src/KBarSearch";
 
 const searchStyles = {
-  padding: "8px",
+  padding: "12px 16px",
+  fontSize: "16px",
   width: "100%",
   boxSizing: "border-box" as React.CSSProperties["boxSizing"],
+  outline: "none",
+  border: "none",
+  background: "var(--background)",
+  color: "var(--foreground)",
 };
 
 const App = () => {
@@ -27,11 +32,19 @@ const App = () => {
       </ul>
       <KBarProvider
         actions={{
+          searchBlogAction: {
+            id: "searchBlogAction",
+            name: "Search blog…",
+            shortcut: [],
+            keywords: "find",
+            section: "",
+            children: ["blogPost1", "blogPost2"],
+          },
           navBlogAction: {
             id: "navBlogAction",
             name: "Blog",
             shortcut: ["b"],
-            keywords: "blog writing work",
+            keywords: "writing work",
             section: "Navigation",
             perform: () => window.alert("nav -> blog"),
           },
@@ -39,7 +52,7 @@ const App = () => {
             id: "contactAction",
             name: "Contact",
             shortcut: ["c"],
-            keywords: "email contact hello",
+            keywords: "email hello",
             section: "Navigation",
             perform: () => window.alert("nav -> contact"),
           },
@@ -47,7 +60,7 @@ const App = () => {
             id: "workAction",
             name: "Work",
             shortcut: ["w"],
-            keywords: "work projects",
+            keywords: "projects",
             section: "Navigation",
             perform: () => window.alert("nav -> work"),
           },
@@ -55,18 +68,10 @@ const App = () => {
             id: "twitterAction",
             name: "Twitter",
             shortcut: ["t"],
-            keywords: "twitter social contact dm",
+            keywords: "social contact dm",
             section: "Navigation",
             perform: () =>
               window.open("https://twitter.com/timcchang", "_blank"),
-          },
-          searchBlogAction: {
-            id: "searchBlogAction",
-            name: "Search blog…",
-            shortcut: [],
-            keywords: "search find",
-            section: "",
-            children: ["blogPost1", "blogPost2"],
           },
           blogPost1: {
             id: "blogPost1",
@@ -86,6 +91,34 @@ const App = () => {
             perform: () => window.alert("nav -> blog post 2"),
             parent: "searchBlogAction",
           },
+          theme: {
+            id: "theme",
+            name: "Change theme…",
+            shortcut: [],
+            keywords: "interface color dark light",
+            section: "",
+            children: ["darkTheme", "lightTheme"],
+          },
+          darkTheme: {
+            id: "darkTheme",
+            name: "Dark",
+            shortcut: [],
+            keywords: "dark",
+            section: "",
+            perform: () =>
+              document.documentElement.setAttribute("data-theme-dark", ""),
+            parent: "theme",
+          },
+          lightTheme: {
+            id: "lightTheme",
+            name: "Light",
+            shortcut: [],
+            keywords: "light",
+            section: "",
+            perform: () =>
+              document.documentElement.removeAttribute("data-theme-dark"),
+            parent: "theme",
+          },
         }}
         options={{
           animations: {
@@ -99,12 +132,24 @@ const App = () => {
           contentStyle={{
             maxWidth: "400px",
             width: "100%",
+            background: "var(--background)",
+            color: "var(--foreground)",
+            borderRadius: "8px",
+            overflow: "hidden",
           }}
         >
-          <KBarSearch style={searchStyles} />
+          <KBarSearch
+            style={searchStyles}
+            placeholder="Type a command or search…"
+          />
           <KBarResults
             onRender={(action, handlers, state) => (
-              <Render action={action} handlers={handlers} state={state} />
+              <Render
+                key={action.id}
+                action={action}
+                handlers={handlers}
+                state={state}
+              />
             )}
           />
         </KBarContent>
@@ -120,7 +165,16 @@ function Render({ action, handlers, state }) {
 
   React.useEffect(() => {
     if (active) {
-      ownRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
+      window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(() =>
+          ownRef.current?.scrollIntoView({
+            block: "nearest",
+            behavior: "smooth",
+          })
+        )
+      );
     }
   }, [active]);
 
@@ -129,8 +183,9 @@ function Render({ action, handlers, state }) {
       ref={ownRef}
       {...handlers}
       style={{
-        padding: "8px",
-        background: state.index === state.activeIndex ? "#eee" : "#fff",
+        padding: "12px 16px",
+        background: active ? "var(--a1)" : "var(--background)",
+        borderLeft: `2px solid ${active ? "var(--foreground)" : "transparent"}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",

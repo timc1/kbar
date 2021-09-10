@@ -159,7 +159,10 @@ export default function KBarResults(props: KBarResultsProps) {
             }
 
             return (
-              <DefaultResultWrapper isActive={activeIndex === index}>
+              <DefaultResultWrapper
+                key={action.id}
+                isActive={activeIndex === index}
+              >
                 {action.name}
               </DefaultResultWrapper>
             );
@@ -179,7 +182,13 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
 
   React.useEffect(() => {
     if (isActive) {
-      ownRef.current?.scrollIntoView({ block: "nearest" });
+      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
+      window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(() =>
+          ownRef.current?.scrollIntoView({ block: "nearest" })
+        )
+      );
     }
   }, [isActive]);
 
@@ -203,7 +212,7 @@ function useMatches(term: string, actions: Action[]) {
     () =>
       term.trim() === ""
         ? actions
-        : matchSorter(actions, term, { keys: ["keywords"] }),
+        : matchSorter(actions, term, { keys: ["keywords", "name"] }),
     [term, actions]
   );
 }

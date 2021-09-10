@@ -76,7 +76,6 @@ export const KBarProvider: React.FC<KBarProviderProps> = (props) => {
   );
 };
 
-// pub/sub https://github.com/prevwong/craft.js
 class Publisher {
   getState;
   subscribers: Subscriber[] = [];
