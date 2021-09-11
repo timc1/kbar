@@ -24,8 +24,8 @@ const App = () => {
   const history = useHistory();
   return (
     <KBarProvider
-      actions={{
-        searchBlogAction: {
+      actions={[
+        {
           id: "searchBlogAction",
           name: "Search blog…",
           shortcut: [],
@@ -33,7 +33,7 @@ const App = () => {
           section: "",
           children: ["blogPost1", "blogPost2"],
         },
-        homeAction: {
+        {
           id: "homeAction",
           name: "Home",
           shortcut: ["h"],
@@ -41,7 +41,7 @@ const App = () => {
           section: "Navigation",
           perform: () => history.push("/"),
         },
-        navBlogAction: {
+        {
           id: "navBlogAction",
           name: "Blog",
           shortcut: ["b"],
@@ -49,7 +49,7 @@ const App = () => {
           section: "Navigation",
           perform: () => history.push("/blog"),
         },
-        contactAction: {
+        {
           id: "contactAction",
           name: "Contact",
           shortcut: ["c"],
@@ -57,7 +57,7 @@ const App = () => {
           section: "Navigation",
           perform: () => history.push("/contact"),
         },
-        workAction: {
+        {
           id: "workAction",
           name: "Work",
           shortcut: ["w"],
@@ -65,7 +65,7 @@ const App = () => {
           section: "Navigation",
           perform: () => history.push("/work"),
         },
-        twitterAction: {
+        {
           id: "twitterAction",
           name: "Twitter",
           shortcut: ["t"],
@@ -73,7 +73,7 @@ const App = () => {
           section: "Navigation",
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
         },
-        blogPost1: {
+        {
           id: "blogPost1",
           name: "Blog post 1",
           shortcut: [],
@@ -82,7 +82,7 @@ const App = () => {
           perform: () => window.alert("nav -> blog post 1"),
           parent: "searchBlogAction",
         },
-        blogPost2: {
+        {
           id: "blogPost2",
           name: "Blog post 2",
           shortcut: [],
@@ -91,7 +91,7 @@ const App = () => {
           perform: () => window.alert("nav -> blog post 2"),
           parent: "searchBlogAction",
         },
-        theme: {
+        {
           id: "theme",
           name: "Change theme…",
           shortcut: [],
@@ -99,7 +99,7 @@ const App = () => {
           section: "",
           children: ["darkTheme", "lightTheme"],
         },
-        darkTheme: {
+        {
           id: "darkTheme",
           name: "Dark",
           shortcut: [],
@@ -109,7 +109,7 @@ const App = () => {
             document.documentElement.setAttribute("data-theme-dark", ""),
           parent: "theme",
         },
-        lightTheme: {
+        {
           id: "lightTheme",
           name: "Light",
           shortcut: [],
@@ -119,7 +119,7 @@ const App = () => {
             document.documentElement.removeAttribute("data-theme-dark"),
           parent: "theme",
         },
-      }}
+      ]}
       options={{
         animations: {
           enterMs: 200,

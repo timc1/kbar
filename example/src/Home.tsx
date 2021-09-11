@@ -1,4 +1,7 @@
+import Highlight, { defaultProps } from "prism-react-renderer";
+import vsLight from "prism-react-renderer/themes/vsLight";
 import * as React from "react";
+import Code from "./Code";
 
 export default function Home() {
   return (
@@ -7,23 +10,18 @@ export default function Home() {
         kbar is a fully extensible command+k interface for your site. Try it out
         – press <kbd>cmd</kbd> and <kbd>k</kbd>.
       </p>
-
       <h3>Background</h3>
-
       <p>
         Command+k interfaces are used to create a web experience where any type
         of action users would be able to do via clicking can be done through a
         command menu.
       </p>
-
       <p>
         With macOS's Spotlight and Linear's command+k experience in mind, kbar
         aims to be a simple abstraction to add a fast and extensible command+k
         menu to your site.
       </p>
-
       <h4>Features</h4>
-
       <ul role="list">
         <li>Built in animations, fully customizable</li>
         <li>
@@ -32,7 +30,7 @@ export default function Home() {
         </li>
         <li>
           Keyboard shortcuts support for registering keystrokes to specific
-          actions; e.g. hit <kbd>t</kbd> for Twitter.
+          actions; e.g. hit <kbd>t</kbd> for Twitter
         </li>
         <li>Navigate between nested actions with backspace</li>
         <li>
@@ -42,6 +40,85 @@ export default function Home() {
       </ul>
 
       <h4>Usage</h4>
+
+      <p>
+        Have a fully functioning command menu for your site in minutes. Let's
+        start with a basic example. First, install kbar.
+      </p>
+
+      <Code code="npm install kbar" />
+
+      <p>
+        At the root of your site, import and wrap the site with a{" "}
+        <code>KBarProvider</code>.
+      </p>
+
+      <Code
+        code={`
+// app.tsx
+
+return (
+  <KBarProvider>
+    <App />
+  </KBarProvider>
+)
+        `}
+      />
+
+      <p>
+        Next, we'll create a few static actions. Static actions are actions with
+        no external dependencies; they don't rely on another hook, for instance.
+        We'll talk about dynamic actions later.
+      </p>
+
+      <Code
+        code={`
+const actions = [
+  {
+    id: "blog",
+    name: "Blog",
+    shortcut: ["b"],
+    keywords: "writing words",
+    perform: () => window.location.pathname = "blog"
+  },
+  {
+    id: "contact",
+    name: "Contact",
+    shortcut: ["c"],
+    keywords: "email",
+    perform: () => window.location.pathname = "contact"
+  }
+]
+
+return (
+  <KBarProvider actions={actions}>
+    <App />
+  </KBarProvider>
+)
+        `}
+      />
+
+      <p>
+        Next, we'll wrap our site in a <code>KBarProvider</code> and register
+        these initial static actions.
+      </p>
+
+      <p>
+        kbar exposes a few components which handle animations, keyboard events,
+        etc. You can compose them together like so:
+      </p>
+
+      <Code
+        code={`
+<KBarProvider>
+  <KBarContent>
+    <KBarSearch />
+    <KBarResults />
+  </KBarContent>
+  <MyApp />
+</KBarProvider>
+        `}
+      />
     </>
   );
 }
