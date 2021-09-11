@@ -122,6 +122,7 @@ export default function KBarResults(props: KBarResultsProps) {
       }
 
       if (event.key === "Enter") {
+        event.preventDefault();
         select();
       }
     }
