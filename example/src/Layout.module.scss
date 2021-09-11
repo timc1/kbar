@@ -1,3 +1,24 @@
 .wrapper {
+  max-width: 1024px;
+  width: 100%;
+  margin: auto;
   padding: 48px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: calc(var(--unit) * 2);
+
+  h1 {
+    margin-left: var(--unit);
+  }
+
+  button {
+    cursor: pointer;
+    background: var(--a1);
+    border: 1px solid var(--a2);
+    border-radius: calc(var(--unit) * 0.5);
+    color: var(--foreground);
+  }
 }

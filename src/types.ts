@@ -22,7 +22,7 @@ export interface KBarOptions {
 }
 
 export interface KBarProviderProps {
-  actions: ActionTree;
+  actions: Action[];
   options: KBarOptions;
 }
 

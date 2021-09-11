@@ -30,7 +30,6 @@ figure,
 blockquote,
 dl,
 dd {
-  margin: 0;
   font-size: 16px;
 }
 
@@ -38,6 +37,7 @@ dd {
 ul[role="list"],
 ol[role="list"] {
   list-style: none;
+  padding: 0;
 }
 
 /* Set core root defaults */
@@ -49,7 +49,7 @@ html:focus-within {
 body {
   min-height: 100vh;
   text-rendering: optimizeSpeed;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* A elements that don't have a class get default styles */
@@ -90,22 +90,24 @@ select {
 
 * {
   font-family: "Inter";
-  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
 }
 
 :root {
-  --background: rgb(252, 252, 252);
+  --background: rgb(252 252 252);
   --a1: rgba(0 0 0 / 0.05);
   --a2: rgba(0 0 0 / 0.1);
-  --foreground: rgb(28, 28, 29);
+  --foreground: rgb(28 28 29);
   --shadow: 0px 6px 20px rgb(0 0 0 / 20%);
+
+  --unit: 8px;
 }
 
 html[data-theme-dark]:root {
-  --background: rgb(28, 28, 29);
-  --a1: rgb(53, 53, 54);
+  --background: rgb(28 28 29);
+  --a1: rgb(53 53 54);
   --a2: rgba(255 255 255 / 0.1);
-  --foreground: rgb(252, 252, 252);
+  --foreground: rgba(252 252 252 / 0.9);
   --shadow: rgb(0 0 0 / 50%) 0px 16px 70px;
 }
 
@@ -116,4 +118,13 @@ html {
 
 kbd {
   font-family: monospace;
+  background: var(--a2);
+  padding: calc(var(--unit) * 0.5);
+  border-radius: calc(var(--unit) * 0.5);
+}
+
+a {
+  color: var(--foreground);
+  font-weight: 600;
+  text-decoration: none;
 }
