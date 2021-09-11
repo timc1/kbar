@@ -21,7 +21,7 @@
   "scripts": {
     "build": "rm -rf ./lib & tsc",
     "build:example": "webpack --config ./example/webpack.prod.cjs",
-    "dev:example": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
+    "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
   },
   "keywords": [],
   "author": "Tim Chang <timchang.tcc@gmail.com>",
