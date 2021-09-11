@@ -1,6 +1,6 @@
 {
   "name": "kbar",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "devDependencies": {
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",

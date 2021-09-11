@@ -148,6 +148,7 @@ export default function KBarResults(props: KBarResultsProps) {
             const handlers = {
               key: action.id,
               onClick: select,
+              onPointerDown: () => setActiveIndex(index),
               onMouseEnter: () => setActiveIndex(index),
             };
 
@@ -162,8 +163,8 @@ export default function KBarResults(props: KBarResultsProps) {
 
             return (
               <DefaultResultWrapper
-                key={action.id}
                 isActive={activeIndex === index}
+                {...handlers}
               >
                 {action.name}
               </DefaultResultWrapper>
