@@ -2,7 +2,7 @@
   max-width: 1024px;
   width: 100%;
   margin: auto;
-  padding: 48px;
+  padding: 32px;
 }
 
 .header {
@@ -20,5 +20,7 @@
     border: 1px solid var(--a2);
     border-radius: calc(var(--unit) * 0.5);
     color: var(--foreground);
+    height: 30px;
+    width: 30px;
   }
 }

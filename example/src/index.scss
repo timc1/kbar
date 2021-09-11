@@ -125,6 +125,6 @@ kbd {
 
 a {
   color: var(--foreground);
-  font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-position: under;
 }

@@ -1,99 +1,83 @@
-## KBar
+## kbar
 
-KBar is a simple plug-n-play component to add a fast,
-portable, and extensible command interface to your site.
+kbar is a simple plug-n-play component to add a fast,
+portable, and extensible command+k interface to your site.
+
+![demo](https://user-images.githubusercontent.com/12195101/132958919-7a525cab-e191-4642-ae9a-5f22a3ba7845.gif)
 
 ## Background
 
-There are a few apps/sites out there with the concept of a command portal and triggering any
-action through a few keyboard strokes; macOS, Abstract, Linear, etc. I have always been intrigued by the interactions and curious
-about how to implement something of this sort. KBar is an attempt at building a command bar with as
-much flexibility as possible.
+Command+k interfaces are used to create a web experience where any type of action users would be able to do via clicking can be done through a command menu.
 
-### What we want to build
+With macOS's Spotlight and Linear's command+k experience in mind, kbar aims to be a simple abstraction to add a fast and extensible command+k menu to your site.
 
-For v1, we are building KBar to represent and filter through a static data structure, particularly
-useful for navigation to specific pages of a site or toggling specific actions; e.g. Creating a
-_thing_, editing a _thing_, copying to a clipboard, etc.
+### Features
 
-- A data structure to represent the various types of actions that can be triggered
-- A set of UI components to render the dialog, search, results, etc.
+- Built in animations, fully customizable
+- Keyboard navigation support; e.g. ctrl n / ctrl p for the navigation wizards
+- Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit t for Twitter
+- Navigate between nested actions with backspace
+- A simple data structure which enables anyone to easily build their custom components
 
-#### Data structure
+Usage
+Have a fully functioning command menu for your site in minutes. Let's start with a basic example. First, install kbar.
 
 ```
-Action
-  - id
-  - name
-  - shortcut
-  - keywords
-  - perform
-  - parent
-  - children
+npm install kbar
 ```
 
-#### API
-
-`actions` are defined once in the root of the site. An action has context of the current router and
-knows whether it is applicable in the current context
-
-In the root of the site:
+At the root of your site, import and wrap the site with a KBarProvider.
 
 ```tsx
+// app.tsx
+
 return (
-  <>
-    <KBar
-      actions={{
-        root: {
-          children: ["navBlogAction", "contactAction", "searchBlog"],
-        },
-        navBlogAction: {
-          id: "navBlogAction",
-          name: "Blog",
-          shortcut: ["b"],
-          keywords: "blog writing work",
-          section: "Navigation",
-          perform: () => router.push("/blog"),
-          parent: "root",
-        },
-        contactAction: {
-          id: "contactAction",
-          name: "Contact",
-          shortcut: ["c"],
-          keywords: "email contact hello",
-          section: "Navigation",
-          perform: () => router.push("/contact"),
-          parent: "root",
-        },
-        searchBlogAction: {
-          id: "searchBlogAction",
-          name: "Search blog…",
-          shortcut: [],
-          keywords: "blog writing",
-          parent: "root",
-          children: ["blogPost1", "blogPost2"],
-        },
-        blogPost1: {
-          id: "blogPost1",
-          name: "Blog post 1",
-          shortcut: [],
-          keywords: "Blog post 1",
-          section: "",
-          perform: () => console.log("nav -> blog post 1"),
-          parent: "searchBlogAction",
-        },
-        blogPost2: {
-          id: "blogPost2",
-          name: "Blog post 2",
-          shortcut: [],
-          keywords: "Blog post 2",
-          section: "",
-          perform: () => console.log("nav -> blog post 2"),
-          parent: "searchBlogAction",
-        },
-      }}
-    />
-    // <App />
-  </>
+  <KBarProvider>
+    <App />
+  </KBarProvider>
 );
 ```
+
+kbar is built on top of `actions`. Actions define what to execute when a user selects it. Actions can have children which are just other actions.
+
+Let's create a few static actions. Static actions are actions with no external dependencies; they don't rely on a method from some other hook, for instance. We'll talk about dynamic actions later.
+
+```tsx
+const actions = [
+  {
+    id: "blog",
+    name: "Blog",
+    shortcut: ["b"],
+    keywords: "writing words",
+    perform: () => (window.location.pathname = "blog"),
+  },
+  {
+    id: "contact",
+    name: "Contact",
+    shortcut: ["c"],
+    keywords: "email",
+    perform: () => (window.location.pathname = "contact"),
+  },
+];
+
+return (
+  <KBarProvider actions={actions}>
+    <App />
+  </KBarProvider>
+);
+```
+
+kbar exposes a few components which handle animations, keyboard events, etc. You can compose them together like so:
+
+```tsx
+<KBarProvider actions={actions}>
+  <KBarContent>
+    <KBarSearch />
+    <KBarResults />
+  </KBarContent>
+  <MyApp />
+</KBarProvider>
+```
+
+Hit cmd+k and you should see a primitive command menu. kbar allows you to have full control over all
+aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get an understanding of further capabilities.

@@ -6,8 +6,8 @@ import KBarResults from "../../src/KBarResults";
 import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory } from "react-router-dom";
 import Layout from "./Layout";
-import Blog from "./Blog";
 import Home from "./Home";
+import Docs from "./Docs";
 
 const searchStyles = {
   padding: "12px 16px",
@@ -26,12 +26,12 @@ const App = () => {
     <KBarProvider
       actions={[
         {
-          id: "searchBlogAction",
-          name: "Search blog…",
+          id: "searchDocsAction",
+          name: "Search docs…",
           shortcut: [],
           keywords: "find",
           section: "",
-          children: ["blogPost1", "blogPost2"],
+          children: ["docs1", "docs2"],
         },
         {
           id: "homeAction",
@@ -50,20 +50,12 @@ const App = () => {
           perform: () => history.push("/docs"),
         },
         {
-          id: "navBlogAction",
-          name: "Blog",
-          shortcut: ["b"],
-          keywords: "writing work",
-          section: "Navigation",
-          perform: () => history.push("/blog"),
-        },
-        {
           id: "contactAction",
           name: "Contact",
           shortcut: ["c"],
           keywords: "email hello",
           section: "Navigation",
-          perform: () => history.push("/contact"),
+          perform: () => window.open("mailto:timchang@hey.com", "_blank"),
         },
         {
           id: "twitterAction",
@@ -74,21 +66,21 @@ const App = () => {
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
         },
         {
-          id: "blogPost1",
-          name: "Blog post 1",
+          id: "docs1",
+          name: "Docs 1 (Coming soon)",
           shortcut: [],
-          keywords: "Blog post 1",
+          keywords: "Docs 1",
           section: "",
-          perform: () => window.alert("nav -> blog post 1"),
+          perform: () => window.alert("nav -> Docs 1"),
           parent: "searchBlogAction",
         },
         {
-          id: "blogPost2",
-          name: "Blog post 2",
+          id: "docs2",
+          name: "Docs 2 (Coming soon)",
           shortcut: [],
-          keywords: "Blog post 2",
+          keywords: "Docs 2",
           section: "",
-          perform: () => window.alert("nav -> blog post 2"),
+          perform: () => window.alert("nav -> Docs 2"),
           parent: "searchBlogAction",
         },
         {
@@ -155,17 +147,8 @@ const App = () => {
       </KBarContent>
       <Layout>
         <Switch>
-          <Route path="/about">
-            <div>About</div>
-          </Route>
-          <Route path="/blog">
-            <Blog />
-          </Route>
-          <Route path="/contact">
-            <div>Contact</div>
-          </Route>
           <Route path="/docs">
-            <div>Docs</div>
+            <Docs />
           </Route>
           <Route path="/">
             <Home />
