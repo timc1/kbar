@@ -30,6 +30,7 @@ At the root of your site, import and wrap the site with a KBarProvider.
 
 ```tsx
 // app.tsx
+import { KBarProvider } from "kbar";
 
 return (
   <KBarProvider>
@@ -70,13 +71,15 @@ return (
 kbar exposes a few components which handle animations, keyboard events, etc. You can compose them together like so:
 
 ```tsx
+import { KBarProvider, KBarContent, KBarSearch } from "kbar";
+
 <KBarProvider actions={actions}>
   <KBarContent>
     <KBarSearch />
     <KBarResults />
   </KBarContent>
   <MyApp />
-</KBarProvider>
+</KBarProvider>;
 ```
 
 Hit cmd+k and you should see a primitive command menu. kbar allows you to have full control over all
