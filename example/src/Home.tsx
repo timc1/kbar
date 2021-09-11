@@ -1,6 +1,7 @@
 import Highlight, { defaultProps } from "prism-react-renderer";
 import vsLight from "prism-react-renderer/themes/vsLight";
 import * as React from "react";
+import { Link } from "react-router-dom";
 import Code from "./Code";
 
 export default function Home() {
@@ -38,42 +39,37 @@ export default function Home() {
           custom components
         </li>
       </ul>
-
       <h4>Usage</h4>
-
       <p>
         Have a fully functioning command menu for your site in minutes. Let's
         start with a basic example. First, install kbar.
       </p>
-
       <Code code="npm install kbar" />
-
       <p>
         At the root of your site, import and wrap the site with a{" "}
         <code>KBarProvider</code>.
       </p>
-
       <Code
-        code={`
-// app.tsx
+        code={`// app.tsx
 
 return (
   <KBarProvider>
     <App />
   </KBarProvider>
-)
-        `}
+)`}
       />
-
       <p>
-        Next, we'll create a few static actions. Static actions are actions with
-        no external dependencies; they don't rely on another hook, for instance.
-        We'll talk about dynamic actions later.
+        kbar is built on top of <code>actions</code>. Actions define what to
+        execute when a user selects it. Actions can have children which are just
+        other actions.
       </p>
-
+      <p>
+        Let's create a few static actions. Static actions are actions with no
+        external dependencies; they don't rely on a method from some other hook,
+        for instance. We'll talk about dynamic actions later.
+      </p>
       <Code
-        code={`
-const actions = [
+        code={`const actions = [
   {
     id: "blog",
     name: "Blog",
@@ -94,31 +90,28 @@ return (
   <KBarProvider actions={actions}>
     <App />
   </KBarProvider>
-)
-        `}
+)`}
       />
-
-      <p>
-        Next, we'll wrap our site in a <code>KBarProvider</code> and register
-        these initial static actions.
-      </p>
-
       <p>
         kbar exposes a few components which handle animations, keyboard events,
         etc. You can compose them together like so:
       </p>
-
       <Code
-        code={`
-<KBarProvider>
+        code={`<KBarProvider actions={actions}>
   <KBarContent>
     <KBarSearch />
     <KBarResults />
   </KBarContent>
   <MyApp />
-</KBarProvider>
-        `}
+</KBarProvider>`}
       />
+
+      <p>
+        Hit <code>cmd</code>+<code>k</code> and you should see a primitive
+        command menu. kbar allows you to have full control over all aspects of
+        your command menu – refer to the <Link to="/docs">docs</Link> to get an
+        understanding of further capabilities.
+      </p>
     </>
   );
 }

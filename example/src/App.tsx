@@ -42,6 +42,14 @@ const App = () => {
           perform: () => history.push("/"),
         },
         {
+          id: "docsAction",
+          name: "Docs",
+          shortcut: ["d"],
+          keywords: "help",
+          section: "Navigation",
+          perform: () => history.push("/docs"),
+        },
+        {
           id: "navBlogAction",
           name: "Blog",
           shortcut: ["b"],
@@ -56,14 +64,6 @@ const App = () => {
           keywords: "email hello",
           section: "Navigation",
           perform: () => history.push("/contact"),
-        },
-        {
-          id: "workAction",
-          name: "Work",
-          shortcut: ["w"],
-          keywords: "projects",
-          section: "Navigation",
-          perform: () => history.push("/work"),
         },
         {
           id: "twitterAction",
@@ -164,8 +164,8 @@ const App = () => {
           <Route path="/contact">
             <div>Contact</div>
           </Route>
-          <Route path="/work">
-            <div>Work</div>
+          <Route path="/docs">
+            <div>Docs</div>
           </Route>
           <Route path="/">
             <Home />
