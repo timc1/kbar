@@ -47,9 +47,7 @@ const backgroundStyle: React.CSSProperties = {
 };
 
 const contentStyle: React.CSSProperties = {
-  maxWidth: "640px",
   width: "min-content",
-  boxShadow: "var(--shadow)",
   ...animationKeyframes[0],
 };
 

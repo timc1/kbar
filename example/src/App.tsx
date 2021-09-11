@@ -128,6 +128,7 @@ const App = () => {
           color: "var(--foreground)",
           borderRadius: "8px",
           overflow: "hidden",
+          boxShadow: "var(--shadow)",
         }}
       >
         <KBarSearch
