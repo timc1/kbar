@@ -1,5 +1,5 @@
 import { matchSorter } from "match-sorter";
-import React from "react";
+import * as React from "react";
 import { Action, VisualState } from "./types";
 import useKBar from "./useKBar";
 
@@ -26,6 +26,7 @@ export default function KBarResults(props: KBarResultsProps) {
     (state) => ({
       search: state.searchQuery,
       currentRootActionId: state.currentRootActionId,
+      actions: state.actions,
     })
   );
 

@@ -13,9 +13,17 @@ export interface Action {
 
 export type ActionTree = Record<string, Action>;
 
+export interface KBarOptions {
+  animations: {
+    enterMs?: number;
+    exitMs?: number;
+    maxContentHeight?: number;
+  };
+}
+
 export interface KBarProviderProps {
   actions: ActionTree;
-  options: any;
+  options: KBarOptions;
 }
 
 export interface KBarState {
@@ -23,18 +31,19 @@ export interface KBarState {
   // TODO: simplify type
   currentRootActionId: ActionId | null | undefined;
   visualState: VisualState;
+  actions: ActionTree;
 }
 
 export interface KBarQuery {
   setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
+  registerActions: (actions: Action[]) => () => void;
 }
 
 export interface IKBarContext {
   getState: () => KBarState;
   query: KBarQuery;
-  actions: ActionTree;
   subscribe: (
     collector: <C>(state: KBarState) => C,
     cb: <C>(collected: C) => void

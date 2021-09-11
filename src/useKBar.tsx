@@ -1,11 +1,10 @@
-import React from "react";
+import * as React from "react";
 import { KBarContext } from "./KBarContextProvider";
-import type { ActionTree, KBarQuery, KBarState } from "./types";
+import type { KBarQuery, KBarState } from "./types";
 
 interface BaseKBarReturnType {
   query: KBarQuery;
   options: any;
-  actions: ActionTree;
 }
 
 type useKBarReturnType<S = null> = S extends null
@@ -15,8 +14,7 @@ type useKBarReturnType<S = null> = S extends null
 export default function useKBar<C = null>(
   collector?: (state: KBarState) => C
 ): useKBarReturnType<C> {
-  const { query, getState, subscribe, options, actions } =
-    React.useContext(KBarContext);
+  const { query, getState, subscribe, options } = React.useContext(KBarContext);
 
   const collected = React.useRef(collector?.(getState()));
   const collectorRef = React.useRef(collector);
@@ -26,9 +24,8 @@ export default function useKBar<C = null>(
       ...collected,
       query,
       options,
-      actions,
     }),
-    [query, options, actions]
+    [query, options]
   );
 
   const [render, setRender] = React.useState(onCollect(collected.current));

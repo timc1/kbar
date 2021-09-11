@@ -1,8 +1,13 @@
+import "./index.scss";
 import * as React from "react";
 import { KBarContent } from "../../src/KBarContent";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
 import KBarSearch from "../../src/KBarSearch";
+import { Switch, Route, useHistory } from "react-router-dom";
+import Layout from "./Layout";
+import Blog from "./Blog";
+import Home from "./Home";
 
 const searchStyles = {
   padding: "12px 16px",
@@ -16,20 +21,9 @@ const searchStyles = {
 };
 
 const App = () => {
+  const history = useHistory();
   return (
-    <>
-      <h1>kbar</h1>
-      <ul>
-        <li>cmd+k to toggle menu</li>
-        <li>
-          backspace when in a nested path to navigate back to previous path;
-          e.g. search blog
-        </li>
-        <li>
-          keyboard shortcuts registered; e.g. hit `t` when kbar is hidden to
-          trigger the Twitter action
-        </li>
-      </ul>
+    <Layout>
       <KBarProvider
         actions={{
           searchBlogAction: {
@@ -40,13 +34,21 @@ const App = () => {
             section: "",
             children: ["blogPost1", "blogPost2"],
           },
+          homeAction: {
+            id: "homeAction",
+            name: "Home",
+            shortcut: ["h"],
+            keywords: "back",
+            section: "Navigation",
+            perform: () => history.push("/"),
+          },
           navBlogAction: {
             id: "navBlogAction",
             name: "Blog",
             shortcut: ["b"],
             keywords: "writing work",
             section: "Navigation",
-            perform: () => window.alert("nav -> blog"),
+            perform: () => history.push("/blog"),
           },
           contactAction: {
             id: "contactAction",
@@ -54,7 +56,7 @@ const App = () => {
             shortcut: ["c"],
             keywords: "email hello",
             section: "Navigation",
-            perform: () => window.alert("nav -> contact"),
+            perform: () => history.push("/contact"),
           },
           workAction: {
             id: "workAction",
@@ -62,7 +64,7 @@ const App = () => {
             shortcut: ["w"],
             keywords: "projects",
             section: "Navigation",
-            perform: () => window.alert("nav -> work"),
+            perform: () => history.push("/work"),
           },
           twitterAction: {
             id: "twitterAction",
@@ -123,7 +125,7 @@ const App = () => {
         options={{
           animations: {
             enterMs: 200,
-            exitMs: 200,
+            exitMs: 100,
             maxContentHeight: 400,
           },
         }}
@@ -153,8 +155,25 @@ const App = () => {
             )}
           />
         </KBarContent>
+        <Switch>
+          <Route path="/about">
+            <div>About</div>
+          </Route>
+          <Route path="/blog">
+            <Blog />
+          </Route>
+          <Route path="/contact">
+            <div>Contact</div>
+          </Route>
+          <Route path="/work">
+            <div>Work</div>
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
       </KBarProvider>
-    </>
+    </Layout>
   );
 };
 
