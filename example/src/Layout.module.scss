@@ -7,20 +7,32 @@
 
 .header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 4);
 
   h1 {
-    margin-left: var(--unit);
+    margin: 0;
+    font-size: 24px;
   }
 
   button {
     cursor: pointer;
-    background: var(--a1);
-    border: 1px solid var(--a2);
+    background: none;
+    border: none;
     border-radius: calc(var(--unit) * 0.5);
     color: var(--foreground);
-    height: 30px;
-    width: 30px;
+    height: 100px;
+    width: 100px;
+    padding: 0;
+    transition: background 100ms;
+
+    &:hover {
+      background: var(--a1);
+    }
+
+    &:active {
+      background: var(--a2);
+    }
   }
 }
