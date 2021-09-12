@@ -170,12 +170,18 @@ function Render({ action, handlers, state }) {
       // wait for the KBarContent to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(() =>
-          ownRef.current?.scrollIntoView({
+        window.requestAnimationFrame(() => {
+          const element = ownRef.current;
+          if (!element) {
+            return;
+          }
+          // @ts-ignore
+          element.scrollIntoView({
             block: "nearest",
             behavior: "smooth",
-          })
-        )
+            inline: "start",
+          });
+        })
       );
     }
   }, [active]);
@@ -191,6 +197,7 @@ function Render({ action, handlers, state }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        cursor: "pointer",
       }}
     >
       <span>{action.name}</span>

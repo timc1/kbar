@@ -188,9 +188,13 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
       // wait for the KBarContent to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(() =>
-          ownRef.current?.scrollIntoView({ block: "nearest" })
-        )
+        window.requestAnimationFrame(() => {
+          const element = ownRef.current;
+          if (!element) {
+            return;
+          }
+          element.scrollIntoView({ block: "nearest" });
+        })
       );
     }
   }, [isActive]);
