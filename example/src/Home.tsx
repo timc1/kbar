@@ -9,7 +9,7 @@ export default function Home() {
     <>
       <p>
         kbar is a fully extensible command+k interface for your site. Try it out
-        – press <kbd>cmd</kbd> and <kbd>k</kbd>.
+        – press <kbd>cmd</kbd> and <kbd>k</kbd>, or click the logo above.
       </p>
       <h3>Background</h3>
       <p>
