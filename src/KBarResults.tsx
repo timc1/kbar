@@ -99,7 +99,7 @@ export default function KBarResults(props: KBarResultsProps) {
     function handleKeyDown(event: KeyboardEvent) {
       event.stopPropagation();
 
-      if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n") || (event.ctrlKey && event.key === "j")) {
+      if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n")) {
         event.preventDefault();
         setActiveIndex((index) => {
           if (index >= matches.length - 1) {
@@ -110,7 +110,7 @@ export default function KBarResults(props: KBarResultsProps) {
         });
       }
 
-      if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p") || (event.ctrlKey && event.key === "k")) {
+      if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
         setActiveIndex((index) => {
           if (index === 0) {
