@@ -71,7 +71,7 @@ return (
 kbar exposes a few components which handle animations, keyboard events, etc. You can compose them together like so:
 
 ```tsx
-import { KBarProvider, KBarContent, KBarSearch } from "kbar";
+import { KBarProvider, KBarContent, KBarSearch, KBarResults } from "kbar";
 
 <KBarProvider actions={actions}>
   <KBarContent>
