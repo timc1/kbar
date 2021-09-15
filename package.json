@@ -1,6 +1,12 @@
 {
   "name": "kbar",
   "version": "0.1.0-beta.1",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rm -rf ./lib & tsc",
+    "build:example": "webpack --config ./example/webpack.prod.cjs",
+    "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
+  },
   "devDependencies": {
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
@@ -16,18 +22,18 @@
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.1.0",
-    "@reach/portal": "^0.16.0",
-    "fast-equals": "^2.0.3",
-    "match-sorter": "^6.3.0",
     "react-router-dom": "^5.3.0",
     "react": "^16.0.0 || ^17.0.0",
     "react-dom": "^16.0.0 || ^17.0.0"
   },
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "rm -rf ./lib & tsc",
-    "build:example": "webpack --config ./example/webpack.prod.cjs",
-    "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot"
+  "dependencies": {
+    "@reach/portal": "^0.16.0",
+    "fast-equals": "^2.0.3",
+    "match-sorter": "^6.3.0"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0 || ^17.0.0",
+    "react-dom": "^16.0.0 || ^17.0.0"
   },
   "keywords": [
     "command bar",
@@ -38,9 +44,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/timc1/kbar.git"
-  },
-  "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0"
   }
 }
