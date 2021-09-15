@@ -42,6 +42,7 @@ const backgroundStyle: React.CSSProperties = {
   justifyContent: "center",
   width: "100%",
   inset: "0px",
+  top:0, // needs to be explicit for safari to show the modal
   padding: "14vh 16px 16px",
   boxSizing: "border-box",
 };
