@@ -1,6 +1,6 @@
 ## kbar
 
-kbar is a simple plug-n-play component to add a fast,
+kbar is a simple plug-n-play React component to add a fast,
 portable, and extensible command+k interface to your site.
 
 ![demo](https://user-images.githubusercontent.com/12195101/132958919-7a525cab-e191-4642-ae9a-5f22a3ba7845.gif)
