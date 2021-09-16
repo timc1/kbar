@@ -42,6 +42,14 @@ const App = () => {
           perform: () => history.push("/"),
         },
         {
+          id: "sourceAction",
+          name: "Source in GitHub",
+          shortcut: ["s"],
+          keywords: "social contact src code github gh contribute",
+          section: "Navigation",
+          perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
+        },
+        {
           id: "docsAction",
           name: "Docs",
           shortcut: ["d"],
