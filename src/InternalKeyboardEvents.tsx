@@ -7,14 +7,18 @@ type Timeout = ReturnType<typeof setTimeout>;
 export default function InternalEvents() {
   return (
     <>
-      <KBarToggler />
-      <DocumentLock />
+      <ToggleHandler />
       <ShortcutsHandler />
+      <FocusHandler />
+      <DocumentLock />
     </>
   );
 }
 
-function KBarToggler() {
+/**
+ * `ToggleHandler` handles the keyboard events for toggling kbar.
+ */
+function ToggleHandler() {
   const { query, options, visualState } = useKBar((state) => ({
     visualState: state.visualState,
   }));
@@ -85,6 +89,10 @@ function KBarToggler() {
   return null;
 }
 
+/**
+ * `DocumentLock` is a simple implementation for preventing the
+ * underlying page content from scrolling when kbar is open.
+ */
 function DocumentLock() {
   const { visualState } = useKBar((state) => ({
     visualState: state.visualState,
@@ -101,6 +109,10 @@ function DocumentLock() {
   return null;
 }
 
+/**
+ * `ShortcutsHandler` registers and listens to keyboard strokes and
+ * performs actions for patterns that match the user defined `shortcut`.
+ */
 function ShortcutsHandler() {
   const { actions } = useKBar((state) => ({
     actions: state.actions,
@@ -148,5 +160,40 @@ function ShortcutsHandler() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  return null;
+}
+
+/**
+ * `FocusHandler` ensures that focus is set back on the element which was
+ * in focus prior to kbar being triggered.
+ */
+function FocusHandler() {
+  const { isShowing } = useKBar((state) => ({
+    isShowing:
+      state.visualState === VisualState.showing ||
+      state.visualState === VisualState.animatingIn,
+  }));
+
+  const activeElementRef = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    if (isShowing) {
+      activeElementRef.current = document.activeElement as HTMLElement;
+      return;
+    }
+
+    // This fixes an issue on Safari where closing kbar causes the entire
+    // page to scroll to the bottom. The reason this was happening was due
+    // to the search input still in focus when we removed it from the dom.
+    const currentActiveElement = document.activeElement as HTMLElement;
+    if (currentActiveElement?.tagName.toLowerCase() === "input") {
+      currentActiveElement.blur();
+    }
+
+    const activeElement = activeElementRef.current;
+    if (activeElement) {
+      activeElement.focus();
+    }
+  }, [isShowing]);
   return null;
 }
