@@ -4,10 +4,19 @@ import useKBar from "./useKBar";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
-export default function InternalKeyboardEvents() {
-  const { query, options, visualState, actions } = useKBar((state) => ({
+export default function InternalEvents() {
+  return (
+    <>
+      <KBarToggler />
+      <DocumentLock />
+      <ShortcutsHandler />
+    </>
+  );
+}
+
+function KBarToggler() {
+  const { query, options, visualState } = useKBar((state) => ({
     visualState: state.visualState,
-    actions: state.actions,
   }));
 
   React.useEffect(() => {
@@ -36,7 +45,67 @@ export default function InternalKeyboardEvents() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [query]);
 
-  // Shortcuts
+  const timeoutRef = React.useRef<Timeout>();
+  const runAnimateTimer = React.useCallback(
+    (vs: VisualState.animatingIn | VisualState.animatingOut) => {
+      let ms = 0;
+      if (vs === VisualState.animatingIn) {
+        ms = options.animations?.enterMs || 0;
+      }
+      if (vs === VisualState.animatingOut) {
+        ms = options.animations?.exitMs || 0;
+      }
+
+      clearTimeout(timeoutRef.current as Timeout);
+      timeoutRef.current = setTimeout(() => {
+        // TODO: setVisualState argument should be a function or just a VisualState value.
+        query.setVisualState(() => {
+          const finalVs =
+            vs === VisualState.animatingIn
+              ? VisualState.showing
+              : VisualState.hidden;
+          return finalVs;
+        });
+        query.setCurrentRootAction(null);
+        query.setSearch("");
+      }, ms);
+    },
+    []
+  );
+
+  React.useEffect(() => {
+    switch (visualState) {
+      case VisualState.animatingIn:
+      case VisualState.animatingOut:
+        runAnimateTimer(visualState);
+        break;
+    }
+  }, [visualState]);
+
+  return null;
+}
+
+function DocumentLock() {
+  const { visualState } = useKBar((state) => ({
+    visualState: state.visualState,
+  }));
+
+  React.useEffect(() => {
+    if (visualState === VisualState.showing) {
+      document.documentElement.style.overflow = "hidden";
+    } else if (visualState === VisualState.hidden) {
+      document.documentElement.style.removeProperty("overflow");
+    }
+  }, [visualState]);
+
+  return null;
+}
+
+function ShortcutsHandler() {
+  const { actions } = useKBar((state) => ({
+    actions: state.actions,
+  }));
+
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
@@ -78,43 +147,6 @@ export default function InternalKeyboardEvents() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  const timeoutRef = React.useRef<Timeout>();
-  const runAnimateTimer = React.useCallback(
-    (vs: VisualState.animatingIn | VisualState.animatingOut) => {
-      let ms = 0;
-      if (vs === VisualState.animatingIn) {
-        ms = options.animations?.enterMs || 0;
-      }
-      if (vs === VisualState.animatingOut) {
-        ms = options.animations?.exitMs || 0;
-      }
-
-      clearTimeout(timeoutRef.current as Timeout);
-      timeoutRef.current = setTimeout(() => {
-        // TODO: setVisualState argument should be a function or just a VisualState value.
-        query.setVisualState(() => {
-          const finalVs =
-            vs === VisualState.animatingIn
-              ? VisualState.showing
-              : VisualState.hidden;
-          return finalVs;
-        });
-        query.setCurrentRootAction(null);
-        query.setSearch("");
-      }, ms);
-    },
-    []
-  );
-
-  React.useEffect(() => {
-    switch (visualState) {
-      case VisualState.animatingIn:
-      case VisualState.animatingOut:
-        runAnimateTimer(visualState);
-        break;
-    }
-  }, [visualState]);
 
   return null;
 }
