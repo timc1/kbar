@@ -57,3 +57,22 @@ export enum VisualState {
   animatingOut = "animating-out",
   hidden = "hidden",
 }
+
+export interface ResultHandlers {
+  onClick: () => void;
+  onMouseEnter: () => void;
+  onPointerDown: () => void;
+}
+
+export interface ResultState {
+  index: number;
+  activeIndex: number;
+}
+
+export interface KBarResultsProps {
+  onRender?: (
+    action: Action,
+    handlers: ResultHandlers,
+    state: ResultState
+  ) => React.ReactElement;
+}
