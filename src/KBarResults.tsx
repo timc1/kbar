@@ -1,25 +1,13 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
-import { Action, VisualState } from "./types";
+import { VisualState } from "./types";
+import type {
+  Action,
+  KBarResultsProps,
+  ResultHandlers,
+  ResultState,
+} from "./types";
 import useKBar from "./useKBar";
-
-interface Handlers {
-  onClick: () => void;
-  onMouseEnter: () => void;
-}
-
-interface RenderResultState {
-  index: number;
-  activeIndex: number;
-}
-
-interface KBarResultsProps {
-  onRender?: (
-    action: Action,
-    handlers: Handlers,
-    state: RenderResultState
-  ) => React.ReactNode;
-}
 
 export default function KBarResults(props: KBarResultsProps) {
   const { search, actions, currentRootActionId, query, options } = useKBar(
@@ -145,24 +133,30 @@ export default function KBarResults(props: KBarResultsProps) {
     >
       {matches.length
         ? matches.map((action, index) => {
-            const handlers = {
-              key: action.id,
+            const handlers: ResultHandlers = {
               onClick: select,
               onPointerDown: () => setActiveIndex(index),
               onMouseEnter: () => setActiveIndex(index),
             };
 
-            const state = {
+            const state: ResultState = {
               activeIndex,
               index,
             };
 
             if (props.onRender) {
-              return props.onRender(action, handlers, state);
+              // Implicitly add a `key` so the user won't have to.
+              return React.cloneElement(
+                props.onRender(action, handlers, state),
+                {
+                  key: action.id,
+                }
+              );
             }
 
             return (
               <DefaultResultWrapper
+                key={action.id}
                 isActive={activeIndex === index}
                 {...handlers}
               >

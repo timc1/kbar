@@ -23,7 +23,7 @@ export interface KBarOptions {
 
 export interface KBarProviderProps {
   actions: Action[];
-  options: KBarOptions;
+  options?: KBarOptions;
 }
 
 export interface KBarState {
@@ -56,4 +56,23 @@ export enum VisualState {
   showing = "showing",
   animatingOut = "animating-out",
   hidden = "hidden",
+}
+
+export interface ResultHandlers {
+  onClick: () => void;
+  onMouseEnter: () => void;
+  onPointerDown: () => void;
+}
+
+export interface ResultState {
+  index: number;
+  activeIndex: number;
+}
+
+export interface KBarResultsProps {
+  onRender?: (
+    action: Action,
+    handlers: ResultHandlers,
+    state: ResultState
+  ) => React.ReactElement;
 }

@@ -137,12 +137,7 @@ const App = () => {
         />
         <KBarResults
           onRender={(action, handlers, state) => (
-            <Render
-              key={action.id}
-              action={action}
-              handlers={handlers}
-              state={state}
-            />
+            <Render action={action} handlers={handlers} state={state} />
           )}
         />
       </KBarContent>
