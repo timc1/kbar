@@ -1,7 +1,7 @@
 import useStore from "./useStore";
 import * as React from "react";
-import InternalEvents from "./InternalKeyboardEvents";
 import { IKBarContext, KBarProviderProps } from "./types";
+import InternalEvents from "./InternalEvents";
 
 export const KBarContext = React.createContext<IKBarContext>(
   {} as IKBarContext

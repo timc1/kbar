@@ -5,20 +5,17 @@ import useKBar from "./useKBar";
 type Timeout = ReturnType<typeof setTimeout>;
 
 export default function InternalEvents() {
-  return (
-    <>
-      <ToggleHandler />
-      <ShortcutsHandler />
-      <FocusHandler />
-      <DocumentLock />
-    </>
-  );
+  useToggleHandler();
+  useDocumentLock();
+  useShortcuts();
+  useFocusHandler();
+  return null;
 }
 
 /**
- * `ToggleHandler` handles the keyboard events for toggling kbar.
+ * `useToggleHandler` handles the keyboard events for toggling kbar.
  */
-function ToggleHandler() {
+function useToggleHandler() {
   const { query, options, visualState } = useKBar((state) => ({
     visualState: state.visualState,
   }));
@@ -85,15 +82,13 @@ function ToggleHandler() {
         break;
     }
   }, [visualState]);
-
-  return null;
 }
 
 /**
- * `DocumentLock` is a simple implementation for preventing the
+ * `useDocumentLock` is a simple implementation for preventing the
  * underlying page content from scrolling when kbar is open.
  */
-function DocumentLock() {
+function useDocumentLock() {
   const { visualState } = useKBar((state) => ({
     visualState: state.visualState,
   }));
@@ -105,15 +100,13 @@ function DocumentLock() {
       document.documentElement.style.removeProperty("overflow");
     }
   }, [visualState]);
-
-  return null;
 }
 
 /**
- * `ShortcutsHandler` registers and listens to keyboard strokes and
+ * `useShortcuts` registers and listens to keyboard strokes and
  * performs actions for patterns that match the user defined `shortcut`.
  */
-function ShortcutsHandler() {
+function useShortcuts() {
   const { actions } = useKBar((state) => ({
     actions: state.actions,
   }));
@@ -159,15 +152,13 @@ function ShortcutsHandler() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  return null;
 }
 
 /**
- * `FocusHandler` ensures that focus is set back on the element which was
+ * `useFocusHandler` ensures that focus is set back on the element which was
  * in focus prior to kbar being triggered.
  */
-function FocusHandler() {
+function useFocusHandler() {
   const { isShowing } = useKBar((state) => ({
     isShowing:
       state.visualState === VisualState.showing ||
@@ -195,5 +186,4 @@ function FocusHandler() {
       activeElement.focus();
     }
   }, [isShowing]);
-  return null;
 }
