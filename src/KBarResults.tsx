@@ -6,6 +6,7 @@ import useKBar from "./useKBar";
 interface Handlers {
   onClick: () => void;
   onMouseEnter: () => void;
+  onPointerDown: () => void;
 }
 
 interface RenderResultState {
@@ -18,7 +19,7 @@ interface KBarResultsProps {
     action: Action,
     handlers: Handlers,
     state: RenderResultState
-  ) => React.ReactNode;
+  ) => React.ReactElement;
 }
 
 export default function KBarResults(props: KBarResultsProps) {
@@ -145,8 +146,7 @@ export default function KBarResults(props: KBarResultsProps) {
     >
       {matches.length
         ? matches.map((action, index) => {
-            const handlers = {
-              key: action.id,
+            const handlers: Handlers = {
               onClick: select,
               onPointerDown: () => setActiveIndex(index),
               onMouseEnter: () => setActiveIndex(index),
@@ -158,11 +158,18 @@ export default function KBarResults(props: KBarResultsProps) {
             };
 
             if (props.onRender) {
-              return props.onRender(action, handlers, state);
+              // Implicitly add a `key` so the user won't have to.
+              return React.cloneElement(
+                props.onRender(action, handlers, state),
+                {
+                  key: action.id,
+                }
+              );
             }
 
             return (
               <DefaultResultWrapper
+                key={action.id}
                 isActive={activeIndex === index}
                 {...handlers}
               >
