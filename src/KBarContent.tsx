@@ -67,9 +67,10 @@ const Animator: React.FC<
       return;
     }
 
-    const duration = VisualState.animatingIn
-      ? options?.animations?.enterMs || 0
-      : options?.animations?.exitMs || 0;
+    const duration =
+      props.visualState === VisualState.animatingIn
+        ? options?.animations?.enterMs || 0
+        : options?.animations?.exitMs || 0;
 
     const element = outerRef.current;
 
