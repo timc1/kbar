@@ -1,15 +1,17 @@
 import "./index.scss";
 import * as React from "react";
-import { KBarContent } from "../../src/KBarContent";
+import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
+import KBarContent from "../../src/KBarContent";
+import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
 
-const searchStyles = {
+const searchStyle = {
   padding: "12px 16px",
   fontSize: "16px",
   width: "100%",
@@ -18,6 +20,21 @@ const searchStyles = {
   border: "none",
   background: "var(--background)",
   color: "var(--foreground)",
+};
+
+const resultsStyle = {
+  maxHeight: 400,
+  overflow: "auto",
+};
+
+const animatorStyle = {
+  maxWidth: "500px",
+  width: "100%",
+  background: "var(--background)",
+  color: "var(--foreground)",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "var(--shadow)",
 };
 
 const App = () => {
@@ -116,30 +133,24 @@ const App = () => {
         animations: {
           enterMs: 200,
           exitMs: 100,
-          maxContentHeight: 400,
         },
       }}
     >
-      <KBarContent
-        contentStyle={{
-          maxWidth: "400px",
-          width: "100%",
-          background: "var(--background)",
-          color: "var(--foreground)",
-          borderRadius: "8px",
-          overflow: "hidden",
-          boxShadow: "var(--shadow)",
-        }}
-      >
-        <KBarSearch
-          style={searchStyles}
-          placeholder="Type a command or search…"
-        />
-        <KBarResults
-          onRender={(action, handlers, state) => (
-            <Render action={action} handlers={handlers} state={state} />
-          )}
-        />
+      <KBarContent>
+        <KBarPositioner>
+          <KBarAnimator style={animatorStyle}>
+            <KBarSearch
+              style={searchStyle}
+              placeholder="Type a command or search…"
+            />
+            <KBarResults
+              style={resultsStyle}
+              onRender={(action, handlers, state) => (
+                <Render action={action} handlers={handlers} state={state} />
+              )}
+            />
+          </KBarAnimator>
+        </KBarPositioner>
       </KBarContent>
       <Layout>
         <Switch>

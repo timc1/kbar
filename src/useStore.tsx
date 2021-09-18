@@ -6,6 +6,7 @@ import {
   ActionTree,
   KBarProviderProps,
   KBarState,
+  KBarOptions,
   VisualState,
 } from "./types";
 
@@ -40,7 +41,7 @@ export default function useStore(props: useStoreProps) {
     publisher.notify();
   }, [state]);
 
-  const optionsRef = React.useRef(props.options || {});
+  const optionsRef = React.useRef((props.options || {}) as KBarOptions);
 
   const registerActions = React.useCallback((actions: Action[]) => {
     const actionsByKey: ActionTree = actions.reduce((acc, curr) => {

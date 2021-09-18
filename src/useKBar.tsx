@@ -1,10 +1,10 @@
 import * as React from "react";
 import { KBarContext } from "./KBarContextProvider";
-import type { KBarQuery, KBarState } from "./types";
+import type { KBarQuery, KBarState, KBarOptions } from "./types";
 
 interface BaseKBarReturnType {
   query: KBarQuery;
-  options: any;
+  options: KBarOptions;
 }
 
 type useKBarReturnType<S = null> = S extends null
