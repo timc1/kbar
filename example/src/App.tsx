@@ -61,7 +61,7 @@ const App = () => {
         {
           id: "docsAction",
           name: "Docs",
-          shortcut: ["d"],
+          shortcut: ["g", "d"],
           keywords: "help",
           section: "Navigation",
           perform: () => history.push("/docs"),
@@ -208,15 +208,20 @@ function Render({ action, handlers, state }) {
     >
       <span>{action.name}</span>
       {action.shortcut?.length ? (
-        <kbd
-          style={{
-            padding: "4px 6px",
-            background: "rgba(0 0 0 / .1)",
-            borderRadius: "4px",
-          }}
-        >
-          {action.shortcut}
-        </kbd>
+        <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
+          {action.shortcut.map((sc) => (
+            <kbd
+              key={sc}
+              style={{
+                padding: "4px 6px",
+                background: "rgba(0 0 0 / .1)",
+                borderRadius: "4px",
+              }}
+            >
+              {sc}
+            </kbd>
+          ))}
+        </div>
       ) : null}
     </div>
   );
