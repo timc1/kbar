@@ -8,13 +8,25 @@ interface KBarAnimatorProps {
   className?: string;
 }
 
-const animationKeyframes = [
+const appearanceAnimationKeyframes = [
   {
     opacity: 0,
-    transform: "scale(0.95)",
+    transform: "scale(.95)",
   },
   { opacity: 0.75, transform: "scale(1.02)" },
   { opacity: 1, transform: "scale(1)" },
+];
+
+const bumpAnimationKeyframes = [
+  {
+    transform: "scale(1)",
+  },
+  {
+    transform: "scale(.98)",
+  },
+  {
+    transform: "scale(1)",
+  },
 ];
 
 export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
@@ -45,7 +57,7 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
 
     const element = outerRef.current;
 
-    element?.animate(animationKeyframes, {
+    element?.animate(appearanceAnimationKeyframes, {
       duration,
       easing:
         // TODO: expose easing in options
@@ -56,8 +68,8 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
     });
   }, [options, visualState, enterMs, exitMs]);
 
-  const previousHeight = React.useRef<number>();
   // Height animation
+  const previousHeight = React.useRef<number>();
   React.useEffect(() => {
     // Only animate if we're actually showing
     if (visualState === VisualState.showing) {
@@ -112,23 +124,10 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
     }
     const element = outerRef.current;
     if (element) {
-      element.animate(
-        [
-          {
-            transform: "scale(1)",
-          },
-          {
-            transform: "scale(.98)",
-          },
-          {
-            transform: "scale(1)",
-          },
-        ],
-        {
-          duration: enterMs,
-          easing: "ease-out",
-        }
-      );
+      element.animate(bumpAnimationKeyframes, {
+        duration: enterMs,
+        easing: "ease-out",
+      });
     }
   }, [currentRootActionId, enterMs]);
 
@@ -137,10 +136,9 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
   });
 
   return (
-    // TODO: improve here; no need for spreading
     <div
       ref={outerRef}
-      style={{ ...animationKeyframes[0], ...style }}
+      style={{ ...appearanceAnimationKeyframes[0], ...style }}
       className={className}
     >
       <div ref={innerRef}>{children}</div>
