@@ -1,4 +1,4 @@
-import KBarContent from "./KBarContent";
+import KBarPortal from "./KBarPortal";
 import KBarPositioner from "./KBarPositioner";
 import KBarSearch from "./KBarSearch";
 import KBarResults from "./KBarResults";
@@ -6,7 +6,7 @@ import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
 
 export {
-  KBarContent,
+  KBarPortal as KBarContent,
   KBarPositioner,
   KBarSearch,
   KBarResults,

@@ -7,7 +7,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function KBarContent(props: Props) {
+export default function KBarPortal(props: Props) {
   const { showing } = useKBar((state) => ({
     showing: state.visualState !== VisualState.hidden,
   }));
