@@ -22,8 +22,9 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
   style,
   className,
 }) => {
-  const { visualState } = useKBar((state) => ({
+  const { visualState, currentRootActionId } = useKBar((state) => ({
     visualState: state.visualState,
+    currentRootActionId: state.currentRootActionId,
   }));
 
   const outerRef = React.useRef<HTMLDivElement>(null);
@@ -101,6 +102,35 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
       };
     }
   }, [visualState, options, enterMs, exitMs]);
+
+  // Bump animation between nested actions
+  const firstRender = React.useRef(true);
+  React.useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const element = outerRef.current;
+    if (element) {
+      element.animate(
+        [
+          {
+            transform: "scale(1)",
+          },
+          {
+            transform: "scale(.98)",
+          },
+          {
+            transform: "scale(1)",
+          },
+        ],
+        {
+          duration: enterMs,
+          easing: "ease-out",
+        }
+      );
+    }
+  }, [currentRootActionId, enterMs]);
 
   useOuterClick(outerRef, () => {
     query.setVisualState(VisualState.animatingOut);
