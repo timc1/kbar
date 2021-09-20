@@ -1,5 +1,3 @@
-import Highlight, { defaultProps } from "prism-react-renderer";
-import vsLight from "prism-react-renderer/themes/vsLight";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import Code from "./Code";

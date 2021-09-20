@@ -17,7 +17,7 @@ const defaultStyle: React.CSSProperties = {
 
 export default function KBarPositioner(props: Props) {
   return (
-    <div style={defaultStyle} {...props}>
+    <div style={!props.className ? defaultStyle : undefined} {...props}>
       {props.children}
     </div>
   );

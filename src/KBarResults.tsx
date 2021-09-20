@@ -174,7 +174,7 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
 
   React.useEffect(() => {
     if (isActive) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => {
