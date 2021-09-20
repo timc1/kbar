@@ -6,7 +6,7 @@ import KBarResults from "../../src/KBarResults";
 import KBarPortal from "../../src/KBarPortal";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
-import { Switch, Route, useHistory } from "react-router-dom";
+import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
@@ -154,10 +154,13 @@ const App = () => {
       </KBarPortal>
       <Layout>
         <Switch>
-          <Route path="/docs">
+          <Route path="/docs" exact>
+            <Redirect to="/docs/overview" />
+          </Route>
+          <Route path="/docs/:slug">
             <Docs />
           </Route>
-          <Route path="/">
+          <Route path="*">
             <Home />
           </Route>
         </Switch>
