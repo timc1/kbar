@@ -8,7 +8,16 @@ export default function Home() {
   return (
     <>
       <p>
-        kbar is a fully extensible command+k interface for your site. Try it out
+        <b>
+          <a
+            href="https://github.com/timc1/kbar"
+            target="_blank"
+            rel="noreferrer"
+          >
+            kbar
+          </a>
+        </b>{" "}
+        is a fully extensible command+k interface for your site. Try it out
         – press <kbd>cmd</kbd> and <kbd>k</kbd>, or click the logo above.
       </p>
       <h3>Background</h3>
