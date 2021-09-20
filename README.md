@@ -1,26 +1,28 @@
 ## kbar
 
-kbar is a simple plug-n-play React component to add a fast,
-portable, and extensible command+k interface to your site.
+kbar is a simple plug-n-play React component to add a fast, portable, and extensible command+k interface to your site.
 
-![demo](https://user-images.githubusercontent.com/12195101/132958919-7a525cab-e191-4642-ae9a-5f22a3ba7845.gif)
+![demo](https://user-images.githubusercontent.com/12195101/134022553-af4a29e9-0a3d-40f1-9254-3bd9673f3401.gif)
 
-## Background
+### Background
 
 Command+k interfaces are used to create a web experience where any type of action users would be able to do via clicking can be done through a command menu.
 
-With macOS's Spotlight and Linear's command+k experience in mind, kbar aims to be a simple abstraction to add a fast and extensible command+k menu to your site.
+With macOS's Spotlight and Linear's command+k experience in mind, kbar aims to be a simple
+abstraction to add a fast and extensible command+k menu to your site.
 
 ### Features
 
-- Built in animations, fully customizable
+- Built in animations and fully customizable components
 - Keyboard navigation support; e.g. ctrl n / ctrl p for the navigation wizards
 - Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit t for Twitter
-- Navigate between nested actions with backspace
-- A simple data structure which enables anyone to easily build their custom components
+- Nested actions enable creation of rich navigation experiences; e.g. hit backspace to navigate to
+  the previous action
+- A simple data structure which enables anyone to easily build their own custom components
 
-Usage
-Have a fully functioning command menu for your site in minutes. Let's start with a basic example. First, install kbar.
+### Usage
+
+Have a fully functioning command menu for your site in minutes. First, install kbar.
 
 ```
 npm install kbar
@@ -41,7 +43,8 @@ return (
 
 kbar is built on top of `actions`. Actions define what to execute when a user selects it. Actions can have children which are just other actions.
 
-Let's create a few static actions. Static actions are actions with no external dependencies; they don't rely on a method from some other hook, for instance. We'll talk about dynamic actions later.
+We'll create a few static actions first. Static actions are actions with no external dependencies. Our example below sets the `window.location.pathname`, which does not rely on any
+external hook, for instance.
 
 ```tsx
 const actions = [
@@ -68,19 +71,49 @@ return (
 );
 ```
 
-kbar exposes a few components which handle animations, keyboard events, etc. You can compose them together like so:
+kbar exposes a few components which handle animations, keyboard events, default styles, etc. You can use them together like so:
 
 ```tsx
 import { KBarProvider, KBarContent, KBarSearch } from "kbar";
 
 <KBarProvider actions={actions}>
-  <KBarContent>
-    <KBarSearch />
-    <KBarResults />
-  </KBarContent>
+  <KBarPortal>
+    {" "}
+    // Renders the content outside the root node
+    <KBarPositioner>
+      {" "}
+      // Centers the content
+      <KBarAnimator>
+        {" "}
+        // Handles the show/hide and height animations
+        <KBarSearch /> // Search input
+        <KBarResults /> // Results renderer
+      </KBarAnimator>
+    </KBarPositioner>
+  </KBarPortal>
   <MyApp />
 </KBarProvider>;
 ```
 
-Hit cmd+k and you should see a primitive command menu. kbar allows you to have full control over all
-aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get an understanding of further capabilities.
+Hit cmd+k (or ctrl+k) and you should see a primitive command menu. kbar allows you to have full control over all
+aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get
+an understanding of further capabilities. Excited to see what you build.
+
+### Contributing to kbar
+
+Contributions are welcome!
+
+#### New features
+
+Please [open a new issue](https://github.com/timc1/kbar/issues) so we can discuss prior to moving
+forward.
+
+#### Bug fixes
+
+Please [open a new Pull Request](https://github.com/timc1/kbar/pulls) for the given bug fix.
+
+#### Nits and spelling mistakes
+
+Please [open a new issue](https://github.com/timc1/kbar/issues) for things like spelling mistakes
+and README tweaks – we will group the issues together and tackle them as a group. Please do not
+create a PR for it!
