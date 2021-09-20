@@ -3,7 +3,7 @@ import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
-import KBarContent from "../../src/KBarContent";
+import KBarPortal from "../../src/KBarPortal";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory } from "react-router-dom";
@@ -136,7 +136,7 @@ const App = () => {
         },
       }}
     >
-      <KBarContent>
+      <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>
             <KBarSearch
@@ -151,7 +151,7 @@ const App = () => {
             />
           </KBarAnimator>
         </KBarPositioner>
-      </KBarContent>
+      </KBarPortal>
       <Layout>
         <Switch>
           <Route path="/docs">
@@ -173,7 +173,7 @@ function Render({ action, handlers, state }) {
 
   React.useEffect(() => {
     if (active) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => {

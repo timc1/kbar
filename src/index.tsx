@@ -6,7 +6,7 @@ import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
 
 export {
-  KBarPortal as KBarContent,
+  KBarPortal,
   KBarPositioner,
   KBarSearch,
   KBarResults,
