@@ -10,6 +10,7 @@ import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
+import SearchDocsActions from "./SearchDocsActions";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -43,14 +44,6 @@ const App = () => {
     <KBarProvider
       actions={[
         {
-          id: "searchDocsAction",
-          name: "Search docs…",
-          shortcut: [],
-          keywords: "find",
-          section: "",
-          children: ["docs1", "docs2"],
-        },
-        {
           id: "homeAction",
           name: "Home",
           shortcut: ["h"],
@@ -81,24 +74,6 @@ const App = () => {
           keywords: "social contact dm",
           section: "Navigation",
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
-        },
-        {
-          id: "docs1",
-          name: "Docs 1 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 1",
-          section: "",
-          perform: () => window.alert("nav -> Docs 1"),
-          parent: "searchBlogAction",
-        },
-        {
-          id: "docs2",
-          name: "Docs 2 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 2",
-          section: "",
-          perform: () => window.alert("nav -> Docs 2"),
-          parent: "searchBlogAction",
         },
         {
           id: "theme",
@@ -136,6 +111,7 @@ const App = () => {
         },
       }}
     >
+      <SearchDocsActions />
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>

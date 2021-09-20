@@ -52,8 +52,8 @@ export default function useStore(props: useStoreProps) {
     setState((state) => ({
       ...state,
       actions: {
-        ...state.actions,
         ...actionsByKey,
+        ...state.actions,
       },
     }));
 
