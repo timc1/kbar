@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Action } from "./types";
 
 export function swallowEvent(event) {
   event.stopPropagation();
@@ -22,4 +23,15 @@ export function useOuterClick(
     window.addEventListener("mousedown", handleMouseDown);
     return () => window.removeEventListener("mousedown", handleMouseDown);
   }, [dom]);
+}
+
+export function randomId() {
+  return Math.random().toString(36).substring(2, 9);
+}
+
+export function createAction(params: Omit<Action, "id">): Action {
+  return {
+    id: randomId(),
+    ...params,
+  };
 }
