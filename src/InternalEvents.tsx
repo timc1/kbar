@@ -134,7 +134,7 @@ function useShortcuts() {
 
       const currentTime = Date.now();
 
-      if (currentTime - lastKeyStrokeTime > 1000) {
+      if (currentTime - lastKeyStrokeTime > 400) {
         buffer = [];
       }
 
@@ -144,6 +144,7 @@ function useShortcuts() {
       for (let action of actionsList) {
         if (JSON.stringify(action.shortcut) === JSON.stringify(buffer)) {
           action.perform?.();
+          buffer = [];
           break;
         }
       }

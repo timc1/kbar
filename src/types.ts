@@ -14,10 +14,9 @@ export interface Action {
 export type ActionTree = Record<string, Action>;
 
 export interface KBarOptions {
-  animations: {
+  animations?: {
     enterMs?: number;
     exitMs?: number;
-    maxContentHeight?: number;
   };
 }
 
@@ -48,7 +47,7 @@ export interface IKBarContext {
     collector: <C>(state: KBarState) => C,
     cb: <C>(collected: C) => void
   ) => void;
-  options: any;
+  options: KBarOptions;
 }
 
 export enum VisualState {
@@ -70,6 +69,8 @@ export interface ResultState {
 }
 
 export interface KBarResultsProps {
+  style?: React.CSSProperties;
+  className?: string;
   onRender?: (
     action: Action,
     handlers: ResultHandlers,

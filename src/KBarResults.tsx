@@ -125,12 +125,7 @@ export default function KBarResults(props: KBarResultsProps) {
   }, [filteredList.length, search]);
 
   return (
-    <div
-      style={{
-        maxHeight: options?.animations?.maxContentHeight || 400,
-        overflow: "auto",
-      }}
-    >
+    <div className={props.className} style={props.style}>
       {matches.length
         ? matches.map((action, index) => {
             const handlers: ResultHandlers = {
@@ -179,7 +174,7 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
 
   React.useEffect(() => {
     if (isActive) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => {

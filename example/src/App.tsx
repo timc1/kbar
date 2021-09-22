@@ -1,15 +1,18 @@
 import "./index.scss";
 import * as React from "react";
-import { KBarContent } from "../../src/KBarContent";
+import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
+import KBarPortal from "../../src/KBarPortal";
+import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
-import { Switch, Route, useHistory } from "react-router-dom";
+import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
+import SearchDocsActions from "./SearchDocsActions";
 
-const searchStyles = {
+const searchStyle = {
   padding: "12px 16px",
   fontSize: "16px",
   width: "100%",
@@ -20,19 +23,26 @@ const searchStyles = {
   color: "var(--foreground)",
 };
 
+const resultsStyle = {
+  maxHeight: 400,
+  overflow: "auto",
+};
+
+const animatorStyle = {
+  maxWidth: "500px",
+  width: "100%",
+  background: "var(--background)",
+  color: "var(--foreground)",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "var(--shadow)",
+};
+
 const App = () => {
   const history = useHistory();
   return (
     <KBarProvider
       actions={[
-        {
-          id: "searchDocsAction",
-          name: "Search docs…",
-          shortcut: [],
-          keywords: "find",
-          section: "",
-          children: ["docs1", "docs2"],
-        },
         {
           id: "homeAction",
           name: "Home",
@@ -44,7 +54,7 @@ const App = () => {
         {
           id: "docsAction",
           name: "Docs",
-          shortcut: ["d"],
+          shortcut: ["g", "d"],
           keywords: "help",
           section: "Navigation",
           perform: () => history.push("/docs"),
@@ -64,24 +74,6 @@ const App = () => {
           keywords: "social contact dm",
           section: "Navigation",
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
-        },
-        {
-          id: "docs1",
-          name: "Docs 1 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 1",
-          section: "",
-          perform: () => window.alert("nav -> Docs 1"),
-          parent: "searchBlogAction",
-        },
-        {
-          id: "docs2",
-          name: "Docs 2 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 2",
-          section: "",
-          perform: () => window.alert("nav -> Docs 2"),
-          parent: "searchBlogAction",
         },
         {
           id: "theme",
@@ -116,37 +108,35 @@ const App = () => {
         animations: {
           enterMs: 200,
           exitMs: 100,
-          maxContentHeight: 400,
         },
       }}
     >
-      <KBarContent
-        contentStyle={{
-          maxWidth: "400px",
-          width: "100%",
-          background: "var(--background)",
-          color: "var(--foreground)",
-          borderRadius: "8px",
-          overflow: "hidden",
-          boxShadow: "var(--shadow)",
-        }}
-      >
-        <KBarSearch
-          style={searchStyles}
-          placeholder="Type a command or search…"
-        />
-        <KBarResults
-          onRender={(action, handlers, state) => (
-            <Render action={action} handlers={handlers} state={state} />
-          )}
-        />
-      </KBarContent>
+      <SearchDocsActions />
+      <KBarPortal>
+        <KBarPositioner>
+          <KBarAnimator style={animatorStyle}>
+            <KBarSearch
+              style={searchStyle}
+              placeholder="Type a command or search…"
+            />
+            <KBarResults
+              style={resultsStyle}
+              onRender={(action, handlers, state) => (
+                <Render action={action} handlers={handlers} state={state} />
+              )}
+            />
+          </KBarAnimator>
+        </KBarPositioner>
+      </KBarPortal>
       <Layout>
         <Switch>
-          <Route path="/docs">
+          <Route path="/docs" exact>
+            <Redirect to="/docs/overview" />
+          </Route>
+          <Route path="/docs/:slug">
             <Docs />
           </Route>
-          <Route path="/">
+          <Route path="*">
             <Home />
           </Route>
         </Switch>
@@ -162,7 +152,7 @@ function Render({ action, handlers, state }) {
 
   React.useEffect(() => {
     if (active) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => {
@@ -197,15 +187,20 @@ function Render({ action, handlers, state }) {
     >
       <span>{action.name}</span>
       {action.shortcut?.length ? (
-        <kbd
-          style={{
-            padding: "4px 6px",
-            background: "rgba(0 0 0 / .1)",
-            borderRadius: "4px",
-          }}
-        >
-          {action.shortcut}
-        </kbd>
+        <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
+          {action.shortcut.map((sc) => (
+            <kbd
+              key={sc}
+              style={{
+                padding: "4px 6px",
+                background: "rgba(0 0 0 / .1)",
+                borderRadius: "4px",
+              }}
+            >
+              {sc}
+            </kbd>
+          ))}
+        </div>
       ) : null}
     </div>
   );
