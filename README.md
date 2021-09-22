@@ -77,15 +77,9 @@ kbar exposes a few components which handle animations, keyboard events, default 
 import { KBarProvider, KBarContent, KBarSearch } from "kbar";
 
 <KBarProvider actions={actions}>
-  <KBarPortal>
-    {" "}
-    // Renders the content outside the root node
-    <KBarPositioner>
-      {" "}
-      // Centers the content
-      <KBarAnimator>
-        {" "}
-        // Handles the show/hide and height animations
+  <KBarPortal> // Renders the content outside the root node
+    <KBarPositioner> // Centers the content
+      <KBarAnimator> // Handles the show/hide and height animations
         <KBarSearch /> // Search input
         <KBarResults /> // Results renderer
       </KBarAnimator>
