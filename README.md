@@ -74,7 +74,14 @@ return (
 kbar exposes a few components which handle animations, keyboard events, default styles, etc. You can use them together like so:
 
 ```tsx
-import { KBarProvider, KBarContent, KBarSearch } from "kbar";
+import { 
+  KBarProvider, 
+  KBarPortal, 
+  KBarPositioner, 
+  KBarAnimator, 
+  KBarSearch, 
+  KBarResults 
+} from "kbar";
 
 <KBarProvider actions={actions}>
   <KBarPortal> // Renders the content outside the root node
@@ -89,7 +96,7 @@ import { KBarProvider, KBarContent, KBarSearch } from "kbar";
 </KBarProvider>;
 ```
 
-Hit cmd+k (or ctrl+k) and you should see a primitive command menu. kbar allows you to have full control over all
+Hit <kbd>cmd</kbd>+<kbd>k</kbd> (or <kbd>ctrl</kbd>+<kbd>k</kbd>) and you should see a primitive command menu. kbar allows you to have full control over all
 aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get
 an understanding of further capabilities. Excited to see what you build.
 
