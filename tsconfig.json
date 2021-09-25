@@ -4,7 +4,7 @@
     "declaration": true,
     "target": "ESNext",
     "lib": [
-      "ESNext",
+      "es5",
       "DOM"
     ],
     "strict": true,
