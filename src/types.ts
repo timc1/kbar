@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export type ActionId = string;
 
 export interface Action {
@@ -9,6 +11,8 @@ export interface Action {
   section?: string;
   parent?: ActionId | null | undefined;
   children?: ActionId[];
+  icon?: string | React.ReactElement | React.ReactNode;
+  subtitle?: string;
 }
 
 export type ActionTree = Record<string, Action>;

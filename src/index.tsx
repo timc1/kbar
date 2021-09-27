@@ -4,6 +4,7 @@ import KBarSearch from "./KBarSearch";
 import KBarResults from "./KBarResults";
 import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
+import { createAction } from "./utils";
 
 export {
   KBarPortal,
@@ -12,6 +13,7 @@ export {
   KBarResults,
   useKBar,
   useRegisterActions,
+  createAction,
 };
 
 export * from "./KBarContextProvider";
