@@ -11,6 +11,8 @@ import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
 import SearchDocsActions from "./SearchDocsActions";
+import { Action, ResultHandlers, ResultState } from "../../src/types";
+import { createAction } from "../../src/utils";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -50,6 +52,8 @@ const App = () => {
           keywords: "back",
           section: "Navigation",
           perform: () => history.push("/"),
+          icon: <HomeIcon />,
+          subtitle: "Subtitles can help add more context.",
         },
         {
           id: "docsAction",
@@ -75,6 +79,13 @@ const App = () => {
           section: "Navigation",
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
         },
+        createAction({
+          name: "Github",
+          shortcut: ["g", "h"],
+          keywords: "sourcecode",
+          section: "Navigation",
+          perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
+        }),
         {
           id: "theme",
           name: "Change theme…",
@@ -145,7 +156,15 @@ const App = () => {
   );
 };
 
-function Render({ action, handlers, state }) {
+function Render({
+  action,
+  handlers,
+  state,
+}: {
+  action: Action;
+  handlers: ResultHandlers;
+  state: ResultState;
+}) {
   const ownRef = React.useRef<HTMLDivElement>(null);
 
   const active = state.index === state.activeIndex;
@@ -185,7 +204,15 @@ function Render({ action, handlers, state }) {
         cursor: "pointer",
       }}
     >
-      <span>{action.name}</span>
+      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        {action.icon && action.icon}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>{action.name}</span>
+          {action.subtitle && (
+            <span style={{ fontSize: 12 }}>{action.subtitle}</span>
+          )}
+        </div>
+      </div>
       {action.shortcut?.length ? (
         <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
           {action.shortcut.map((sc) => (
@@ -207,3 +234,14 @@ function Render({ action, handlers, state }) {
 }
 
 export default App;
+
+function HomeIcon() {
+  return (
+    <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="m19.681 10.406-7.09-6.179a.924.924 0 0 0-1.214.002l-7.06 6.179c-.642.561-.244 1.618.608 1.618.51 0 .924.414.924.924v5.395c0 .51.414.923.923.923h3.236V14.54c0-.289.234-.522.522-.522h2.94c.288 0 .522.233.522.522v4.728h3.073c.51 0 .924-.413.924-.923V12.95c0-.51.413-.924.923-.924h.163c.853 0 1.25-1.059.606-1.62Z"
+        fill="var(--foreground)"
+      />
+    </svg>
+  );
+}
