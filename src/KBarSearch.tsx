@@ -10,12 +10,16 @@ export default function KBarSearch(
     actions: state.actions,
   }));
 
+  const ownRef = React.useRef<HTMLInputElement>(null);
+
   React.useEffect(() => {
     query.setSearch("");
+    ownRef.current!.focus();
   }, [currentRootActionId]);
 
   return (
     <input
+      ref={ownRef}
       autoFocus
       {...props}
       value={search}
