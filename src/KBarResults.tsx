@@ -75,8 +75,7 @@ export default function KBarResults(props: KBarResultsProps) {
   const select = React.useCallback(() => {
     const action = matches[activeIndex];
 
-    if (!action)
-      return;
+    if (!action) return;
 
     if (action.perform) {
       action.perform();
