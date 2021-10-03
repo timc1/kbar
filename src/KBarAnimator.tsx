@@ -11,9 +11,8 @@ interface KBarAnimatorProps {
 const appearanceAnimationKeyframes = [
   {
     opacity: 0,
-    transform: "scale(.95)",
+    transform: "scale(.98)",
   },
-  { opacity: 0.75, transform: "scale(1.02)" },
   { opacity: 1, transform: "scale(1)" },
 ];
 

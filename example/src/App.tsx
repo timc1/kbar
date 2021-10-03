@@ -3,6 +3,7 @@ import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarResults from "../../src/KBarResults";
+import KBarGroupedResults from "../../src/KBarGroupedResults";
 import KBarPortal from "../../src/KBarPortal";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
@@ -31,7 +32,7 @@ const resultsStyle = {
 };
 
 const animatorStyle = {
-  maxWidth: "500px",
+  maxWidth: "600px",
   width: "100%",
   background: "var(--background)",
   color: "var(--foreground)",
@@ -91,7 +92,7 @@ const App = () => {
           name: "Change theme…",
           shortcut: [],
           keywords: "interface color dark light",
-          section: "",
+          section: "Preferences",
           children: ["darkTheme", "lightTheme"],
         },
         {
@@ -117,7 +118,7 @@ const App = () => {
       ]}
       options={{
         animations: {
-          enterMs: 200,
+          enterMs: 150,
           exitMs: 100,
         },
       }}
@@ -130,12 +131,13 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <KBarResults
+            <KBarGroupedResults style={resultsStyle} />
+            {/* <KBarResults
               style={resultsStyle}
               onRender={(action, handlers, state) => (
                 <Render action={action} handlers={handlers} state={state} />
               )}
-            />
+            /> */}
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>

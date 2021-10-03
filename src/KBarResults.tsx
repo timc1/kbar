@@ -208,7 +208,9 @@ function useMatches(term: string, actions: Action[]) {
     () =>
       term.trim() === ""
         ? actions
-        : matchSorter(actions, term, { keys: ["keywords", "name"] }),
+        : matchSorter(actions, term, {
+            keys: ["keywords", "name", "subtitle"],
+          }),
     [term, actions]
   );
 }
