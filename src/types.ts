@@ -81,3 +81,19 @@ export interface KBarResultsProps {
     state: ResultState
   ) => React.ReactElement;
 }
+
+export interface KBarGroupedResultsProps {
+  className?: string;
+  style?: React.CSSProperties;
+  onRender?: (groupsWithCount: ActionGroupsWithTotal) => React.ReactNode;
+}
+
+export interface ActionGroupsWithTotal {
+  actionGroups: ActionGroup[];
+  total: number;
+}
+
+export interface ActionGroup {
+  name: string;
+  actions: Action[];
+}

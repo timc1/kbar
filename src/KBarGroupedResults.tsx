@@ -1,210 +1,243 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
 import { VisualState } from ".";
-import type { Action } from "./types";
+import {
+  Action,
+  ActionGroup,
+  ActionGroupsWithTotal,
+  ActionTree,
+  KBarGroupedResultsProps,
+} from "./types";
 import useKBar from "./useKBar";
 
-interface KBarGroupedResultsProps {
-  className?: string;
-  style?: React.CSSProperties;
-  onRender?: () => React.ReactElement;
-}
-
-const noGroup = "noGroup";
-const groupHeaderStyle: React.CSSProperties = {
-  padding: "4px 16px",
-  background: "rgb(238 238 238 / 25%)",
+const defaultGroupNameStyle = {
+  padding: "8px 16px",
   fontSize: "10px",
-  textTransform: "uppercase",
+  textTransform: "uppercase" as const,
+  opacity: 0.5,
+  background: "transparent",
 };
 
+const getDefaultResultStyle = (active: boolean) => ({
+  padding: "8px 16px",
+  background: active ? "#80808047" : "transparent",
+});
+
+export const NO_GROUP = "none";
+
 export default function KBarGroupedResults(props: KBarGroupedResultsProps) {
-  const { actions, currentRootActionId, search } = useKBar((state) => ({
+  const { actions, search, rootActionId } = useKBar((state) => ({
     actions: state.actions,
-    currentRootActionId: state.currentRootActionId,
     search: state.searchQuery,
+    rootActionId: state.currentRootActionId,
   }));
+
+  const filtered = React.useMemo(() => {
+    return Object.keys(actions).reduce((acc, actionId) => {
+      const action = actions[actionId];
+      if (!action.parent && !rootActionId) {
+        acc[actionId] = action;
+      }
+
+      if (action.parent === rootActionId) {
+        acc[actionId] = action;
+      }
+      return acc;
+    }, {});
+  }, [actions, rootActionId]);
+
+  const matches = useMatches(filtered, search);
+
+  const groupsWithCount: ActionGroupsWithTotal = React.useMemo(() => {
+    const groupMap = matches.reduce((acc, action) => {
+      const section = action.section || NO_GROUP;
+      if (!acc[section]) {
+        acc[section] = [];
+      }
+      acc[section].push(action);
+      return acc;
+    }, {} as Record<string, Action[]>);
+
+    let total = 0;
+    let actionGroups: ActionGroup[] = [];
+
+    Object.keys(groupMap).map((name) => {
+      const actions = groupMap[name];
+      total += actions.length;
+      actionGroups.push({ name, actions });
+    });
+
+    return {
+      actionGroups,
+      total,
+    };
+  }, [matches]);
+
+  return (
+    <div {...props}>
+      {typeof props.onRender === "function" ? (
+        props.onRender(groupsWithCount)
+      ) : (
+        <RenderGroups
+          groups={groupsWithCount.actionGroups}
+          total={groupsWithCount.total}
+        />
+      )}
+    </div>
+  );
+}
+
+function RenderGroups({
+  groups,
+  total,
+}: {
+  groups: ActionGroup[];
+  total: number;
+}) {
+  const { search, query, rootActionId } = useKBar((state) => ({
+    search: state.searchQuery,
+    rootActionId: state.currentRootActionId,
+  }));
+
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  // Keyboard navigation
+  React.useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n")) {
+        event.preventDefault();
+        setActiveIndex((curr) => (curr < total - 1 ? curr + 1 : 0));
+      } else if (
+        event.key === "ArrowUp" ||
+        (event.ctrlKey && event.key === "p")
+      ) {
+        event.preventDefault();
+        setActiveIndex((curr) => (curr > 0 ? curr - 1 : total - 1));
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [groups, total]);
+
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll management
+  React.useEffect(() => {
+    const element = scrollRef.current;
+    if (element) {
+      element.scrollIntoView({
+        block: "nearest",
+      });
+    }
+  }, [activeIndex]);
+
+  const perform = React.useCallback(() => {
+    const list = groups.reduce((acc, curr) => {
+      const actions = curr.actions;
+      acc.push(...actions);
+      return acc;
+    }, [] as Action[]);
+
+    const action = list[activeIndex];
+    if (!action) return;
+
+    if (action.perform) {
+      action.perform();
+      query.setVisualState(VisualState.animatingOut);
+      return;
+    }
+
+    if (action.children) {
+      query.setCurrentRootAction(action.id);
+      return;
+    }
+  }, [activeIndex, groups, query]);
+
+  React.useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        perform();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [perform]);
+
+  React.useEffect(() => {
+    setActiveIndex(0);
+  }, [search, rootActionId]);
+
+  let index = 0;
+
+  return (
+    <div>
+      {groups.map((group) => (
+        <div key={group.name}>
+          {group.name !== NO_GROUP && (
+            <div style={defaultGroupNameStyle}>{group.name}</div>
+          )}
+          {group.actions.map((action) => {
+            const currIndex = index;
+            const active = activeIndex === currIndex;
+            index++;
+
+            const handlers = {
+              onPointerDown: () => setActiveIndex(currIndex),
+              onMouseEnter: () => setActiveIndex(currIndex),
+              onClick: perform,
+            };
+
+            return (
+              <div
+                ref={active ? scrollRef : null}
+                key={action.id}
+                style={getDefaultResultStyle(active)}
+                {...handlers}
+              >
+                {action.name}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function useMatches(actions: ActionTree, search: string) {
+  // matchSorter returns an unstable array each time it is called.
+  // We throttle here to limit the calls to a reasonable amount.
+  const throttled = useThrottled(search, 100);
 
   const list = React.useMemo(
     () => Object.keys(actions).map((key) => actions[key]),
     [actions]
   );
 
-  const filtered = React.useMemo(() => {
-    if (!currentRootActionId) {
-      return list.filter((action) => !action.parent);
-    }
-
-    const parent = actions[currentRootActionId];
-    if (!parent) {
-      return [];
-    }
-
-    const children = parent.children;
-    if (!children?.length) {
-      return [];
-    }
-
-    return children.map((actionId) => actions[actionId]);
-  }, [list, actions, currentRootActionId]);
-
-  const matches = useMatches(filtered, search);
-
-  const grouped = React.useMemo(
-    () =>
-      matches.reduce((acc, curr) => {
-        if (curr.section) {
-          if (!acc[curr.section]) {
-            acc[curr.section] = [];
-          }
-          acc[curr.section].push(curr);
-        } else {
-          if (!acc[noGroup]) {
-            acc[noGroup] = [];
-          }
-          acc[noGroup].push(curr);
-        }
-        return acc;
-      }, {} as Record<string, Action[]>),
-    [matches]
-  );
-
-  return (
-    <div className={props.className} style={props.style}>
-      <RenderResults results={grouped} />
-    </div>
-  );
-}
-
-function RenderResults({ results }: { results: Record<string, Action[]> }) {
-  const groups = Object.keys(results);
-
-  const flattened = groups.reduce((acc, name) => {
-    const actions = results[name];
-    acc.push(...actions);
-    return acc;
-  }, [] as Action[]);
-
-  const { activeIndex, getResultProps } =
-    useCurrentActiveResultIndex(flattened);
-
-  if (!groups.length) {
-    return null;
-  }
-
-  let index = 0;
-
-  return (
-    <>
-      {groups.map((name) => {
-        const actions = results[name];
-        return (
-          <div key={name}>
-            {name !== noGroup && <div style={groupHeaderStyle}>{name}</div>}
-            {actions.map((action) => {
-              const currIndex = index;
-              index++;
-
-              const active = currIndex === activeIndex;
-
-              return (
-                <div
-                  key={action.id}
-                  style={{
-                    background: active ? "#eee" : "#fff",
-                    borderLeft: `2px solid ${active ? "#000" : "transparent"}`,
-                  }}
-                  {...getResultProps(currIndex)}
-                >
-                  {action.name}
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
-    </>
-  );
-}
-
-function useMatches(list: Action[], term: string) {
   return React.useMemo(
     () =>
-      term.trim() === ""
+      search.trim() === ""
         ? list
-        : matchSorter(list, term, { keys: ["keywords", "name", "subtitle"] }),
-    [list, term]
+        : matchSorter(list, throttled, {
+            keys: ["name", "keywords", "subtitle"],
+          }),
+    [throttled, list]
   );
 }
 
-function useCurrentActiveResultIndex(results: Action[]) {
-  const { actions, query, currentRootActionId } = useKBar((state) => ({
-    actions: state.actions,
-    currentRootActionId: state.currentRootActionId,
-  }));
-  const [activeIndex, setActiveIndex] = React.useState(0);
+function useThrottled(value: string, ms: number) {
+  const [throttled, setThrottled] = React.useState(value);
+  const lastRan = React.useRef(Date.now());
 
   React.useEffect(() => {
-    setActiveIndex(0);
-  }, [currentRootActionId]);
+    const timeout = setTimeout(() => {
+      setThrottled(value);
+      lastRan.current = Date.now();
+    }, lastRan.current - (Date.now() - ms));
 
-  const select = React.useCallback(() => {
-    const action = actions[results[activeIndex].id];
-    if (!action) return;
-    if (action.perform) {
-      action.perform();
-      query.setVisualState(VisualState.animatingOut);
-    } else if (action.children) {
-      query.setCurrentRootAction(action.id);
-    }
-  }, [actions, activeIndex, results, query]);
+    return () => clearTimeout(timeout);
+  }, [value]);
 
-  React.useEffect(() => {
-    function handleKeyDown(event) {
-      const key = event.key;
-      if (key === "ArrowDown" || (event.ctrlKey && key === "n")) {
-        event.preventDefault();
-        setActiveIndex((index) =>
-          index < results.length - 1 ? (index += 1) : 0
-        );
-        return;
-      }
-
-      if (key === "ArrowUp" || (event.ctrlKey && key === "p")) {
-        event.preventDefault();
-        setActiveIndex((index) =>
-          index > 0 ? (index -= 1) : results.length - 1
-        );
-        return;
-      }
-
-      if (key === "Enter") {
-        event.preventDefault();
-        select();
-        return;
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [results.length, select]);
-
-  const getResultProps = React.useCallback(
-    (index: number) => {
-      const props = {
-        onClick: select,
-        onPointerDown: () => setActiveIndex(index),
-        onMouseEnter: () => setActiveIndex(index),
-      };
-
-      if (index === activeIndex) {
-        props["data-kbar-active"] = true;
-      }
-
-      return props;
-    },
-    [query, select, activeIndex]
-  );
-
-  return { activeIndex, getResultProps };
+  return throttled;
 }
