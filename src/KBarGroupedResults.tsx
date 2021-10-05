@@ -10,19 +10,6 @@ import {
 } from "./types";
 import useKBar from "./useKBar";
 
-const defaultGroupNameStyle = {
-  padding: "8px 16px",
-  fontSize: "10px",
-  textTransform: "uppercase" as const,
-  opacity: 0.5,
-  background: "transparent",
-};
-
-const getDefaultResultStyle = (active: boolean) => ({
-  padding: "8px 16px",
-  background: active ? "#80808047" : "transparent",
-});
-
 export const NO_GROUP = "none";
 
 export default function KBarGroupedResults(props: KBarGroupedResultsProps) {
@@ -86,6 +73,19 @@ export default function KBarGroupedResults(props: KBarGroupedResultsProps) {
     </div>
   );
 }
+
+const defaultGroupNameStyle = {
+  padding: "8px 16px",
+  fontSize: "10px",
+  textTransform: "uppercase" as const,
+  opacity: 0.5,
+  background: "transparent",
+};
+
+const getDefaultResultStyle = (active: boolean) => ({
+  padding: "8px 16px",
+  background: active ? "#80808047" : "transparent",
+});
 
 function RenderGroups({
   groups,
