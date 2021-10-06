@@ -96,6 +96,19 @@ export default function useStore(props: useStoreProps) {
             ...state,
             searchQuery,
           })),
+        toggle: () => {
+          const visualState = [
+            VisualState.animatingOut,
+            VisualState.hidden,
+          ].includes(state.visualState)
+            ? VisualState.animatingIn
+            : VisualState.animatingOut;
+          setState((state) => ({
+            ...state,
+            visualState,
+          }));
+          return visualState;
+        },
         registerActions,
       },
       options: optionsRef.current,
