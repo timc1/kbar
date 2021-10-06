@@ -87,6 +87,15 @@ const App = () => {
           perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
         }),
         {
+          id: "regex",
+          name: "R(.*)x",
+          shortcut: [],
+          keywords: "",
+          regex: /(r|R)(.*)+x$/,
+          section: "Regex",
+          perform: () => {},
+        },
+        {
           id: "theme",
           name: "Change theme…",
           shortcut: [],

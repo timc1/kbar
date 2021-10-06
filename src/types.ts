@@ -7,6 +7,7 @@ export interface Action {
   name: string;
   shortcut: string[];
   keywords: string;
+  regex?: RegExp;
   perform?: () => void;
   section?: string;
   parent?: ActionId | null | undefined;

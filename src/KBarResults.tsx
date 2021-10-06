@@ -206,11 +206,12 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
 
 function useMatches(term: string, actions: Action[]) {
   // TODO: we can throttle this if needed
-  return React.useMemo(
-    () =>
-      term.trim() === ""
-        ? actions
-        : matchSorter(actions, term, { keys: ["keywords", "name"] }),
-    [term, actions]
-  );
+  return React.useMemo(() => {
+    if (term.trim() === "") {
+      return actions;
+    }
+    const matches = matchSorter(actions, term, { keys: ["keywords", "name"] });
+    const regexMatches = actions.filter((action) => action.regex?.test(term));
+    return Array.from(new Set([...matches, ...regexMatches]));
+  }, [term, actions]);
 }
