@@ -42,7 +42,7 @@ export interface KBarQuery {
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
   registerActions: (actions: Action[]) => () => void;
-  toggle: () => VisualState;
+  toggle: () => VisualState.animatingIn | VisualState.animatingOut;
 }
 
 export interface IKBarContext {
