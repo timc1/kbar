@@ -97,15 +97,14 @@ export default function useStore(props: useStoreProps) {
             searchQuery,
           })),
         toggle: () => {
-          const visualState = [
-            VisualState.animatingOut,
-            VisualState.hidden,
-          ].includes(state.visualState)
-            ? VisualState.animatingIn
-            : VisualState.animatingOut;
           setState((state) => ({
             ...state,
-            visualState,
+            visualState: [
+              VisualState.animatingOut,
+              VisualState.hidden,
+            ].includes(state.visualState)
+              ? VisualState.animatingIn
+              : VisualState.animatingOut,
           }));
           return visualState;
         },
