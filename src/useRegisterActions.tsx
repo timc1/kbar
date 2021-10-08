@@ -16,5 +16,5 @@ export default function useRegisterActions(actions: Action[]) {
     return () => {
       unregister();
     };
-  }, []);
+  }, [query]);
 }

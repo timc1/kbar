@@ -34,12 +34,12 @@ export default function useStore(props: useStoreProps) {
   currState.current = state;
 
   const getState = React.useCallback(() => currState.current, []);
-  const publisher = React.useMemo(() => new Publisher(getState), []);
+  const publisher = React.useMemo(() => new Publisher(getState), [getState]);
 
   React.useEffect(() => {
     currState.current = state;
     publisher.notify();
-  }, [state]);
+  }, [state, publisher]);
 
   const optionsRef = React.useRef((props.options || {}) as KBarOptions);
 
@@ -104,7 +104,7 @@ export default function useStore(props: useStoreProps) {
         cb: <C>(collected: C) => void
       ) => publisher.subscribe(collector, cb),
     };
-  }, [getState, publisher]);
+  }, [getState, publisher, registerActions]);
 }
 
 class Publisher {

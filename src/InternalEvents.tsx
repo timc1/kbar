@@ -71,7 +71,7 @@ function useToggleHandler() {
         query.setSearch("");
       }, ms);
     },
-    []
+    [options.animations?.enterMs, options.animations?.exitMs, query]
   );
 
   React.useEffect(() => {
@@ -81,7 +81,7 @@ function useToggleHandler() {
         runAnimateTimer(visualState);
         break;
     }
-  }, [visualState]);
+  }, [runAnimateTimer, visualState]);
 }
 
 /**
@@ -152,7 +152,7 @@ function useShortcuts() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [actions]);
 }
 
 /**
