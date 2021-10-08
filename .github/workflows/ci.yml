@@ -9,3 +9,5 @@ jobs:
         run: npm install
       - name: eslint
         run: npm run lint
+      - name: tsc
+        run: npm run typecheck
