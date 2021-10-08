@@ -10,13 +10,11 @@ import type {
 import useKBar from "./useKBar";
 
 export default function KBarResults(props: KBarResultsProps) {
-  const { search, actions, currentRootActionId, query, options } = useKBar(
-    (state) => ({
-      search: state.searchQuery,
-      currentRootActionId: state.currentRootActionId,
-      actions: state.actions,
-    })
-  );
+  const { search, actions, currentRootActionId, query } = useKBar((state) => ({
+    search: state.searchQuery,
+    currentRootActionId: state.currentRootActionId,
+    actions: state.actions,
+  }));
 
   // Store reference to a list of all actions
   const actionsList = React.useMemo(
@@ -52,7 +50,7 @@ export default function KBarResults(props: KBarResultsProps) {
         return acc;
       }, {}),
     };
-  }, [actionsList, currentRootActionId]);
+  }, [actions, actionsList, currentRootActionId]);
 
   const filteredList = React.useMemo(
     () =>

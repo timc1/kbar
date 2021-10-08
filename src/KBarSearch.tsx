@@ -15,7 +15,7 @@ export default function KBarSearch(
   React.useEffect(() => {
     query.setSearch("");
     ownRef.current!.focus();
-  }, [currentRootActionId]);
+  }, [currentRootActionId, query]);
 
   return (
     <input
