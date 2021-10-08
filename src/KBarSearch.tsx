@@ -13,9 +13,8 @@ export default function KBarSearch(
   const ownRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    query.setSearch("");
     ownRef.current!.focus();
-  }, [currentRootActionId, query]);
+  }, [currentRootActionId]);
 
   return (
     <input

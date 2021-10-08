@@ -1,69 +1,18 @@
-import { matchSorter } from "match-sorter";
 import * as React from "react";
 import { VisualState } from ".";
-import {
-  Action,
-  ActionGroup,
-  ActionGroupsWithTotal,
-  ActionTree,
-  KBarGroupedResultsProps,
-} from "./types";
+import { Action, ActionGroup, KBarGroupedResultsProps } from "./types";
 import useKBar from "./useKBar";
+import useMatches from "./useMatches";
 
 export const NO_GROUP = "none";
 
 export default function KBarGroupedResults(props: KBarGroupedResultsProps) {
-  const { actions, search, rootActionId } = useKBar((state) => ({
-    actions: state.actions,
-    search: state.searchQuery,
-    rootActionId: state.currentRootActionId,
-  }));
-
-  const filtered = React.useMemo(() => {
-    return Object.keys(actions).reduce((acc, actionId) => {
-      const action = actions[actionId];
-      if (!action.parent && !rootActionId) {
-        acc[actionId] = action;
-      }
-
-      if (action.parent === rootActionId) {
-        acc[actionId] = action;
-      }
-      return acc;
-    }, {});
-  }, [actions, rootActionId]);
-
-  const matches = useMatches(filtered, search);
-
-  const groupsWithCount: ActionGroupsWithTotal = React.useMemo(() => {
-    const groupMap = matches.reduce((acc, action) => {
-      const section = action.section || NO_GROUP;
-      if (!acc[section]) {
-        acc[section] = [];
-      }
-      acc[section].push(action);
-      return acc;
-    }, {} as Record<string, Action[]>);
-
-    let total = 0;
-    let actionGroups: ActionGroup[] = [];
-
-    Object.keys(groupMap).map((name) => {
-      const actions = groupMap[name];
-      total += actions.length;
-      actionGroups.push({ name, actions });
-    });
-
-    return {
-      actionGroups,
-      total,
-    };
-  }, [matches]);
-
+  const groupsWithCount = useMatches();
+  const { onRender, ...rest } = props;
   return (
-    <div {...props}>
-      {typeof props.onRender === "function" ? (
-        props.onRender(groupsWithCount)
+    <div {...rest}>
+      {typeof onRender === "function" ? (
+        onRender(groupsWithCount)
       ) : (
         <RenderGroups
           groups={groupsWithCount.actionGroups}
@@ -203,41 +152,4 @@ function RenderGroups({
       ))}
     </div>
   );
-}
-
-function useMatches(actions: ActionTree, search: string) {
-  // matchSorter returns an unstable array each time it is called.
-  // We throttle here to limit the calls to a reasonable amount.
-  const throttled = useThrottled(search, 100);
-
-  const list = React.useMemo(
-    () => Object.keys(actions).map((key) => actions[key]),
-    [actions]
-  );
-
-  return React.useMemo(
-    () =>
-      search.trim() === ""
-        ? list
-        : matchSorter(list, throttled, {
-            keys: ["name", "keywords", "subtitle"],
-          }),
-    [throttled, list]
-  );
-}
-
-function useThrottled(value: string, ms: number) {
-  const [throttled, setThrottled] = React.useState(value);
-  const lastRan = React.useRef(Date.now());
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setThrottled(value);
-      lastRan.current = Date.now();
-    }, lastRan.current - (Date.now() - ms));
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return throttled;
 }

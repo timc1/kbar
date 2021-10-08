@@ -145,7 +145,7 @@ const App = () => {
       ]}
       options={{
         animations: {
-          enterMs: 150,
+          enterMs: 200,
           exitMs: 100,
         },
       }}
@@ -242,6 +242,7 @@ function Render({ groups, total }: { groups: ActionGroup[]; total: number }) {
     }
 
     if (action.children) {
+      query.setSearch("");
       query.setCurrentRootAction(action.id);
       return;
     }

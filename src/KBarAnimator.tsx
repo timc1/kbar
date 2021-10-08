@@ -13,6 +13,7 @@ const appearanceAnimationKeyframes = [
     opacity: 0,
     transform: "scale(.98)",
   },
+  { opacity: 1, transform: "scale(1.01)" },
   { opacity: 1, transform: "scale(1)" },
 ];
 
