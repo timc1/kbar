@@ -121,7 +121,7 @@ function useShortcuts() {
     let lastKeyStrokeTime = Date.now();
 
     function handleKeyDown(event) {
-      const key = event.key.toLowerCase();
+      const key = event.key?.toLowerCase();
 
       const activeElement = document.activeElement;
       const ignoreStrokes =
