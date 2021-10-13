@@ -35,3 +35,8 @@ export function createAction(params: Omit<Action, "id">): Action {
     ...params,
   };
 }
+
+export function noop() {}
+
+export const useIsomorphicLayout =
+  typeof window === "undefined" ? noop : React.useLayoutEffect;
