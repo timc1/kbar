@@ -9,6 +9,16 @@ import type {
 } from "./types";
 import useKBar from "./useKBar";
 
+/**
+ * @deprecated Results can be created using a combination of the `Results` component alongside
+ * `useResultItem` hook.
+ *
+ * ```tsx
+ * import { Results, useResultItem } from "kbar";
+ * ```
+ *
+ * Reference: https://github.com/timc1/kbar/pull/59
+ */
 export default function KBarResults(props: KBarResultsProps) {
   const { search, actions, currentRootActionId, query } = useKBar((state) => ({
     search: state.searchQuery,

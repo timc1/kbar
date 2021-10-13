@@ -87,14 +87,12 @@ function useManager() {
     count.current = -1;
   };
 
-  // TODO: Type
-  const getIndex = (id: string, opts: any) => {
+  const getIndex = (id: string) => {
     if (!map.current[id]) {
       count.current++;
       map.current[id] = {
         index: count.current,
       };
-      map.current[id].opts = opts;
     }
     return map.current[id].index;
   };
