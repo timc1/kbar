@@ -55,19 +55,48 @@ export default function useStore(props: useStoreProps) {
       return acc;
     }, {});
 
-    setState((state) => ({
-      ...state,
-      actions: {
-        ...actionsByKey,
-        ...state.actions,
-      },
-    }));
+    setState((state) => {
+      Object.keys(actionsByKey).forEach((actionId) => {
+        const action = actionsByKey[actionId];
+        if (action.parent) {
+          const parent =
+            state.actions[action.parent] || actionsByKey[action.parent];
+          if (!parent.children) {
+            parent.children = [];
+          }
+          if (parent.children?.includes(action.id)) {
+            return;
+          }
+          parent.children.push(action.id);
+        }
+      });
+
+      return {
+        ...state,
+        actions: {
+          ...actionsByKey,
+          ...state.actions,
+        },
+      };
+    });
 
     return function unregister() {
       setState((state) => {
         const actions = state.actions;
         const removeActionIds = Object.keys(actionsByKey);
-        removeActionIds.forEach((actionId) => delete actions[actionId]);
+        removeActionIds.forEach((actionId) => {
+          const action = state.actions[actionId];
+          if (action?.parent) {
+            const parent = state.actions[action.parent];
+            if (!parent.children) {
+              return;
+            }
+            parent.children = parent.children.filter(
+              (child) => child !== actionId
+            );
+          }
+          delete actions[actionId];
+        });
         return {
           ...state,
           actions: {
