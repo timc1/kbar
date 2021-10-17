@@ -140,9 +140,13 @@ function useShortcuts() {
 
       buffer.push(key);
       lastKeyStrokeTime = currentTime;
+      const bufferString = buffer.join("");
 
       for (let action of actionsList) {
-        if (JSON.stringify(action.shortcut) === JSON.stringify(buffer)) {
+        if (!action.shortcut) {
+          break;
+        }
+        if (action.shortcut.join("") === bufferString) {
           action.perform?.();
           buffer = [];
           break;
