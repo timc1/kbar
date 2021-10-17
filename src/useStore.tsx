@@ -12,6 +12,13 @@ import {
 
 type useStoreProps = KBarProviderProps;
 
+function arrayEquals(a: Array<any> | undefined, b: Array<any> | undefined): boolean {
+  return Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index]);
+}
+
 export default function useStore(props: useStoreProps) {
   if (!props.actions) {
     throw new Error(
@@ -49,13 +56,26 @@ export default function useStore(props: useStoreProps) {
       return acc;
     }, {});
 
-    setState((state) => ({
-      ...state,
-      actions: {
-        ...actionsByKey,
-        ...state.actions,
-      },
-    }));
+    setState((state) => {
+      // update action in state if children attribute has changed, otherwise we
+      // use the existing cached action
+      const changedActions = {};
+
+      for (const key of Object.keys(actionsByKey)) {
+        if (!arrayEquals(state.actions[key]?.children, actionsByKey[key]?.children)) {
+          changedActions[key] = actionsByKey[key];
+        }
+      }
+
+      return {
+        ...state,
+        actions: {
+          ...actionsByKey,
+          ...state.actions,
+          ...changedActions,
+        },
+      }
+    });
 
     return function unregister() {
       setState((state) => {
