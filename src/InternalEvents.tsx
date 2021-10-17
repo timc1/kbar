@@ -144,7 +144,7 @@ function useShortcuts() {
 
       for (let action of actionsList) {
         if (!action.shortcut) {
-          break;
+          continue;
         }
         if (action.shortcut.join("") === bufferString) {
           action.perform?.();
