@@ -128,9 +128,11 @@ function useShortcuts() {
 
       const activeElement = document.activeElement;
       const ignoreStrokes =
-        activeElement &&
-        (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
-        activeElement.attributes.getNamedItem("role")?.value === "textbox");
+      activeElement &&
+      (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
+        activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
+        activeElement.attributes.getNamedItem("contenteditable")?.value ===
+          "true");
 
       if (ignoreStrokes || event.metaKey || charList.indexOf(key) === -1) {
         return;
