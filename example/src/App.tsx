@@ -117,12 +117,6 @@ const App = () => {
           parent: "theme",
         },
       ]}
-      options={{
-        animations: {
-          enterMs: 200,
-          exitMs: 100,
-        },
-      }}
     >
       <SearchDocsActions />
       <KBarPortal>
