@@ -68,7 +68,6 @@ function useToggleHandler() {
           return finalVs;
         });
         query.setCurrentRootAction(null);
-        query.setSearch("");
       }, ms);
     },
     [options.animations?.enterMs, options.animations?.exitMs, query]
