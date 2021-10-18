@@ -60,13 +60,13 @@ export default function useStore(props: useStoreProps) {
         const action = actionsByKey[actionId];
         if (action.parent) {
           const parent =
+            // parent could have already existed or parent is defined alongside children.
             state.actions[action.parent] || actionsByKey[action.parent];
-          if (!parent.children) {
-            parent.children = [];
-          }
-          if (parent.children?.includes(action.id)) {
-            return;
-          }
+
+          // TODO(tim): add invariant
+
+          if (!parent.children) parent.children = [];
+          if (parent.children.includes(action.id)) return;
           parent.children.push(action.id);
         }
       });
