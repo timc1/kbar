@@ -41,7 +41,13 @@ export default function useStore(props: useStoreProps) {
     publisher.notify();
   }, [state, publisher]);
 
-  const optionsRef = React.useRef((props.options || {}) as KBarOptions);
+  const optionsRef = React.useRef({
+    animations: {
+      enterMs: 200,
+      exitMs: 100,
+    },
+    ...props.options,
+  } as KBarOptions);
 
   const registerActions = React.useCallback((actions: Action[]) => {
     const actionsByKey: ActionTree = actions.reduce((acc, curr) => {
