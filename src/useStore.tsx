@@ -89,7 +89,7 @@ export default function useStore(props: useStoreProps) {
           const action = state.actions[actionId];
           if (action?.parent) {
             const parent = state.actions[action.parent];
-            if (!parent.children) {
+            if (!parent?.children) {
               return;
             }
             parent.children = parent.children.filter(
@@ -100,10 +100,7 @@ export default function useStore(props: useStoreProps) {
         });
         return {
           ...state,
-          actions: {
-            ...state.actions,
-            ...allActions,
-          },
+          actions: allActions,
         };
       });
     };
