@@ -63,15 +63,25 @@ function useToggleHandler() {
 
       clearTimeout(timeoutRef.current as Timeout);
       timeoutRef.current = setTimeout(() => {
+        let backToRoot = false;
+
         // TODO: setVisualState argument should be a function or just a VisualState value.
         query.setVisualState(() => {
           const finalVs =
             vs === VisualState.animatingIn
               ? VisualState.showing
               : VisualState.hidden;
+
+          if (finalVs === VisualState.hidden) {
+            backToRoot = true;
+          }
+
           return finalVs;
         });
-        query.setCurrentRootAction(null);
+
+        if (backToRoot) {
+          query.setCurrentRootAction(null);
+        }
       }, ms);
     },
     [options.animations?.enterMs, options.animations?.exitMs, query]
@@ -110,14 +120,14 @@ function useDocumentLock() {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions } = useKBar((state) => ({
+  const { actions, query } = useKBar((state) => ({
     actions: state.actions,
   }));
 
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
-    const charList = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const charList = "abcdefghijklmnopqrstuvwxyz0123456789shift";
     const inputs = ["input", "select", "button", "textarea"];
 
     let buffer: string[] = [];
@@ -153,7 +163,13 @@ function useShortcuts() {
           continue;
         }
         if (action.shortcut.join("") === bufferString) {
-          action.perform?.();
+          if (action.children) {
+            query.setCurrentRootAction(action.id);
+            query.setVisualState(VisualState.animatingIn);
+          } else {
+            action.perform?.();
+          }
+
           buffer = [];
           break;
         }
@@ -162,7 +178,7 @@ function useShortcuts() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [actions]);
+  }, [actions, query]);
 }
 
 /**
