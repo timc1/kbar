@@ -56,14 +56,15 @@ export default function useStore(props: useStoreProps) {
     }, {});
 
     setState((state) => {
-      Object.keys(actionsByKey).forEach((actionId) => {
-        const action = actionsByKey[actionId];
+      actions.forEach((action) => {
         if (action.parent) {
           const parent =
             // parent could have already existed or parent is defined alongside children.
             state.actions[action.parent] || actionsByKey[action.parent];
 
-          // TODO(tim): add invariant
+          if (!parent) {
+            throw new Error(`Action of id ${action.parent} does not exist.`);
+          }
 
           if (!parent.children) parent.children = [];
           if (parent.children.includes(action.id)) return;
@@ -82,8 +83,8 @@ export default function useStore(props: useStoreProps) {
 
     return function unregister() {
       setState((state) => {
-        const actions = state.actions;
-        const removeActionIds = Object.keys(actionsByKey);
+        const allActions = state.actions;
+        const removeActionIds = actions.map((action) => action.id);
         removeActionIds.forEach((actionId) => {
           const action = state.actions[actionId];
           if (action?.parent) {
@@ -95,13 +96,13 @@ export default function useStore(props: useStoreProps) {
               (child) => child !== actionId
             );
           }
-          delete actions[actionId];
+          delete allActions[actionId];
         });
         return {
           ...state,
           actions: {
             ...state.actions,
-            ...actions,
+            ...allActions,
           },
         };
       });
