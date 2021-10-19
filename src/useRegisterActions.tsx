@@ -2,19 +2,23 @@ import * as React from "react";
 import { Action } from "./types";
 import useKBar from "./useKBar";
 
-export default function useRegisterActions(actions: Action[]) {
+export default function useRegisterActions(
+  actions: Action[],
+  dependencies: React.DependencyList = []
+) {
   const { query } = useKBar();
 
-  const actionsRef = React.useRef(actions || []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const actionsCache = React.useMemo(() => actions, dependencies);
+
   React.useEffect(() => {
-    const actions = actionsRef.current;
-    if (!actions.length) {
+    if (!actionsCache.length) {
       return;
     }
 
-    const unregister = query.registerActions(actions);
+    const unregister = query.registerActions(actionsCache);
     return () => {
       unregister();
     };
-  }, [query]);
+  }, [query, actionsCache]);
 }
