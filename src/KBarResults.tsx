@@ -26,7 +26,13 @@ export default function KBarResults(props: KBarResultsProps) {
   );
 
   const currActions = React.useMemo(() => {
-    if (!currentRootActionId) {
+    if (
+      !currentRootActionId ||
+      // `currentRootActionId` can refer to an action that is no
+      // longer registered while kbar is open in the case where
+      // `useRegisterActions`'s effect is ran multiple times.
+      (currentRootActionId && !actions[currentRootActionId])
+    ) {
       return actionsList.reduce((acc, curr) => {
         if (!curr.parent) {
           acc[curr.id] = curr;

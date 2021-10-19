@@ -55,25 +55,52 @@ export default function useStore(props: useStoreProps) {
       return acc;
     }, {});
 
-    setState((state) => ({
-      ...state,
-      actions: {
-        ...actionsByKey,
-        ...state.actions,
-      },
-    }));
+    setState((state) => {
+      actions.forEach((action) => {
+        if (action.parent) {
+          const parent =
+            // parent could have already existed or parent is defined alongside children.
+            state.actions[action.parent] || actionsByKey[action.parent];
+
+          if (!parent) {
+            throw new Error(`Action of id ${action.parent} does not exist.`);
+          }
+
+          if (!parent.children) parent.children = [];
+          if (parent.children.includes(action.id)) return;
+          parent.children.push(action.id);
+        }
+      });
+
+      return {
+        ...state,
+        actions: {
+          ...actionsByKey,
+          ...state.actions,
+        },
+      };
+    });
 
     return function unregister() {
       setState((state) => {
-        const actions = state.actions;
-        const removeActionIds = Object.keys(actionsByKey);
-        removeActionIds.forEach((actionId) => delete actions[actionId]);
+        const allActions = state.actions;
+        const removeActionIds = actions.map((action) => action.id);
+        removeActionIds.forEach((actionId) => {
+          const action = state.actions[actionId];
+          if (action?.parent) {
+            const parent = state.actions[action.parent];
+            if (!parent?.children) {
+              return;
+            }
+            parent.children = parent.children.filter(
+              (child) => child !== actionId
+            );
+          }
+          delete allActions[actionId];
+        });
         return {
           ...state,
-          actions: {
-            ...state.actions,
-            ...actions,
-          },
+          actions: allActions,
         };
       });
     };
