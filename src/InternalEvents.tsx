@@ -165,7 +165,7 @@ function useShortcuts() {
         if (action.shortcut.join("") === bufferString) {
           if (action.children) {
             query.setCurrentRootAction(action.id);
-            query.setVisualState(VisualState.animatingIn);
+            query.toggle();
           } else {
             action.perform?.();
           }
