@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export type ActionId = string;
 
 export interface Action {
@@ -9,21 +11,27 @@ export interface Action {
   section?: string;
   parent?: ActionId | null | undefined;
   children?: ActionId[];
+  icon?: string | React.ReactElement | React.ReactNode;
+  subtitle?: string;
 }
 
 export type ActionTree = Record<string, Action>;
 
+export interface ActionGroup {
+  name: string;
+  actions: Action[];
+}
+
 export interface KBarOptions {
-  animations: {
+  animations?: {
     enterMs?: number;
     exitMs?: number;
-    maxContentHeight?: number;
   };
 }
 
 export interface KBarProviderProps {
   actions: Action[];
-  options: KBarOptions;
+  options?: KBarOptions;
 }
 
 export interface KBarState {
@@ -39,6 +47,7 @@ export interface KBarQuery {
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
   registerActions: (actions: Action[]) => () => void;
+  toggle: () => void;
 }
 
 export interface IKBarContext {
@@ -48,7 +57,7 @@ export interface IKBarContext {
     collector: <C>(state: KBarState) => C,
     cb: <C>(collected: C) => void
   ) => void;
-  options: any;
+  options: KBarOptions;
 }
 
 export enum VisualState {
@@ -56,4 +65,25 @@ export enum VisualState {
   showing = "showing",
   animatingOut = "animating-out",
   hidden = "hidden",
+}
+
+export interface ResultHandlers {
+  onClick: () => void;
+  onMouseEnter: () => void;
+  onPointerDown: () => void;
+}
+
+export interface ResultState {
+  index: number;
+  activeIndex: number;
+}
+
+export interface KBarResultsProps {
+  style?: React.CSSProperties;
+  className?: string;
+  onRender?: (
+    action: Action,
+    handlers: ResultHandlers,
+    state: ResultState
+  ) => React.ReactElement;
 }

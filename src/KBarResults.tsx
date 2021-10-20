@@ -1,34 +1,30 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
-import { Action, VisualState } from "./types";
+import { VisualState } from "./types";
+import type {
+  Action,
+  KBarResultsProps,
+  ResultHandlers,
+  ResultState,
+} from "./types";
 import useKBar from "./useKBar";
 
-interface Handlers {
-  onClick: () => void;
-  onMouseEnter: () => void;
-}
-
-interface RenderResultState {
-  index: number;
-  activeIndex: number;
-}
-
-interface KBarResultsProps {
-  onRender?: (
-    action: Action,
-    handlers: Handlers,
-    state: RenderResultState
-  ) => React.ReactNode;
-}
-
+/**
+ * @deprecated Results can be created using a combination of the `Results` component alongside
+ * `useResultItem` hook.
+ *
+ * ```tsx
+ * import { Results, useResultItem } from "kbar";
+ * ```
+ *
+ * Reference: https://github.com/timc1/kbar/pull/59
+ */
 export default function KBarResults(props: KBarResultsProps) {
-  const { search, actions, currentRootActionId, query, options } = useKBar(
-    (state) => ({
-      search: state.searchQuery,
-      currentRootActionId: state.currentRootActionId,
-      actions: state.actions,
-    })
-  );
+  const { search, actions, currentRootActionId, query } = useKBar((state) => ({
+    search: state.searchQuery,
+    currentRootActionId: state.currentRootActionId,
+    actions: state.actions,
+  }));
 
   // Store reference to a list of all actions
   const actionsList = React.useMemo(
@@ -40,7 +36,13 @@ export default function KBarResults(props: KBarResultsProps) {
   );
 
   const currActions = React.useMemo(() => {
-    if (!currentRootActionId) {
+    if (
+      !currentRootActionId ||
+      // `currentRootActionId` can refer to an action that is no
+      // longer registered while kbar is open in the case where
+      // `useRegisterActions`'s effect is ran multiple times.
+      (currentRootActionId && !actions[currentRootActionId])
+    ) {
       return actionsList.reduce((acc, curr) => {
         if (!curr.parent) {
           acc[curr.id] = curr;
@@ -64,7 +66,7 @@ export default function KBarResults(props: KBarResultsProps) {
         return acc;
       }, {}),
     };
-  }, [actionsList, currentRootActionId]);
+  }, [actions, actionsList, currentRootActionId]);
 
   const filteredList = React.useMemo(
     () =>
@@ -86,6 +88,8 @@ export default function KBarResults(props: KBarResultsProps) {
 
   const select = React.useCallback(() => {
     const action = matches[activeIndex];
+
+    if (!action) return;
 
     if (action.perform) {
       action.perform();
@@ -137,32 +141,33 @@ export default function KBarResults(props: KBarResultsProps) {
   }, [filteredList.length, search]);
 
   return (
-    <div
-      style={{
-        maxHeight: options?.animations?.maxContentHeight || 400,
-        overflow: "auto",
-      }}
-    >
+    <div className={props.className} style={props.style}>
       {matches.length
         ? matches.map((action, index) => {
-            const handlers = {
-              key: action.id,
+            const handlers: ResultHandlers = {
               onClick: select,
               onPointerDown: () => setActiveIndex(index),
               onMouseEnter: () => setActiveIndex(index),
             };
 
-            const state = {
+            const state: ResultState = {
               activeIndex,
               index,
             };
 
             if (props.onRender) {
-              return props.onRender(action, handlers, state);
+              // Implicitly add a `key` so the user won't have to.
+              return React.cloneElement(
+                props.onRender(action, handlers, state),
+                {
+                  key: action.id,
+                }
+              );
             }
 
             return (
               <DefaultResultWrapper
+                key={action.id}
                 isActive={activeIndex === index}
                 {...handlers}
               >
@@ -185,7 +190,7 @@ const DefaultResultWrapper: React.FC<{ isActive: boolean }> = ({
 
   React.useEffect(() => {
     if (isActive) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
+      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
       // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
       window.requestAnimationFrame(() =>
         window.requestAnimationFrame(() => {
@@ -219,7 +224,9 @@ function useMatches(term: string, actions: Action[]) {
     () =>
       term.trim() === ""
         ? actions
-        : matchSorter(actions, term, { keys: ["keywords", "name"] }),
+        : matchSorter(actions, term, {
+            keys: ["keywords", "name", "subtitle"],
+          }),
     [term, actions]
   );
 }

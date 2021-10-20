@@ -6,6 +6,7 @@ import {
   ActionTree,
   KBarProviderProps,
   KBarState,
+  KBarOptions,
   VisualState,
 } from "./types";
 
@@ -33,14 +34,20 @@ export default function useStore(props: useStoreProps) {
   currState.current = state;
 
   const getState = React.useCallback(() => currState.current, []);
-  const publisher = React.useMemo(() => new Publisher(getState), []);
+  const publisher = React.useMemo(() => new Publisher(getState), [getState]);
 
   React.useEffect(() => {
     currState.current = state;
     publisher.notify();
-  }, [state]);
+  }, [state, publisher]);
 
-  const optionsRef = React.useRef(props.options || {});
+  const optionsRef = React.useRef({
+    animations: {
+      enterMs: 200,
+      exitMs: 100,
+    },
+    ...props.options,
+  } as KBarOptions);
 
   const registerActions = React.useCallback((actions: Action[]) => {
     const actionsByKey: ActionTree = actions.reduce((acc, curr) => {
@@ -48,25 +55,52 @@ export default function useStore(props: useStoreProps) {
       return acc;
     }, {});
 
-    setState((state) => ({
-      ...state,
-      actions: {
-        ...state.actions,
-        ...actionsByKey,
-      },
-    }));
+    setState((state) => {
+      actions.forEach((action) => {
+        if (action.parent) {
+          const parent =
+            // parent could have already existed or parent is defined alongside children.
+            state.actions[action.parent] || actionsByKey[action.parent];
+
+          if (!parent) {
+            throw new Error(`Action of id ${action.parent} does not exist.`);
+          }
+
+          if (!parent.children) parent.children = [];
+          if (parent.children.includes(action.id)) return;
+          parent.children.push(action.id);
+        }
+      });
+
+      return {
+        ...state,
+        actions: {
+          ...actionsByKey,
+          ...state.actions,
+        },
+      };
+    });
 
     return function unregister() {
       setState((state) => {
-        const actions = state.actions;
-        const removeActionIds = Object.keys(actionsByKey);
-        removeActionIds.forEach((actionId) => delete actions[actionId]);
+        const allActions = state.actions;
+        const removeActionIds = actions.map((action) => action.id);
+        removeActionIds.forEach((actionId) => {
+          const action = state.actions[actionId];
+          if (action?.parent) {
+            const parent = state.actions[action.parent];
+            if (!parent?.children) {
+              return;
+            }
+            parent.children = parent.children.filter(
+              (child) => child !== actionId
+            );
+          }
+          delete allActions[actionId];
+        });
         return {
           ...state,
-          actions: {
-            ...state.actions,
-            ...actions,
-          },
+          actions: allActions,
         };
       });
     };
@@ -96,6 +130,16 @@ export default function useStore(props: useStoreProps) {
             searchQuery,
           })),
         registerActions,
+        toggle: () =>
+          setState((state) => ({
+            ...state,
+            visualState: [
+              VisualState.animatingOut,
+              VisualState.hidden,
+            ].includes(state.visualState)
+              ? VisualState.animatingIn
+              : VisualState.animatingOut,
+          })),
       },
       options: optionsRef.current,
       subscribe: (
@@ -103,7 +147,7 @@ export default function useStore(props: useStoreProps) {
         cb: <C>(collected: C) => void
       ) => publisher.subscribe(collector, cb),
     };
-  }, [getState, publisher]);
+  }, [getState, publisher, registerActions]);
 }
 
 class Publisher {

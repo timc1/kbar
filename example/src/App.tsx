@@ -1,15 +1,22 @@
 import "./index.scss";
 import * as React from "react";
-import { KBarContent } from "../../src/KBarContent";
+import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
-import KBarResults from "../../src/KBarResults";
+import { Results, useResultItem } from "../../src/Results";
+import KBarPortal from "../../src/KBarPortal";
+import useMatches, { NO_GROUP } from "../../src/useMatches";
+import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
-import { Switch, Route, useHistory } from "react-router-dom";
+import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
+import SearchDocsActions from "./SearchDocsActions";
+import { createAction } from "../../src/utils";
+import { useAnalytics } from "./utils";
+import { Action } from "../../src";
 
-const searchStyles = {
+const searchStyle = {
   padding: "12px 16px",
   fontSize: "16px",
   width: "100%",
@@ -20,19 +27,35 @@ const searchStyles = {
   color: "var(--foreground)",
 };
 
+const resultsStyle = {
+  maxHeight: 400,
+  overflow: "auto",
+};
+
+const animatorStyle = {
+  maxWidth: "600px",
+  width: "100%",
+  background: "var(--background)",
+  color: "var(--foreground)",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "var(--shadow)",
+};
+
+const groupNameStyle = {
+  padding: "8px 16px",
+  fontSize: "10px",
+  textTransform: "uppercase" as const,
+  opacity: 0.5,
+  background: "var(--background)",
+};
+
 const App = () => {
+  useAnalytics();
   const history = useHistory();
   return (
     <KBarProvider
       actions={[
-        {
-          id: "searchDocsAction",
-          name: "Search docs…",
-          shortcut: [],
-          keywords: "find",
-          section: "",
-          children: ["docs1", "docs2"],
-        },
         {
           id: "homeAction",
           name: "Home",
@@ -40,11 +63,13 @@ const App = () => {
           keywords: "back",
           section: "Navigation",
           perform: () => history.push("/"),
+          icon: <HomeIcon />,
+          subtitle: "Subtitles can help add more context.",
         },
         {
           id: "docsAction",
           name: "Docs",
-          shortcut: ["d"],
+          shortcut: ["g", "d"],
           keywords: "help",
           section: "Navigation",
           perform: () => history.push("/docs"),
@@ -65,30 +90,19 @@ const App = () => {
           section: "Navigation",
           perform: () => window.open("https://twitter.com/timcchang", "_blank"),
         },
-        {
-          id: "docs1",
-          name: "Docs 1 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 1",
-          section: "",
-          perform: () => window.alert("nav -> Docs 1"),
-          parent: "searchBlogAction",
-        },
-        {
-          id: "docs2",
-          name: "Docs 2 (Coming soon)",
-          shortcut: [],
-          keywords: "Docs 2",
-          section: "",
-          perform: () => window.alert("nav -> Docs 2"),
-          parent: "searchBlogAction",
-        },
+        createAction({
+          name: "Github",
+          shortcut: ["g", "h"],
+          keywords: "sourcecode",
+          section: "Navigation",
+          perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
+        }),
         {
           id: "theme",
           name: "Change theme…",
           shortcut: [],
           keywords: "interface color dark light",
-          section: "",
+          section: "Preferences",
           children: ["darkTheme", "lightTheme"],
         },
         {
@@ -112,46 +126,28 @@ const App = () => {
           parent: "theme",
         },
       ]}
-      options={{
-        animations: {
-          enterMs: 200,
-          exitMs: 100,
-          maxContentHeight: 400,
-        },
-      }}
     >
-      <KBarContent
-        contentStyle={{
-          maxWidth: "400px",
-          width: "100%",
-          background: "var(--background)",
-          color: "var(--foreground)",
-          borderRadius: "8px",
-          overflow: "hidden",
-          boxShadow: "var(--shadow)",
-        }}
-      >
-        <KBarSearch
-          style={searchStyles}
-          placeholder="Type a command or search…"
-        />
-        <KBarResults
-          onRender={(action, handlers, state) => (
-            <Render
-              key={action.id}
-              action={action}
-              handlers={handlers}
-              state={state}
+      <SearchDocsActions />
+      <KBarPortal>
+        <KBarPositioner>
+          <KBarAnimator style={animatorStyle}>
+            <KBarSearch
+              style={searchStyle}
+              placeholder="Type a command or search…"
             />
-          )}
-        />
-      </KBarContent>
+            <RenderResults />
+          </KBarAnimator>
+        </KBarPositioner>
+      </KBarPortal>
       <Layout>
         <Switch>
-          <Route path="/docs">
+          <Route path="/docs" exact>
+            <Redirect to="/docs/overview" />
+          </Route>
+          <Route path="/docs/:slug">
             <Docs />
           </Route>
-          <Route path="/">
+          <Route path="*">
             <Home />
           </Route>
         </Switch>
@@ -160,35 +156,32 @@ const App = () => {
   );
 };
 
-function Render({ action, handlers, state }) {
-  const ownRef = React.useRef<HTMLDivElement>(null);
+function RenderResults() {
+  const groups = useMatches();
 
-  const active = state.index === state.activeIndex;
+  return (
+    <Results>
+      <div style={resultsStyle}>
+        {groups.map((group) => (
+          <div key={group.name}>
+            {group.name !== NO_GROUP && (
+              <div style={groupNameStyle}>{group.name}</div>
+            )}
+            {group.actions.map((action) => {
+              return <ResultItem key={action.id} action={action} />;
+            })}
+          </div>
+        ))}
+      </div>
+    </Results>
+  );
+}
 
-  React.useEffect(() => {
-    if (active) {
-      // wait for the KBarContent to resize, _then_ scrollIntoView.
-      // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
-      window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(() => {
-          const element = ownRef.current;
-          if (!element) {
-            return;
-          }
-          // @ts-ignore
-          element.scrollIntoView({
-            block: "nearest",
-            behavior: "smooth",
-            inline: "start",
-          });
-        })
-      );
-    }
-  }, [active]);
+function ResultItem({ action }: { action: Action }) {
+  const { active, handlers } = useResultItem({ action });
 
   return (
     <div
-      ref={ownRef}
       {...handlers}
       style={{
         padding: "12px 16px",
@@ -200,20 +193,44 @@ function Render({ action, handlers, state }) {
         cursor: "pointer",
       }}
     >
-      <span>{action.name}</span>
+      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        {action.icon && action.icon}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>{action.name}</span>
+          {action.subtitle && (
+            <span style={{ fontSize: 12 }}>{action.subtitle}</span>
+          )}
+        </div>
+      </div>
       {action.shortcut?.length ? (
-        <kbd
-          style={{
-            padding: "4px 6px",
-            background: "rgba(0 0 0 / .1)",
-            borderRadius: "4px",
-          }}
-        >
-          {action.shortcut}
-        </kbd>
+        <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
+          {action.shortcut.map((sc) => (
+            <kbd
+              key={sc}
+              style={{
+                padding: "4px 6px",
+                background: "rgba(0 0 0 / .1)",
+                borderRadius: "4px",
+              }}
+            >
+              {sc}
+            </kbd>
+          ))}
+        </div>
       ) : null}
     </div>
   );
 }
 
 export default App;
+
+function HomeIcon() {
+  return (
+    <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="m19.681 10.406-7.09-6.179a.924.924 0 0 0-1.214.002l-7.06 6.179c-.642.561-.244 1.618.608 1.618.51 0 .924.414.924.924v5.395c0 .51.414.923.923.923h3.236V14.54c0-.289.234-.522.522-.522h2.94c.288 0 .522.233.522.522v4.728h3.073c.51 0 .924-.413.924-.923V12.95c0-.51.413-.924.923-.924h.163c.853 0 1.25-1.059.606-1.62Z"
+        fill="var(--foreground)"
+      />
+    </svg>
+  );
+}

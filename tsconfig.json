@@ -2,9 +2,9 @@
   "compilerOptions": {
     "jsx": "react",
     "declaration": true,
-    "target": "ESNext",
+    "target": "es5",
     "lib": [
-      "ESNext",
+      "es5",
       "DOM"
     ],
     "strict": true,

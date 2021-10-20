@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Action } from "./types";
 
 export function swallowEvent(event) {
   event.stopPropagation();
@@ -23,3 +24,19 @@ export function useOuterClick(
     return () => window.removeEventListener("mousedown", handleMouseDown);
   }, [dom]);
 }
+
+export function randomId() {
+  return Math.random().toString(36).substring(2, 9);
+}
+
+export function createAction(params: Omit<Action, "id">): Action {
+  return {
+    id: randomId(),
+    ...params,
+  };
+}
+
+export function noop() {}
+
+export const useIsomorphicLayout =
+  typeof window === "undefined" ? noop : React.useLayoutEffect;
