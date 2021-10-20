@@ -5,6 +5,7 @@ import KBarResults from "./KBarResults";
 import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
 import { createAction } from "./utils";
+import useMatches from "./useMatches";
 
 export {
   KBarPortal,
@@ -14,6 +15,7 @@ export {
   useKBar,
   useRegisterActions,
   createAction,
+  useMatches,
 };
 
 export * from "./KBarContextProvider";
