@@ -11,7 +11,7 @@ interface Context {
   >;
   reset: () => void;
   getIndex: (id: string) => number;
-  getHandlers: (index: number) => any;
+  getHandlers: (index: number, opts: any) => any;
   activeIndex: number;
 }
 

@@ -6,6 +6,7 @@ import { Results, useResultItem } from "../../src/Results";
 import KBarPortal from "../../src/KBarPortal";
 import useMatches, { NO_GROUP } from "../../src/useMatches";
 import KBarPositioner from "../../src/KBarPositioner";
+import KBarVirtualizedResults from "../../src/KBarVirtualizedResults";
 import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
@@ -135,7 +136,8 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <RenderResults />
+            <KBarVirtualizedResults />
+            {/* <RenderResults /> */}
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>
