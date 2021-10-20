@@ -2,8 +2,9 @@ import "./index.scss";
 import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
-import KBarResults from "../../src/KBarResults";
+import { Results, useResultItem } from "../../src/Results";
 import KBarPortal from "../../src/KBarPortal";
+import useMatches, { NO_GROUP } from "../../src/useMatches";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
@@ -11,9 +12,9 @@ import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
 import SearchDocsActions from "./SearchDocsActions";
-import { Action, ResultHandlers, ResultState } from "../../src/types";
 import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
+import { Action } from "../../src";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -32,13 +33,21 @@ const resultsStyle = {
 };
 
 const animatorStyle = {
-  maxWidth: "500px",
+  maxWidth: "600px",
   width: "100%",
   background: "var(--background)",
   color: "var(--foreground)",
   borderRadius: "8px",
   overflow: "hidden",
   boxShadow: "var(--shadow)",
+};
+
+const groupNameStyle = {
+  padding: "8px 16px",
+  fontSize: "10px",
+  textTransform: "uppercase" as const,
+  opacity: 0.5,
+  background: "var(--background)",
 };
 
 const App = () => {
@@ -93,7 +102,7 @@ const App = () => {
           name: "Change theme…",
           shortcut: [],
           keywords: "interface color dark light",
-          section: "",
+          section: "Preferences",
           children: ["darkTheme", "lightTheme"],
         },
         {
@@ -126,12 +135,7 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <KBarResults
-              style={resultsStyle}
-              onRender={(action, handlers, state) => (
-                <Render action={action} handlers={handlers} state={state} />
-              )}
-            />
+            <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>
@@ -152,43 +156,32 @@ const App = () => {
   );
 };
 
-function Render({
-  action,
-  handlers,
-  state,
-}: {
-  action: Action;
-  handlers: ResultHandlers;
-  state: ResultState;
-}) {
-  const ownRef = React.useRef<HTMLDivElement>(null);
+function RenderResults() {
+  const groups = useMatches();
 
-  const active = state.index === state.activeIndex;
+  return (
+    <Results>
+      <div style={resultsStyle}>
+        {groups.map((group) => (
+          <div key={group.name}>
+            {group.name !== NO_GROUP && (
+              <div style={groupNameStyle}>{group.name}</div>
+            )}
+            {group.actions.map((action) => {
+              return <ResultItem key={action.id} action={action} />;
+            })}
+          </div>
+        ))}
+      </div>
+    </Results>
+  );
+}
 
-  React.useEffect(() => {
-    if (active) {
-      // wait for the KBarAnimator to resize, _then_ scrollIntoView.
-      // https://medium.com/@owencm/one-weird-trick-to-performant-touch-response-animations-with-react-9fe4a0838116
-      window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(() => {
-          const element = ownRef.current;
-          if (!element) {
-            return;
-          }
-          // @ts-ignore
-          element.scrollIntoView({
-            block: "nearest",
-            behavior: "smooth",
-            inline: "start",
-          });
-        })
-      );
-    }
-  }, [active]);
+function ResultItem({ action }: { action: Action }) {
+  const { active, handlers } = useResultItem({ action });
 
   return (
     <div
-      ref={ownRef}
       {...handlers}
       style={{
         padding: "12px 16px",

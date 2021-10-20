@@ -130,6 +130,16 @@ export default function useStore(props: useStoreProps) {
             searchQuery,
           })),
         registerActions,
+        toggle: () =>
+          setState((state) => ({
+            ...state,
+            visualState: [
+              VisualState.animatingOut,
+              VisualState.hidden,
+            ].includes(state.visualState)
+              ? VisualState.animatingIn
+              : VisualState.animatingOut,
+          })),
       },
       options: optionsRef.current,
       subscribe: (

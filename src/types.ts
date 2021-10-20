@@ -17,6 +17,11 @@ export interface Action {
 
 export type ActionTree = Record<string, Action>;
 
+export interface ActionGroup {
+  name: string;
+  actions: Action[];
+}
+
 export interface KBarOptions {
   animations?: {
     enterMs?: number;
@@ -42,6 +47,7 @@ export interface KBarQuery {
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
   registerActions: (actions: Action[]) => () => void;
+  toggle: () => void;
 }
 
 export interface IKBarContext {
