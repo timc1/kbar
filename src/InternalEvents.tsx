@@ -127,7 +127,6 @@ function useShortcuts() {
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
-    const charList = "abcdefghijklmnopqrstuvwxyz0123456789shift";
     const inputs = ["input", "select", "button", "textarea"];
 
     let buffer: string[] = [];
@@ -138,13 +137,13 @@ function useShortcuts() {
 
       const activeElement = document.activeElement;
       const ignoreStrokes =
-      activeElement &&
-      (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
-        activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
-        activeElement.attributes.getNamedItem("contenteditable")?.value ===
-          "true");
+        activeElement &&
+        (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
+          activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
+          activeElement.attributes.getNamedItem("contenteditable")?.value ===
+            "true");
 
-      if (ignoreStrokes || event.metaKey || charList.indexOf(key) === -1) {
+      if (ignoreStrokes || event.metaKey) {
         return;
       }
 
