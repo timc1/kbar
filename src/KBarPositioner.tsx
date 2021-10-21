@@ -1,4 +1,5 @@
 import * as React from "react";
+import useScrollbarSize from 'react-scrollbar-size';
 
 interface Props {
   children: React.ReactNode;
@@ -16,8 +17,10 @@ const defaultStyle: React.CSSProperties = {
 };
 
 export default function KBarPositioner(props: Props) {
+  const scrollbar = useScrollbarSize();
+  
   return (
-    <div style={defaultStyle} {...props}>
+    <div style={{...defaultStyle, width: `calc(100% - ${scrollbar.width})px`}} {...props}>
       {props.children}
     </div>
   );
