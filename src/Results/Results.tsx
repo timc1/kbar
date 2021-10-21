@@ -45,12 +45,12 @@ function useManager() {
       const total = count.current;
 
       if (event.key === "ArrowDown" || (event.ctrlKey && event.key === "n")) {
-        setActiveIndex((current) => (current < total ? current + 1 : 0));
+        setActiveIndex((current) => (current < total ? current + 1 : current));
       } else if (
         event.key === "ArrowUp" ||
         (event.ctrlKey && event.key === "p")
       ) {
-        setActiveIndex((current) => (current > 0 ? current - 1 : total));
+        setActiveIndex((current) => (current > 0 ? current - 1 : current));
       } else if (event.key === "Enter") {
         scrollRef.current?.click();
       }
