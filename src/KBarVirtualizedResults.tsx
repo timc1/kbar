@@ -21,6 +21,7 @@ export default function KBarVirtualizedResults() {
   const rowVirtualizer = useVirtual({
     size: flattened.length,
     parentRef,
+    overscan: 5,
   });
 
   return (
@@ -28,7 +29,7 @@ export default function KBarVirtualizedResults() {
       <div
         ref={parentRef}
         style={{
-          maxHeight: 100,
+          maxHeight: 150,
           overflow: "auto",
         }}
       >
