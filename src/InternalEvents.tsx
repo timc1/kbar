@@ -143,7 +143,7 @@ function useShortcuts() {
           activeElement.attributes.getNamedItem("contenteditable")?.value ===
             "true");
 
-      if (ignoreStrokes || event.metaKey) {
+      if (ignoreStrokes || event.metaKey || key === "shift") {
         return;
       }
 
