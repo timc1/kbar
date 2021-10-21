@@ -1,6 +1,7 @@
 import * as React from "react";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
+import useScrollbarSize from 'react-scrollbar-size';
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -105,12 +106,17 @@ function useDocumentLock() {
   const { visualState } = useKBar((state) => ({
     visualState: state.visualState,
   }));
+  const scrollbar = useScrollbarSize();
 
   React.useEffect(() => {
     if (visualState === VisualState.showing) {
       document.documentElement.style.overflow = "hidden";
+      document.documentElement.style.paddingRight = `${scrollbar.width}px`;
+      document.documentElement.style.paddingBottom = `${scrollbar.height}px`;
     } else if (visualState === VisualState.hidden) {
       document.documentElement.style.removeProperty("overflow");
+      document.documentElement.style.removeProperty("padding-right");
+      document.documentElement.style.removeProperty("padding-bottom");
     }
   }, [visualState]);
 }
