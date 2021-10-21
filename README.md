@@ -74,13 +74,15 @@ return (
 kbar exposes a few components which handle animations, keyboard events, default styles, etc. You can use them together like so:
 
 ```tsx
-import { 
-  KBarProvider, 
-  KBarPortal, 
-  KBarPositioner, 
-  KBarAnimator, 
-  KBarSearch, 
-  KBarResults 
+import {
+  KBarProvider,
+  KBarPortal,
+  KBarPositioner,
+  KBarAnimator,
+  KBarSearch,
+  NO_GROUP,
+  Results,
+  useResultItem
 } from "kbar";
 
 <KBarProvider actions={actions}>
@@ -88,12 +90,39 @@ import {
     <KBarPositioner> // Centers the content
       <KBarAnimator> // Handles the show/hide and height animations
         <KBarSearch /> // Search input
-        <KBarResults /> // Results renderer
+        <RenderResults /> // Results renderer
       </KBarAnimator>
     </KBarPositioner>
   </KBarPortal>
   <MyApp />
 </KBarProvider>;
+
+function RenderResults() {
+  const groups = useMatches();
+
+  return (
+    <Results>
+      {groups.map((group) => (
+        <div key={group.name}>
+          <div>{group.name}</div>
+          {group.actions.map((action) => {
+            return <ResultItem key={action.id} action={action} />;
+          })}
+        </div>
+      ))}
+    </Results>
+  );
+}
+
+function ResultItem({ action }: { action: Action }) {
+  const { active, handlers } = useResultItem({ action });
+
+  return (
+    <div {...handlers}>
+      <p>{action.name}</p>
+    </div>
+  );
+}
 ```
 
 Hit <kbd>cmd</kbd>+<kbd>k</kbd> (or <kbd>ctrl</kbd>+<kbd>k</kbd>) and you should see a primitive command menu. kbar allows you to have full control over all

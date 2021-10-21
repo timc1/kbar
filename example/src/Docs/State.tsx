@@ -7,7 +7,7 @@ export default function State() {
       <h1>Interfacing with state</h1>
       <p>
         While it is great that kbar exposes some primitive components; e.g.{" "}
-        <code>KBarSearch</code>, <code>KBarResults</code>, etc., what if you
+        <code>KBarSearch</code>, <code>KBarAnimator</code>, etc., what if you
         wanted to build some custom components, perhaps a set of breadcrumbs
         that display the current action and it's ancestor actions?
       </p>

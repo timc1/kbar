@@ -107,7 +107,7 @@ return (
         code={`<KBarProvider actions={actions}>
   <KBarContent>
     <KBarSearch />
-    <KBarResults />
+    <RenderResults />
   </KBarContent>
   <MyApp />
 </KBarProvider>`}
