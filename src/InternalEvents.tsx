@@ -1,6 +1,7 @@
 import * as React from "react";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
+import { getScrollbarWidth } from "./utils";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -107,10 +108,23 @@ function useDocumentLock() {
   }));
 
   React.useEffect(() => {
-    if (visualState === VisualState.showing) {
-      document.documentElement.style.overflow = "hidden";
+    if (visualState === VisualState.animatingIn) {
+      document.body.style.pointerEvents = "none";
+      document.body.style.overflow = "hidden";
+
+      let scrollbarWidth = getScrollbarWidth();
+      // take into account the margins explicitly added by the consumer
+      const mr = getComputedStyle(document.body)["margin-right"];
+      if (mr) {
+        // remove non-numeric values; px, rem, em, etc.
+        scrollbarWidth += Number(mr.replace(/\D/g, ""));
+      }
+
+      document.body.style.marginRight = scrollbarWidth + "px";
     } else if (visualState === VisualState.hidden) {
-      document.documentElement.style.removeProperty("overflow");
+      document.body.style.removeProperty("pointer-events");
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("margin-right");
     }
   }, [visualState]);
 }

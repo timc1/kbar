@@ -138,7 +138,11 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
   return (
     <div
       ref={outerRef}
-      style={{ ...appearanceAnimationKeyframes[0], ...style }}
+      style={{
+        ...appearanceAnimationKeyframes[0],
+        ...style,
+        pointerEvents: "auto",
+      }}
       className={className}
     >
       <div ref={innerRef}>{children}</div>
