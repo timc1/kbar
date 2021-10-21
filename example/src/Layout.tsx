@@ -1,5 +1,4 @@
 import * as React from "react";
-import { VisualState } from "../../src/types";
 import useKBar from "../../src/useKBar";
 import styles from "./Layout.module.scss";
 import Logo from "./Logo";
@@ -13,16 +12,7 @@ export default function Layout(props: Props) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <button
-          onClick={() =>
-            // TODO: we can expose a query.toggle to handle this logic within the library itself
-            query.setVisualState((vs) =>
-              [VisualState.animatingOut, VisualState.hidden].includes(vs)
-                ? VisualState.animatingIn
-                : VisualState.animatingOut
-            )
-          }
-        >
+        <button onClick={query.toggle}>
           <Logo />
         </button>
         <h1>kbar</h1>

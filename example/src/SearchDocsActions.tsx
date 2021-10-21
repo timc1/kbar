@@ -30,7 +30,7 @@ export default function SearchDocsActions() {
       return actions;
     };
     return collectDocs(data);
-  }, []);
+  }, [history]);
 
   const rootSearchAction = React.useMemo(
     () =>
