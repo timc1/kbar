@@ -5,15 +5,8 @@ import { Action } from "../types";
 
 const START_INDEX = 0;
 
-interface RenderItemHandlers {
-  onPointerDown: () => void;
-  onMouseEnter: () => void;
-  onClick: () => void;
-}
-
 interface RenderParams<T = Action | string> {
   item: T;
-  handlers: RenderItemHandlers;
   active: boolean;
 }
 
@@ -23,7 +16,7 @@ interface VirtualResultsProps {
 }
 
 export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
-  const activeRef = React.useRef<HTMLElement>(null);
+  const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
 
   // store a ref to the total number of items so we do not have to
@@ -139,7 +132,7 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
       >
         {rowVirtualizer.virtualItems.map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
-          const handlers: RenderItemHandlers = {
+          const handlers = {
             onMouseEnter: () => setActiveIndex(virtualRow.index),
             onPointerDown: () => setActiveIndex(virtualRow.index),
             onClick: () => execute(item),
@@ -148,6 +141,7 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
 
           return (
             <div
+              ref={activeRef}
               key={virtualRow.index}
               style={{
                 position: "absolute",
@@ -156,15 +150,15 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
                 width: "100%",
                 transform: `translateY(${virtualRow.start}px)`,
               }}
+              {...handlers}
             >
               {React.cloneElement(
                 props.onRender({
                   item,
-                  handlers,
                   active,
                 }),
                 {
-                  ref: mergeRefs(virtualRow.measureRef, active && activeRef),
+                  ref: virtualRow.measureRef,
                 }
               )}
             </div>
@@ -174,12 +168,3 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
     </div>
   );
 };
-
-function mergeRefs(...refs: any[]) {
-  return (value: any) =>
-    refs
-      .filter(Boolean)
-      .forEach((ref) =>
-        typeof ref === "function" ? ref(value) : (ref.current = value)
-      );
-}

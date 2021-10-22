@@ -176,11 +176,11 @@ function RenderVirtual() {
     <div style={resultsStyle}>
       <VirtualResults
         items={flattened.filter((i) => i !== NO_GROUP)}
-        onRender={({ item, handlers, active }) =>
+        onRender={({ item, active }) =>
           typeof item === "string" ? (
             <div style={groupNameStyle}>{item}</div>
           ) : (
-            <ResultItem action={item} active={active} handlers={handlers} />
+            <ResultItem action={item} active={active} />
           )
         }
       />
@@ -193,18 +193,15 @@ const ResultItem = React.forwardRef(
     {
       action,
       active,
-      handlers,
     }: {
       action: Action;
       active: boolean;
-      handlers: any;
     },
-    ref
+    ref: React.Ref<HTMLDivElement>
   ) => {
     return (
       <div
         ref={ref}
-        {...handlers}
         style={{
           padding: "12px 16px",
           background: active ? "var(--a1)" : "var(--background)",
