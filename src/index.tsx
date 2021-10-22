@@ -21,4 +21,5 @@ export {
 export * from "./KBarContextProvider";
 export * from "./KBarAnimator";
 export * from "./Results";
+export * from "./VirtualResults";
 export * from "./types";

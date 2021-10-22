@@ -2,12 +2,11 @@ import "./index.scss";
 import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
-import { Results, useResultItem } from "../../src/Results";
 import KBarPortal from "../../src/KBarPortal";
 import useMatches, { NO_GROUP } from "../../src/useMatches";
 import KBarPositioner from "../../src/KBarPositioner";
-import KBarVirtualizedResults from "../../src/KBarVirtualizedResults";
 import KBarSearch from "../../src/KBarSearch";
+import { VirtualResults } from "../../src/VirtualResults";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
@@ -137,8 +136,7 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <KBarVirtualizedResults />
-            {/* <RenderResults /> */}
+            <RenderVirtual />
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>
@@ -162,71 +160,92 @@ const App = () => {
   );
 };
 
-function RenderResults() {
+function RenderVirtual() {
   const groups = useMatches();
-
-  return (
-    <Results>
-      <div style={resultsStyle}>
-        {groups.map((group) => (
-          <div key={group.name}>
-            {group.name !== NO_GROUP && (
-              <div style={groupNameStyle}>{group.name}</div>
-            )}
-            {group.actions.map((action) => {
-              return <ResultItem key={action.id} action={action} />;
-            })}
-          </div>
-        ))}
-      </div>
-    </Results>
+  const flattened = React.useMemo(
+    () =>
+      groups.reduce((acc, curr) => {
+        acc.push(curr.name);
+        acc.push(...curr.actions);
+        return acc;
+      }, []),
+    [groups]
   );
-}
-
-function ResultItem({ action }: { action: Action }) {
-  const { active, handlers } = useResultItem({ action });
 
   return (
-    <div
-      {...handlers}
-      style={{
-        padding: "12px 16px",
-        background: active ? "var(--a1)" : "var(--background)",
-        borderLeft: `2px solid ${active ? "var(--foreground)" : "transparent"}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        {action.icon && action.icon}
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <span>{action.name}</span>
-          {action.subtitle && (
-            <span style={{ fontSize: 12 }}>{action.subtitle}</span>
-          )}
-        </div>
-      </div>
-      {action.shortcut?.length ? (
-        <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
-          {action.shortcut.map((sc) => (
-            <kbd
-              key={sc}
-              style={{
-                padding: "4px 6px",
-                background: "rgba(0 0 0 / .1)",
-                borderRadius: "4px",
-              }}
-            >
-              {sc}
-            </kbd>
-          ))}
-        </div>
-      ) : null}
+    <div style={resultsStyle}>
+      <VirtualResults
+        items={flattened.filter((i) => i !== NO_GROUP)}
+        onRender={({ item, handlers, active }) =>
+          typeof item === "string" ? (
+            <div style={groupNameStyle}>{item}</div>
+          ) : (
+            <ResultItem action={item} active={active} handlers={handlers} />
+          )
+        }
+      />
     </div>
   );
 }
+
+const ResultItem = React.forwardRef(
+  (
+    {
+      action,
+      active,
+      handlers,
+    }: {
+      action: Action;
+      active: boolean;
+      handlers: any;
+    },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref}
+        {...handlers}
+        style={{
+          padding: "12px 16px",
+          background: active ? "var(--a1)" : "var(--background)",
+          borderLeft: `2px solid ${
+            active ? "var(--foreground)" : "transparent"
+          }`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          cursor: "pointer",
+        }}
+      >
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          {action.icon && action.icon}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span>{action.name}</span>
+            {action.subtitle && (
+              <span style={{ fontSize: 12 }}>{action.subtitle}</span>
+            )}
+          </div>
+        </div>
+        {action.shortcut?.length ? (
+          <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
+            {action.shortcut.map((sc) => (
+              <kbd
+                key={sc}
+                style={{
+                  padding: "4px 6px",
+                  background: "rgba(0 0 0 / .1)",
+                  borderRadius: "4px",
+                }}
+              >
+                {sc}
+              </kbd>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+);
 
 export default App;
 
