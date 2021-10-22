@@ -19,15 +19,13 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
   const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
 
-  // store a ref to the total number of items so we do not have to
-  // pass this as a dependency when setting up event listeners.
-  const total = React.useRef(props.items.length);
-  total.current = props.items.length;
+  // store a ref to all items so we do not have to pass
+  // them as a dependency when setting up event listeners.
   const itemsRef = React.useRef(props.items);
   itemsRef.current = props.items;
 
   const rowVirtualizer = useVirtual({
-    size: total.current,
+    size: itemsRef.current.length,
     parentRef,
   });
 
@@ -56,7 +54,8 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
       ) {
         event.preventDefault();
         setActiveIndex((index) => {
-          let nextIndex = index < total.current - 1 ? index + 1 : index;
+          let nextIndex =
+            index < itemsRef.current.length - 1 ? index + 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
             nextIndex += 1;
@@ -141,7 +140,7 @@ export const VirtualResults: React.FC<VirtualResultsProps> = (props) => {
 
           return (
             <div
-              ref={activeRef}
+              ref={active ? activeRef : null}
               key={virtualRow.index}
               style={{
                 position: "absolute",
