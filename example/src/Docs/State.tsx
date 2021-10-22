@@ -36,7 +36,6 @@ function Breadcrumbs() {
             actionAncestors 
         }
     })
-}
 
   return (
     <ul>
@@ -46,7 +45,8 @@ function Breadcrumbs() {
             </li>
         ))}
     </ul>
-  );`}
+  ); 
+}`}
       />
       <p>
         Pass a callback to <code>useKBar</code> and retrieve only what you
