@@ -1,23 +1,18 @@
 import * as React from "react";
 import useRegisterActions from "../../src/useRegisterActions";
+import { createAction } from "../../src/utils";
 
 export default function Blog() {
-  useRegisterActions([
-    {
-      id: "dynamicAction1",
-      name: "Action only visible in Blog",
-      shortcut: [],
+  const actions = Array.from(Array(1000)).map((_, i) =>
+    createAction({
+      name: i.toString(),
+      shortcut: [""],
       keywords: "",
-      perform: () => window.alert("dynamic action"),
-    },
-    {
-      id: "dynamicAction2",
-      name: "Another action only visible in Blog",
-      shortcut: [],
-      keywords: "",
-      perform: () => window.alert("dynamic action"),
-    },
-  ]);
+      perform: () => alert(i),
+    })
+  );
+
+  useRegisterActions(actions);
 
   return <div>Blog</div>;
 }

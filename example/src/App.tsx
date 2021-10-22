@@ -16,6 +16,7 @@ import SearchDocsActions from "./SearchDocsActions";
 import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
 import { Action } from "../../src";
+import Blog from "./Blog";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -148,6 +149,9 @@ const App = () => {
           </Route>
           <Route path="/docs/:slug">
             <Docs />
+          </Route>
+          <Route path="/blog">
+            <Blog />
           </Route>
           <Route path="*">
             <Home />
