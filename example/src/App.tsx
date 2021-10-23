@@ -131,7 +131,7 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <RenderVirtual />
+            <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>
@@ -155,7 +155,7 @@ const App = () => {
   );
 };
 
-function RenderVirtual() {
+function RenderResults() {
   const groups = useMatches();
   const flattened = React.useMemo(
     () =>
