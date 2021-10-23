@@ -6,7 +6,7 @@ import KBarPortal from "../../src/KBarPortal";
 import useMatches, { NO_GROUP } from "../../src/useMatches";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
-import { VirtualResults } from "../../src/VirtualResults";
+import KBarResults from "../../src/KBarResults";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
@@ -26,11 +26,6 @@ const searchStyle = {
   border: "none",
   background: "var(--background)",
   color: "var(--foreground)",
-};
-
-const resultsStyle = {
-  maxHeight: 400,
-  overflow: "auto",
 };
 
 const animatorStyle = {
@@ -136,7 +131,7 @@ const App = () => {
               style={searchStyle}
               placeholder="Type a command or search…"
             />
-            <RenderVirtual />
+            <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
       </KBarPortal>
@@ -160,7 +155,7 @@ const App = () => {
   );
 };
 
-function RenderVirtual() {
+function RenderResults() {
   const groups = useMatches();
   const flattened = React.useMemo(
     () =>
@@ -173,18 +168,16 @@ function RenderVirtual() {
   );
 
   return (
-    <div style={resultsStyle}>
-      <VirtualResults
-        items={flattened.filter((i) => i !== NO_GROUP)}
-        onRender={({ item, active }) =>
-          typeof item === "string" ? (
-            <div style={groupNameStyle}>{item}</div>
-          ) : (
-            <ResultItem action={item} active={active} />
-          )
-        }
-      />
-    </div>
+    <KBarResults
+      items={flattened.filter((i) => i !== NO_GROUP)}
+      onRender={({ item, active }) =>
+        typeof item === "string" ? (
+          <div style={groupNameStyle}>{item}</div>
+        ) : (
+          <ResultItem action={item} active={active} />
+        )
+      }
+    />
   );
 }
 
