@@ -1,7 +1,7 @@
 import KBarPortal from "./KBarPortal";
 import KBarPositioner from "./KBarPositioner";
 import KBarSearch from "./KBarSearch";
-import KBarResults from "./KBarResults";
+import VirtualResults from "./KBarResults";
 import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
 import { createAction } from "./utils";
@@ -11,7 +11,7 @@ export {
   KBarPortal,
   KBarPositioner,
   KBarSearch,
-  KBarResults,
+  VirtualResults,
   useKBar,
   useRegisterActions,
   createAction,
@@ -20,5 +20,4 @@ export {
 
 export * from "./KBarContextProvider";
 export * from "./KBarAnimator";
-export * from "./Results";
 export * from "./types";
