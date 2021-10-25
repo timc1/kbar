@@ -32,12 +32,6 @@ export default function KBarSearch(
       autoComplete="off"
       onKeyDown={(event) => {
         if (currentRootActionId && !search && event.key === "Backspace") {
-          console.log({
-            current: actions[currentRootActionId],
-            actions,
-            currentRootActionId,
-          });
-
           const parent = actions[currentRootActionId].parent;
           query.setCurrentRootAction(parent);
         }

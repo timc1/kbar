@@ -1,16 +1,17 @@
 import * as React from "react";
+import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
 export interface Action {
   id: string;
   name: string;
-  shortcut: string[];
-  keywords: string;
+  keywords?: string;
+  shortcut?: string[];
   perform?: () => void;
   section?: string;
   parent?: ActionId | null | undefined;
-  children?: ActionId[];
+  children?: ActionImpl[];
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
 }

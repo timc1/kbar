@@ -99,7 +99,6 @@ const App = () => {
           shortcut: [],
           keywords: "interface color dark light",
           section: "Preferences",
-          children: ["darkTheme", "lightTheme"],
         },
         {
           id: "darkTheme",

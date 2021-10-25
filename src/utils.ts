@@ -46,7 +46,7 @@ export function randomId() {
   return Math.random().toString(36).substring(2, 9);
 }
 
-export function createAction(params: Omit<Action, "id">): Action {
+export function createAction(params: Omit<Action, "id" | "children">): Action {
   return {
     id: randomId(),
     ...params,

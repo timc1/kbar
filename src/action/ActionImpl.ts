@@ -1,26 +1,8 @@
 import { ReactElement, JSXElementConstructor, ReactNode } from "react";
-
-type ActionId = string;
-
-export interface Action {
-  id: string;
-  name: string;
-  keywords?: string;
-  shortcut?: string[];
-  perform?: () => void;
-  section?: string;
-  parent?: ActionId | null | undefined;
-  children?: ActionImpl[];
-  icon?: string | React.ReactElement | React.ReactNode;
-  subtitle?: string;
-}
-
-interface ActionImplOptions {
-  parent?: string;
-}
+import { Action, ActionId } from "../types";
 
 export class ActionImpl implements Action {
-  id: string;
+  id: ActionId;
   name: string;
   keywords?: string | undefined;
   shortcut?: string[] | undefined;
@@ -31,11 +13,8 @@ export class ActionImpl implements Action {
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
   subtitle?: string | undefined;
 
-  options: ActionImplOptions;
-
-  constructor(action: Action, options: ActionImplOptions = {}) {
-    this.options = options;
-    this.parent = this.options.parent;
+  constructor(action: Action) {
+    this.parent = action.parent;
     this.validate(action);
 
     this.id = action.id;
@@ -51,7 +30,7 @@ export class ActionImpl implements Action {
   addChild(action: ActionImpl) {
     if (!this.children) this.children = [];
     if (this.children.indexOf(action) > -1) return action;
-    this.children.push(action);
+    this.children.unshift(action);
     action.parent = this.id;
     return action;
   }
@@ -61,7 +40,7 @@ export class ActionImpl implements Action {
     return;
   }
 
-  static fromJSON(obj: Action, options: ActionImplOptions = {}) {
-    return new ActionImpl(obj, options);
+  static fromJSON(obj: Action) {
+    return new ActionImpl(obj);
   }
 }

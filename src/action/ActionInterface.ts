@@ -1,4 +1,5 @@
-import { Action, ActionImpl } from "./ActionImpl";
+import { Action } from "../types";
+import { ActionImpl } from "./ActionImpl";
 
 export type SerializedActions = Action[];
 export type ActionTree = Record<string, ActionImpl>;
@@ -21,7 +22,7 @@ export default class ActionInterface {
     );
 
     rootActions.forEach(
-      (action) => (this.actions[action.id] = new ActionImpl(action))
+      (action) => (this.actions[action.id] = ActionImpl.fromJSON(action))
     );
 
     nestedActions.forEach((a) => {
@@ -29,7 +30,7 @@ export default class ActionInterface {
 
       if (!parent) return;
 
-      const action = new ActionImpl(a, { parent: parent.id });
+      const action = ActionImpl.fromJSON(a);
 
       parent.addChild(action);
 

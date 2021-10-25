@@ -1,9 +1,15 @@
 import * as React from "react";
 import { useHistory } from "react-router";
 import useRegisterActions from "../../src/useRegisterActions";
+import { createAction } from "../../src/utils";
 import data from "./Docs/data";
 
-const searchId = randomId();
+const rootSearchAction = createAction({
+  name: "Search docs…",
+  shortcut: ["?"],
+  keywords: "find",
+  section: "",
+});
 
 export default function SearchDocsActions() {
   const history = useHistory();
@@ -17,14 +23,15 @@ export default function SearchDocsActions() {
           collectDocs(curr.children);
         }
         if (curr.component) {
-          actions.push({
-            id: randomId(),
-            parent: searchId,
-            name: curr.name,
-            shortcut: [],
-            keywords: "",
-            perform: () => history.push(curr.slug),
-          });
+          actions.push(
+            createAction({
+              parent: rootSearchAction.id,
+              name: curr.name,
+              shortcut: [],
+              keywords: "",
+              perform: () => history.push(curr.slug),
+            })
+          );
         }
       });
       return actions;
@@ -32,26 +39,7 @@ export default function SearchDocsActions() {
     return collectDocs(data);
   }, [history]);
 
-  const rootSearchAction = React.useMemo(
-    () =>
-      searchActions.length
-        ? {
-            id: searchId,
-            name: "Search docs…",
-            shortcut: ["?"],
-            keywords: "find",
-            section: "",
-            children: searchActions.map((action) => action.id),
-          }
-        : null,
-    [searchActions]
-  );
-
   useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean));
 
   return null;
-}
-
-function randomId() {
-  return Math.random().toString(36).substring(2, 9);
 }
