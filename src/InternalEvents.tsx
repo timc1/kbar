@@ -134,9 +134,11 @@ function useDocumentLock() {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query } = useKBar((state) => ({
-    actions: state.actions,
-  }));
+  const { actions, query } = useKBar((state) => {
+    return {
+      actions: state.actions,
+    };
+  });
 
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);

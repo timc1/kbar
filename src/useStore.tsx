@@ -1,9 +1,9 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
+import ActionInterface from "./action/ActionInterface";
 import {
   Action,
   ActionId,
-  ActionTree,
   KBarProviderProps,
   KBarState,
   KBarOptions,
@@ -19,15 +19,18 @@ export default function useStore(props: useStoreProps) {
     );
   }
 
+  const actionsInterfaceRef = React.useRef(new ActionInterface(props.actions));
+
   // TODO: at this point useReducer might be a better approach to managing state.
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: props.actions.reduce((acc, curr) => {
-      acc[curr.id] = curr;
-      return acc;
-    }, {}),
+    // actions: props.actions.reduce((acc, curr) => {
+    //   acc[curr.id] = curr;
+    //   return acc;
+    // }, {}),
+    actions: { ...actionsInterfaceRef.current.actions },
   });
 
   const currState = React.useRef(state);
@@ -50,57 +53,59 @@ export default function useStore(props: useStoreProps) {
   } as KBarOptions);
 
   const registerActions = React.useCallback((actions: Action[]) => {
-    const actionsByKey: ActionTree = actions.reduce((acc, curr) => {
-      acc[curr.id] = curr;
-      return acc;
-    }, {});
+    // const actionsByKey: ActionTree = actions.reduce((acc, curr) => {
+    //   acc[curr.id] = curr;
+    //   return acc;
+    // }, {});
 
     setState((state) => {
-      actions.forEach((action) => {
-        if (action.parent) {
-          const parent =
-            // parent could have already existed or parent is defined alongside children.
-            state.actions[action.parent] || actionsByKey[action.parent];
+      const updated = actionsInterfaceRef.current.add(actions);
 
-          if (!parent) {
-            throw new Error(`Action of id ${action.parent} does not exist.`);
-          }
+      // actions.forEach((action) => {
+      //   if (action.parent) {
+      //     const parent =
+      //       // parent could have already existed or parent is defined alongside children.
+      //       state.actions[action.parent] || actionsByKey[action.parent];
 
-          if (!parent.children) parent.children = [];
-          if (parent.children.includes(action.id)) return;
-          parent.children.push(action.id);
-        }
-      });
+      //     if (!parent) {
+      //       throw new Error(`Action of id ${action.parent} does not exist.`);
+      //     }
+
+      //     if (!parent.children) parent.children = [];
+      //     if (parent.children.includes(action.id)) return;
+      //     parent.children.push(action.id);
+      //   }
+      // });
 
       return {
         ...state,
-        actions: {
-          ...actionsByKey,
-          ...state.actions,
-        },
+        actions: { ...updated },
       };
     });
 
     return function unregister() {
       setState((state) => {
-        const allActions = state.actions;
-        const removeActionIds = actions.map((action) => action.id);
-        removeActionIds.forEach((actionId) => {
-          const action = state.actions[actionId];
-          if (action?.parent) {
-            const parent = state.actions[action.parent];
-            if (!parent?.children) {
-              return;
-            }
-            parent.children = parent.children.filter(
-              (child) => child !== actionId
-            );
-          }
-          delete allActions[actionId];
-        });
+        const updated = actionsInterfaceRef.current.remove(actions);
+
+        // const allActions = state.actions;
+        // const removeActionIds = actions.map((action) => action.id);
+        // removeActionIds.forEach((actionId) => {
+        //   const action = state.actions[actionId];
+        //   if (action?.parent) {
+        //     const parent = state.actions[action.parent];
+        //     if (!parent?.children) {
+        //       return;
+        //     }
+        //     parent.children = parent.children.filter(
+        //       (child) => child !== actionId
+        //     );
+        //   }
+        //   delete allActions[actionId];
+        // });
+
         return {
           ...state,
-          actions: allActions,
+          actions: { ...updated },
         };
       });
     };
