@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
-import { Action } from "./types";
 import { usePointerMovedSinceMount } from "./utils";
+import type { BaseAction } from "./types";
 
 const START_INDEX = 0;
 
-interface RenderParams<T = Action | string> {
+interface RenderParams<T = BaseAction | string> {
   item: T;
   active: boolean;
 }

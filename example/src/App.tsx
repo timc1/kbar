@@ -14,7 +14,7 @@ import Docs from "./Docs";
 import SearchDocsActions from "./SearchDocsActions";
 import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
-import { Action } from "../../src";
+import type { BaseAction } from "../../src/types";
 import Blog from "./Blog";
 
 const searchStyle = {
@@ -186,7 +186,7 @@ const ResultItem = React.forwardRef(
       action,
       active,
     }: {
-      action: Action;
+      action: BaseAction;
       active: boolean;
     },
     ref: React.Ref<HTMLDivElement>

@@ -1,13 +1,13 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
 import ActionInterface from "./action/ActionInterface";
-import {
-  Action,
+import { VisualState } from "./types";
+import type {
+  BaseAction,
   ActionId,
   KBarProviderProps,
   KBarState,
   KBarOptions,
-  VisualState,
 } from "./types";
 
 type useStoreProps = KBarProviderProps;
@@ -17,13 +17,13 @@ export default function useStore(
     actions: [],
   }
 ) {
-  const actionsInterfaceRef = React.useRef(new ActionInterface(props.actions));
+  const actionInterfaceRef = React.useRef(new ActionInterface(props.actions));
 
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: { ...actionsInterfaceRef.current.actions },
+    actions: { ...actionInterfaceRef.current.actions },
   });
 
   const currState = React.useRef(state);
@@ -45,16 +45,16 @@ export default function useStore(
     ...props.options,
   } as KBarOptions);
 
-  const registerActions = React.useCallback((actions: Action[]) => {
+  const registerActions = React.useCallback((actions: BaseAction[]) => {
     setState((state) => ({
       ...state,
-      actions: { ...actionsInterfaceRef.current.add(actions) },
+      actions: { ...actionInterfaceRef.current.add(actions) },
     }));
 
     return function unregister() {
       setState((state) => ({
         ...state,
-        actions: { ...actionsInterfaceRef.current.remove(actions) },
+        actions: { ...actionInterfaceRef.current.remove(actions) },
       }));
     };
   }, []);

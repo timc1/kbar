@@ -3,7 +3,7 @@ import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
-export interface Action {
+export interface BaseAction {
   id: string;
   name: string;
   keywords?: string;
@@ -11,16 +11,19 @@ export interface Action {
   perform?: () => void;
   section?: string;
   parent?: ActionId | null | undefined;
-  children?: ActionImpl[];
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
 }
 
-export type ActionTree = Record<string, Action>;
+export type Action = BaseAction & {
+  children?: ActionImpl[];
+};
+
+export type ActionTree = Record<string, ActionImpl>;
 
 export interface ActionGroup {
   name: string;
-  actions: Action[];
+  actions: BaseAction[];
 }
 
 export interface KBarOptions {
@@ -31,7 +34,7 @@ export interface KBarOptions {
 }
 
 export interface KBarProviderProps {
-  actions: Action[];
+  actions: BaseAction[];
   options?: KBarOptions;
 }
 
@@ -47,7 +50,7 @@ export interface KBarQuery {
   setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
-  registerActions: (actions: Action[]) => () => void;
+  registerActions: (actions: BaseAction[]) => () => void;
   toggle: () => void;
 }
 

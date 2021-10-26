@@ -1,5 +1,5 @@
 import { ReactElement, JSXElementConstructor, ReactNode } from "react";
-import { Action, ActionId } from "../types";
+import type { BaseAction, Action, ActionId } from "../types";
 
 export class ActionImpl implements Action {
   id: ActionId;
@@ -9,14 +9,12 @@ export class ActionImpl implements Action {
   perform?: (() => void) | undefined;
   section?: string | undefined;
   parent?: string | null | undefined;
-  children?: ActionImpl[] | undefined;
+  children?: ActionImpl[];
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
   subtitle?: string | undefined;
 
-  constructor(action: Action) {
+  constructor(action: BaseAction) {
     this.parent = action.parent;
-    this.validate(action);
-
     this.id = action.id;
     this.name = action.name;
     this.keywords = action.keywords;
@@ -30,14 +28,8 @@ export class ActionImpl implements Action {
   addChild(action: ActionImpl) {
     if (!this.children) this.children = [];
     if (this.children.indexOf(action) > -1) return action;
-    this.children.unshift(action);
-    action.parent = this.id;
+    this.children.push(action);
     return action;
-  }
-
-  private validate(action: Action) {
-    // TODO: validate
-    return;
   }
 
   static fromJSON(obj: Action) {

@@ -1,24 +1,21 @@
-import { Action } from "../types";
+import type { BaseAction, ActionTree } from "../types";
 import { ActionImpl } from "./ActionImpl";
-
-export type SerializedActions = Action[];
-export type ActionTree = Record<string, ActionImpl>;
 
 export default class ActionInterface {
   readonly actions: ActionTree = {};
 
-  constructor(serializedActions: SerializedActions) {
-    this.actions = this.add(serializedActions);
+  constructor(actions: BaseAction[]) {
+    this.actions = this.add(actions);
   }
 
-  add(serializedActions: SerializedActions) {
-    const [rootActions, nestedActions] = serializedActions.reduce(
+  add(actions: BaseAction[]) {
+    const [rootActions, nestedActions] = actions.reduce(
       (acc, action) => {
         const index = !action.parent ? 0 : 1;
         acc[index].push(action);
         return acc;
       },
-      [[], []] as Action[][]
+      [[], []] as BaseAction[][]
     );
 
     rootActions.forEach(
@@ -27,24 +24,19 @@ export default class ActionInterface {
 
     nestedActions.forEach((a) => {
       const parent = this.actions[a.parent!];
-
       if (!parent) return;
-
       const action = ActionImpl.fromJSON(a);
-
       parent.addChild(action);
-
       this.actions[action.id] = action;
     });
 
     return this.actions;
   }
 
-  remove(actions: Action[]) {
+  remove(actions: BaseAction[]) {
     actions.forEach((action) => {
       const actionImpl = this.actions[action.id];
       delete this.actions[action.id];
-
       if (actionImpl?.children) {
         this.remove(actionImpl.children);
       }
