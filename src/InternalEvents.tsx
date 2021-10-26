@@ -146,7 +146,7 @@ function useShortcuts() {
     let buffer: string[] = [];
     let lastKeyStrokeTime = Date.now();
 
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
       const key = event.key?.toLowerCase();
 
       const activeElement = document.activeElement;
@@ -176,6 +176,7 @@ function useShortcuts() {
           continue;
         }
         if (action.shortcut.join("") === bufferString) {
+          event.preventDefault();
           if (action.children) {
             query.setCurrentRootAction(action.id);
             query.toggle();
