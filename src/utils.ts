@@ -25,6 +25,23 @@ export function useOuterClick(
   }, [dom]);
 }
 
+export function usePointerMovedSinceMount() {
+  const [moved, setMoved] = React.useState(false);
+
+  React.useEffect(() => {
+    function handler() {
+      setMoved(true);
+    }
+
+    if (!moved) {
+      window.addEventListener("pointermove", handler);
+      return () => window.removeEventListener("pointermove", handler);
+    }
+  }, [moved]);
+
+  return moved;
+}
+
 export function randomId() {
   return Math.random().toString(36).substring(2, 9);
 }

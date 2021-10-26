@@ -2,6 +2,7 @@ import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
 import { Action } from "./types";
+import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
 
@@ -111,6 +112,8 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     [query]
   );
 
+  const pointerMoved = usePointerMovedSinceMount();
+
   return (
     <div
       ref={parentRef}
@@ -129,7 +132,10 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
         {rowVirtualizer.virtualItems.map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
           const handlers = {
-            onMouseEnter: () => setActiveIndex(virtualRow.index),
+            onPointerMove: () =>
+              pointerMoved &&
+              activeIndex !== virtualRow.index &&
+              setActiveIndex(virtualRow.index),
             onPointerDown: () => setActiveIndex(virtualRow.index),
             onClick: () => execute(item),
           };
