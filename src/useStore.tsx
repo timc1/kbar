@@ -30,6 +30,16 @@ export default function useStore(props: useStoreProps) {
     }, {}),
   });
 
+  React.useEffect(() => {
+    setState((state) => ({
+      ...state,
+      actions: props.actions.reduce((acc, curr) => {
+        acc[curr.id] = curr;
+        return acc;
+      }, {}),
+    }));
+  }, [props]);
+
   const currState = React.useRef(state);
   currState.current = state;
 
