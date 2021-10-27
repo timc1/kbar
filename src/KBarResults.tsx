@@ -46,6 +46,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
           let nextIndex = index > START_INDEX ? index - 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
+            if (nextIndex === 0) return index;
             nextIndex -= 1;
           }
           return nextIndex;
@@ -60,6 +61,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
             index < itemsRef.current.length - 1 ? index + 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
+            if (nextIndex === itemsRef.current.length - 1) return index;
             nextIndex += 1;
           }
           return nextIndex;
