@@ -1,25 +1,30 @@
 import * as React from "react";
+import ActionImpl from "./action/ActionImpl";
 
 export type ActionId = string;
 
 export interface Action {
-  id: string;
+  id: ActionId;
   name: string;
-  shortcut: string[];
-  keywords: string;
+  shortcut?: string[];
+  keywords?: string;
   perform?: () => void;
   section?: string;
   parent?: ActionId | null | undefined;
-  children?: ActionId[];
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
 }
 
-export type ActionTree = Record<string, Action>;
+export type IAction = Omit<Action, "parent" | "children"> & {
+  parent?: ActionImpl;
+  children?: ActionImpl[];
+};
+
+export type ActionTree = Record<string, ActionImpl>;
 
 export interface ActionGroup {
   name: string;
-  actions: Action[];
+  actions: ActionImpl[];
 }
 
 export interface KBarOptions {

@@ -96,7 +96,6 @@ const App = () => {
         {
           id: "theme",
           name: "Change theme…",
-          shortcut: [],
           keywords: "interface color dark light",
           section: "Preferences",
           children: ["darkTheme", "lightTheme"],
@@ -104,7 +103,6 @@ const App = () => {
         {
           id: "darkTheme",
           name: "Dark",
-          shortcut: [],
           keywords: "dark",
           section: "",
           perform: () =>
@@ -114,7 +112,6 @@ const App = () => {
         {
           id: "lightTheme",
           name: "Light",
-          shortcut: [],
           keywords: "light",
           section: "",
           perform: () =>
