@@ -14,7 +14,6 @@ export class ActionImpl implements Action {
   section?: string | undefined;
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
   subtitle?: string | undefined;
-
   parent?: ActionImpl;
   children: ActionImpl[] = [];
 
