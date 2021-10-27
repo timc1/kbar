@@ -152,10 +152,12 @@ export default function useStore(props: useStoreProps) {
           })),
       },
       options: optionsRef.current,
-      subscribe: (
-        collector: <C>(state: KBarState) => C,
-        cb: <C>(collected: C) => void
-      ) => publisher.subscribe(collector, cb),
+      subscribe: function subscribe<C>(
+        collector: (state: KBarState) => C,
+        cb: (collected: C) => void
+      ) {
+        return publisher.subscribe(collector, cb);
+      },
     };
   }, [getState, publisher, registerActions]);
 }
