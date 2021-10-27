@@ -53,9 +53,9 @@ export interface KBarQuery {
 export interface IKBarContext {
   getState: () => KBarState;
   query: KBarQuery;
-  subscribe: (
-    collector: <C>(state: KBarState) => C,
-    cb: <C>(collected: C) => void
+  subscribe: <C extends KBarState[keyof KBarState]>(
+    collector: (state: KBarState) => C,
+    cb: (collected: C) => void
   ) => void;
   options: KBarOptions;
 }
