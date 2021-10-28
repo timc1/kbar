@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
     "@reach/accordion": "^0.16.1",
     "@types/jest": "^27.0.2",
     "@types/react": "^17.0.19",
