@@ -6,7 +6,7 @@
     "build": "rm -rf ./lib & tsc",
     "build:example": "webpack --config ./example/webpack.prod.cjs",
     "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/**/* example/src/**/* --ext .js,.ts,.tsx",
     "typecheck": "tsc --noEmit"
   },
