@@ -38,8 +38,10 @@ export class ActionImpl implements IAction {
   }
 
   addChild(action: ActionImpl) {
-    this.children.push(action);
-    action.collectAncestors();
+    if (!this.children.find((child) => child === action)) {
+      this.children.push(action);
+      action.collectAncestors();
+    }
   }
 
   removeChild(action: ActionImpl) {
