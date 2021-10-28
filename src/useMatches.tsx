@@ -1,7 +1,7 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
-import ActionImpl from "./action/ActionImpl";
-import { Action, ActionGroup, ActionTree } from "./types";
+import type { ActionImpl } from "./action/ActionImpl";
+import type { ActionGroup, ActionTree } from "./types";
 import useKBar from "./useKBar";
 
 export const NO_GROUP = "none";
