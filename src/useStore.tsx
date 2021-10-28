@@ -1,10 +1,9 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
-import ActionInterface from "./action/ActionInterface";
+import { ActionInterface } from "./action";
 import {
   Action,
   ActionId,
-  ActionTree,
   KBarProviderProps,
   KBarState,
   KBarOptions,
@@ -48,8 +47,6 @@ export default function useStore(props: useStoreProps) {
     },
     ...props.options,
   } as KBarOptions);
-
-  console.log(state.actions);
 
   const registerActions = React.useCallback((actions: Action[]) => {
     setState((state) => {

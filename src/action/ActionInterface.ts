@@ -1,7 +1,7 @@
 import type { Action, ActionId } from "../types";
-import ActionImpl from "./ActionImpl";
+import { ActionImpl } from "./ActionImpl";
 
-export default class ActionInterface {
+export class ActionInterface {
   actions: Record<ActionId, ActionImpl> = {};
 
   constructor(actions: Action[] = []) {

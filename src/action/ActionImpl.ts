@@ -5,7 +5,7 @@ interface ActionImplOptions {
   parent?: ActionImpl;
 }
 
-export default class ActionImpl implements IAction {
+export class ActionImpl implements IAction {
   id: string;
   name: string;
   shortcut?: string[] | undefined;
@@ -31,6 +31,10 @@ export default class ActionImpl implements IAction {
     this.parent = options.parent;
 
     this.collectAncestors();
+
+    if (options.parent) {
+      options.parent.addChild(this);
+    }
   }
 
   addChild(action: ActionImpl) {

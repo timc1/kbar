@@ -1,5 +1,5 @@
 import * as React from "react";
-import ActionImpl from "./action/ActionImpl";
+import type { ActionImpl } from "./action";
 
 export type ActionId = string;
 
