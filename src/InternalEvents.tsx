@@ -177,7 +177,7 @@ function useShortcuts() {
         }
         if (action.shortcut.join("") === bufferString) {
           event.preventDefault();
-          if (action.children) {
+          if (action.children?.length) {
             query.setCurrentRootAction(action.id);
             query.toggle();
           } else {
