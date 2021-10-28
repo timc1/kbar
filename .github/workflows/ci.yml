@@ -11,5 +11,3 @@ jobs:
         run: npm run lint
       - name: tsc
         run: npm run typecheck
-      - name: test
-        run: npm run test

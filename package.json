@@ -11,10 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.15.8",
-    "@babel/preset-typescript": "^7.15.0",
     "@reach/accordion": "^0.16.1",
-    "@types/jest": "^27.0.2",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.1.8",
@@ -34,7 +31,6 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "font-loader": "^0.1.2",
-    "jest": "^27.3.1",
     "prettier": "^2.4.1",
     "prism-react-renderer": "^1.2.1",
     "react": "^16.0.0 || ^17.0.0",
