@@ -98,7 +98,6 @@ const App = () => {
           name: "Change theme…",
           keywords: "interface color dark light",
           section: "Preferences",
-          children: ["darkTheme", "lightTheme"],
         },
         {
           id: "darkTheme",
