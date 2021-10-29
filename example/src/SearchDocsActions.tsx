@@ -40,7 +40,7 @@ export default function SearchDocsActions() {
             name: "Search docs…",
             shortcut: ["?"],
             keywords: "find",
-            section: "",
+            section: "Documentation",
           }
         : null,
     [searchActions]

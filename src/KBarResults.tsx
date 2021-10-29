@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
-import { Action } from "./types";
+import { ActionImpl } from "./action";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
 
-interface RenderParams<T = Action | string> {
+interface RenderParams<T = ActionImpl | string> {
   item: T;
   active: boolean;
 }
@@ -133,7 +133,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       >
         {rowVirtualizer.virtualItems.map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
-          const handlers = {
+          const handlers = typeof item !== "string" && {
             onPointerMove: () =>
               pointerMoved &&
               activeIndex !== virtualRow.index &&

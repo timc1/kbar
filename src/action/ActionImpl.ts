@@ -43,6 +43,10 @@ export class ActionImpl implements Action {
 
   addChild(action: ActionImpl) {
     if (!this.children.find((child) => child === action)) {
+      // add parent's section as children section
+      if (!action.section && this.section) {
+        action.section = this.section;
+      }
       this.children.push(action);
       action.collectAncestors();
     }

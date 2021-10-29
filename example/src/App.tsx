@@ -3,7 +3,8 @@ import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarPortal from "../../src/KBarPortal";
-import useMatches, { NO_GROUP } from "../../src/useMatches";
+import { NO_GROUP } from "../../src/useMatches";
+import useDeepMatches from "../../src/useDeepMatches";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
 import KBarResults from "../../src/KBarResults";
@@ -14,8 +15,8 @@ import Docs from "./Docs";
 import SearchDocsActions from "./SearchDocsActions";
 import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
-import { Action } from "../../src";
 import Blog from "./Blog";
+import { ActionImpl } from "../../src/action";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -102,7 +103,7 @@ const App = () => {
         {
           id: "darkTheme",
           name: "Dark",
-          keywords: "dark",
+          keywords: "dark theme",
           section: "",
           perform: () =>
             document.documentElement.setAttribute("data-theme-dark", ""),
@@ -111,7 +112,7 @@ const App = () => {
         {
           id: "lightTheme",
           name: "Light",
-          keywords: "light",
+          keywords: "light theme",
           section: "",
           perform: () =>
             document.documentElement.removeAttribute("data-theme-dark"),
@@ -152,15 +153,16 @@ const App = () => {
 };
 
 function RenderResults() {
-  const groups = useMatches();
+  const deepMatches = useDeepMatches();
+
   const flattened = React.useMemo(
     () =>
-      groups.reduce((acc, curr) => {
+      deepMatches.reduce((acc, curr) => {
         acc.push(curr.name);
         acc.push(...curr.actions);
         return acc;
       }, []),
-    [groups]
+    [deepMatches]
   );
 
   return (
@@ -183,7 +185,7 @@ const ResultItem = React.forwardRef(
       action,
       active,
     }: {
-      action: Action;
+      action: ActionImpl;
       active: boolean;
     },
     ref: React.Ref<HTMLDivElement>
@@ -206,7 +208,29 @@ const ResultItem = React.forwardRef(
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span>{action.name}</span>
+            <div>
+              {action.ancestors.length > 0 &&
+                action.ancestors.map((ancestor) => (
+                  <React.Fragment key={ancestor.id}>
+                    <span
+                      style={{
+                        opacity: 0.5,
+                        marginRight: 8,
+                      }}
+                    >
+                      {ancestor.name}
+                    </span>
+                    <span
+                      style={{
+                        marginRight: 8,
+                      }}
+                    >
+                      &rsaquo;
+                    </span>
+                  </React.Fragment>
+                ))}
+              <span>{action.name}</span>
+            </div>
             {action.subtitle && (
               <span style={{ fontSize: 12 }}>{action.subtitle}</span>
             )}
