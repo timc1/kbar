@@ -1,11 +1,11 @@
 import { ReactElement, JSXElementConstructor, ReactNode } from "react";
-import type { Action, IAction } from "../types";
+import type { BaseAction, Action } from "../types";
 
 interface ActionImplOptions {
   parent?: ActionImpl;
 }
 
-export class ActionImpl implements IAction {
+export class ActionImpl implements Action {
   id: string;
   name: string;
   shortcut?: string[] | undefined;
@@ -14,12 +14,13 @@ export class ActionImpl implements IAction {
   section?: string | undefined;
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
   subtitle?: string | undefined;
+
   parent?: ActionImpl;
   children: ActionImpl[] = [];
 
   ancestors: ActionImpl[] = [];
 
-  constructor(action: Action, options: ActionImplOptions = {}) {
+  constructor(action: BaseAction, options: ActionImplOptions = {}) {
     this.id = action.id;
     this.name = action.name;
     this.shortcut = action.shortcut;
@@ -34,6 +35,10 @@ export class ActionImpl implements IAction {
 
     if (options.parent) {
       options.parent.addChild(this);
+    }
+
+    if (this.parent?.section && !this.section) {
+      this.section = this.parent.section;
     }
   }
 
@@ -53,7 +58,7 @@ export class ActionImpl implements IAction {
     ];
   }
 
-  collectAncestors() {
+  private collectAncestors() {
     let parent = this.parent;
     let ancestors: ActionImpl[] = [];
     while (parent) {
@@ -63,7 +68,7 @@ export class ActionImpl implements IAction {
     this.ancestors = ancestors;
   }
 
-  static fromJSON(action: Action, options: ActionImplOptions = {}) {
+  static fromJSON(action: BaseAction, options: ActionImplOptions = {}) {
     return new ActionImpl(action, options);
   }
 }

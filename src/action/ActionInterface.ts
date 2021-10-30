@@ -1,15 +1,15 @@
-import type { Action, ActionId } from "../types";
+import type { BaseAction, ActionId } from "../types";
 import { ActionImpl } from "./ActionImpl";
 
 export class ActionInterface {
   actions: Record<ActionId, ActionImpl> = {};
 
-  constructor(actions: Action[] = []) {
+  constructor(actions: BaseAction[] = []) {
     this.actions = this.add(actions);
   }
 
-  add(actions: Action[]) {
-    const actionsByKey: Record<ActionId, Action> = actions.reduce(
+  add(actions: BaseAction[]) {
+    const actionsByKey: Record<ActionId, BaseAction> = actions.reduce(
       (acc, curr) => {
         acc[curr.id] = curr;
         return acc;
@@ -20,7 +20,7 @@ export class ActionInterface {
     actions.forEach((action) => {
       if (this.actions[action.id]) return;
 
-      let orderedActions: Action[] = [action];
+      let orderedActions: BaseAction[] = [action];
 
       let parent = action.parent;
       while (parent) {
@@ -47,7 +47,7 @@ export class ActionInterface {
     return { ...this.actions };
   }
 
-  remove(actions: Action[]) {
+  remove(actions: BaseAction[]) {
     actions.forEach((action) => {
       const actionImpl = this.actions[action.id];
       if (!actionImpl) return;
@@ -59,11 +59,6 @@ export class ActionInterface {
         if (child.children) {
           children.push(...child.children);
         }
-      }
-      if (actionImpl.children) {
-        actionImpl.children.forEach((child) => {
-          delete this.actions[child.id];
-        });
       }
       // if child of a parent, remove from parent
       if (actionImpl.parent) {

@@ -2,7 +2,7 @@ import { deepEqual } from "fast-equals";
 import * as React from "react";
 import { ActionInterface } from "./action";
 import {
-  Action,
+  BaseAction,
   ActionId,
   KBarProviderProps,
   KBarState,
@@ -48,7 +48,7 @@ export default function useStore(props: useStoreProps) {
     ...props.options,
   } as KBarOptions);
 
-  const registerActions = React.useCallback((actions: Action[]) => {
+  const registerActions = React.useCallback((actions: BaseAction[]) => {
     setState((state) => {
       return {
         ...state,
@@ -70,7 +70,7 @@ export default function useStore(props: useStoreProps) {
     return {
       getState,
       query: {
-        setCurrentRootAction: (actionId: ActionId | null | undefined) => {
+        setCurrentRootAction: (actionId?: ActionId | null) => {
           setState((state) => ({
             ...state,
             currentRootActionId: actionId,

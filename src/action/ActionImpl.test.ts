@@ -1,9 +1,9 @@
 import { createAction } from "../utils";
-import type { Action } from "../types";
+import type { BaseAction } from "../types";
 import { ActionImpl } from "./ActionImpl";
 
 const perform = jest.fn();
-const baseAction: Action = createAction({
+const baseAction: BaseAction = createAction({
   name: "Test action",
   perform,
 });
@@ -29,6 +29,22 @@ describe("ActionImpl", () => {
     expect(parent.children[0]).toEqual(child);
   });
 
+  it("should be able to get children", () => {
+    const parent = ActionImpl.fromJSON(createAction({ name: "parent" }));
+    const child = ActionImpl.fromJSON(
+      createAction({ name: "child", parent: parent.id }),
+      { parent }
+    );
+    const grandchild = ActionImpl.fromJSON(
+      createAction({ name: "grandchild", parent: child.id }),
+      { parent: child }
+    );
+
+    expect(parent.children.length).toEqual(1);
+    expect(child.children.length).toEqual(1);
+    expect(grandchild.children.length).toEqual(0);
+  });
+
   it("should be able to get ancestors", () => {
     const parent = ActionImpl.fromJSON(createAction({ name: "parent" }));
     const child = ActionImpl.fromJSON(
@@ -48,21 +64,5 @@ describe("ActionImpl", () => {
     expect(grandchild.ancestors.length).toEqual(2);
     expect(grandchild.ancestors[0]).toEqual(parent);
     expect(grandchild.ancestors[1]).toEqual(child);
-  });
-
-  it("should be able to get children", () => {
-    const parent = ActionImpl.fromJSON(createAction({ name: "parent" }));
-    const child = ActionImpl.fromJSON(
-      createAction({ name: "child", parent: parent.id }),
-      { parent }
-    );
-    const grandchild = ActionImpl.fromJSON(
-      createAction({ name: "grandchild", parent: child.id }),
-      { parent: child }
-    );
-
-    expect(parent.children.length).toEqual(1);
-    expect(child.children.length).toEqual(1);
-    expect(grandchild.children.length).toEqual(0);
   });
 });

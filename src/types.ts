@@ -3,19 +3,19 @@ import type { ActionImpl } from "./action";
 
 export type ActionId = string;
 
-export interface Action {
+export interface BaseAction {
   id: ActionId;
   name: string;
   shortcut?: string[];
   keywords?: string;
-  perform?: () => void;
   section?: string;
-  parent?: ActionId | null | undefined;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
+  perform?: () => void;
+  parent?: ActionId;
 }
 
-export type IAction = Omit<Action, "parent" | "children"> & {
+export type Action = Omit<BaseAction, "parent"> & {
   parent?: ActionImpl;
   children?: ActionImpl[];
 };
@@ -35,23 +35,22 @@ export interface KBarOptions {
 }
 
 export interface KBarProviderProps {
-  actions: Action[];
+  actions: BaseAction[];
   options?: KBarOptions;
 }
 
 export interface KBarState {
   searchQuery: string;
-  // TODO: simplify type
-  currentRootActionId: ActionId | null | undefined;
   visualState: VisualState;
   actions: ActionTree;
+  currentRootActionId?: ActionId | null;
 }
 
 export interface KBarQuery {
-  setCurrentRootAction: (actionId: ActionId | null | undefined) => void;
+  setCurrentRootAction: (actionId?: ActionId | null) => void;
   setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
   setSearch: (search: string) => void;
-  registerActions: (actions: Action[]) => () => void;
+  registerActions: (actions: BaseAction[]) => () => void;
   toggle: () => void;
 }
 
