@@ -34,7 +34,7 @@ export default function useDeepMatches() {
     let all: ActionImpl[] = [...actions];
     (function collectChildren(actions: ActionImpl[]) {
       actions.forEach((action) => {
-        if (action.children) {
+        if (action.children.length > 0) {
           all.push(...action.children);
           collectChildren(action.children);
         }
@@ -75,35 +75,34 @@ export default function useDeepMatches() {
 }
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
-  const throttledFiltered = useThrottledValue(filtered);
-  const throttledSearch = useThrottledValue(search);
+  // const throttledFiltered = useThrottledValue(filtered);
+  // const throttledSearch = useThrottledValue(search);
 
   return React.useMemo(
     () =>
       search.trim() === ""
-        ? throttledFiltered
-        : matchSorter(throttledFiltered, throttledSearch, {
+        ? filtered
+        : matchSorter(filtered, search, {
             keys: ["name", "keywords", "subtitle"],
           }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [throttledFiltered, throttledSearch]
+    [filtered, search]
   );
 }
 
-function useThrottledValue(value: any, ms: number = 100) {
-  const [throttledValue, setThrottledValue] = React.useState(value);
-  const lastRan = React.useRef(Date.now());
+// function useThrottledValue(value: any, ms: number = 100) {
+//   const [throttledValue, setThrottledValue] = React.useState(value);
+//   const lastRan = React.useRef(Date.now());
 
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setThrottledValue(value);
-      lastRan.current = Date.now();
-    }, lastRan.current - (Date.now() - ms));
+//   React.useEffect(() => {
+//     const timeout = setTimeout(() => {
+//       setThrottledValue(value);
+//       lastRan.current = Date.now();
+//     }, lastRan.current - (Date.now() - ms));
 
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [ms, value]);
+//     return () => {
+//       clearTimeout(timeout);
+//     };
+//   }, [ms, value]);
 
-  return throttledValue;
-}
+//   return throttledValue;
+// }

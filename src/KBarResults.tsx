@@ -83,7 +83,12 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   // entire rowVirtualizer in the dependencies array.
   const { scrollToIndex } = rowVirtualizer;
   React.useEffect(() => {
-    scrollToIndex(activeIndex);
+    scrollToIndex(activeIndex, {
+      // ensure that if the first item in the list is a group
+      // name and we are focused on the second item, to not
+      // scroll past that group, hiding it.
+      align: activeIndex <= 1 ? "end" : "auto",
+    });
   }, [activeIndex, scrollToIndex]);
 
   React.useEffect(() => {

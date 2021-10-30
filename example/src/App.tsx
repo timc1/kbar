@@ -17,6 +17,7 @@ import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
 import Blog from "./Blog";
 import { ActionImpl } from "../../src/action";
+import { ActionId, useKBar } from "../../src";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -124,10 +125,7 @@ const App = () => {
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>
-            <KBarSearch
-              style={searchStyle}
-              placeholder="Type a command or search…"
-            />
+            <KBarSearch style={searchStyle} />
             <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
@@ -155,6 +153,10 @@ const App = () => {
 function RenderResults() {
   const deepMatches = useDeepMatches();
 
+  const { currentRootActionId } = useKBar((state) => ({
+    currentRootActionId: state.currentRootActionId,
+  }));
+
   const flattened = React.useMemo(
     () =>
       deepMatches.reduce((acc, curr) => {
@@ -172,7 +174,11 @@ function RenderResults() {
         typeof item === "string" ? (
           <div style={groupNameStyle}>{item}</div>
         ) : (
-          <ResultItem action={item} active={active} />
+          <ResultItem
+            action={item}
+            active={active}
+            currentRootActiveId={currentRootActionId}
+          />
         )
       }
     />
@@ -184,12 +190,21 @@ const ResultItem = React.forwardRef(
     {
       action,
       active,
+      currentRootActiveId,
     }: {
       action: ActionImpl;
       active: boolean;
+      currentRootActiveId: ActionId;
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
+    const ancestors = React.useMemo(() => {
+      let index = action.ancestors.findIndex(
+        (action) => action.id === currentRootActiveId
+      );
+      return action.ancestors.slice(index + 1);
+    }, [action.ancestors, currentRootActiveId]);
+
     return (
       <div
         ref={ref}
@@ -205,12 +220,19 @@ const ResultItem = React.forwardRef(
           cursor: "pointer",
         }}
       >
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+            fontSize: 14,
+          }}
+        >
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>
-              {action.ancestors.length > 0 &&
-                action.ancestors.map((ancestor) => (
+              {ancestors.length > 0 &&
+                ancestors.map((ancestor) => (
                   <React.Fragment key={ancestor.id}>
                     <span
                       style={{
@@ -245,6 +267,7 @@ const ResultItem = React.forwardRef(
                   padding: "4px 6px",
                   background: "rgba(0 0 0 / .1)",
                   borderRadius: "4px",
+                  fontSize: 14,
                 }}
               >
                 {sc}
