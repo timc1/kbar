@@ -123,7 +123,6 @@ const App = () => {
         },
       ]}
     >
-      <FakeModal />
       <SearchDocsActions />
       <KBarPortal>
         <KBarPositioner>
@@ -248,27 +247,5 @@ function HomeIcon() {
         fill="var(--foreground)"
       />
     </svg>
-  );
-}
-
-function FakeModal() {
-  const [showing, setShowing] = React.useState(true);
-
-  React.useEffect(() => {
-    function handler(e) {
-      if (e.key === "Escape") {
-        setShowing(false);
-      }
-    }
-    if (showing) {
-      window.addEventListener("keydown", handler);
-      return () => window.addEventListener("keydown", handler);
-    }
-  }, [showing]);
-
-  return showing ? (
-    <div>Fake modal showing</div>
-  ) : (
-    <button onClick={() => setShowing(true)}>Toggle fake modal</button>
   );
 }
