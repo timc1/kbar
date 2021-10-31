@@ -1,5 +1,8 @@
 import Actions from "./Actions";
+import APIReference from "./APIReference";
+import GettingStarted from "./GettingStarted";
 import Overview from "./Overview";
+import Shortcuts from "./Shortcuts";
 import State from "./State";
 
 const data = {
@@ -15,7 +18,7 @@ const data = {
       gettingStarted: {
         name: "Getting started",
         slug: "/docs/getting-started",
-        component: Overview,
+        component: GettingStarted,
       },
     },
   },
@@ -31,7 +34,7 @@ const data = {
       shortcuts: {
         name: "Shortcuts",
         slug: "/docs/concepts/shortcuts",
-        component: Actions,
+        component: Shortcuts,
       },
       accessingState: {
         name: "Interfacing with state",
@@ -46,33 +49,33 @@ const data = {
     children: {
       kbarProvider: {
         name: "KBarProvider",
-        slug: "/docs/api#KBarProvider",
-        component: Actions,
+        slug: "/docs/api/#KBarProvider",
+        component: APIReference,
       },
       kbarPortal: {
         name: "KBarPortal",
-        slug: "/docs/api#KBarPortal",
-        component: Actions,
+        slug: "/docs/api/#KBarPortal",
+        component: APIReference,
       },
       kbarAnimator: {
         name: "KBarAnimator",
-        slug: "/docs/api#KBarAnimator",
-        component: Actions,
+        slug: "/docs/api/#KBarAnimator",
+        component: APIReference,
       },
       kbarSearch: {
         name: "KBarSearch",
-        slug: "/docs/api#KBarSearch",
-        component: Actions,
+        slug: "/docs/api/#KBarSearch",
+        component: APIReference,
       },
       kbarResults: {
         name: "KBarResults",
-        slug: "/docs/api#KBarResults",
-        component: Actions,
+        slug: "/docs/api/#KBarResults",
+        component: APIReference,
       },
       useKBar: {
         name: "useKBar",
-        slug: "/docs/api#useKBar",
-        component: Actions,
+        slug: "/docs/api/#useKBar",
+        component: APIReference,
       },
     },
   },
