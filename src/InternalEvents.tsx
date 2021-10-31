@@ -17,8 +17,9 @@ export default function InternalEvents() {
  * `useToggleHandler` handles the keyboard events for toggling kbar.
  */
 function useToggleHandler() {
-  const { query, options, visualState } = useKBar((state) => ({
+  const { query, options, visualState, hidden } = useKBar((state) => ({
     visualState: state.visualState,
+    hidden: state.visualState !== VisualState.showing,
   }));
 
   React.useEffect(() => {
@@ -37,7 +38,8 @@ function useToggleHandler() {
         });
       }
       if (event.key === "Escape") {
-        event.preventDefault();
+        if (!hidden) event.stopPropagation();
+
         query.setVisualState((vs) => {
           if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
             return vs;
@@ -47,9 +49,9 @@ function useToggleHandler() {
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [query]);
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [query, hidden]);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(
