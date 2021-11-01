@@ -23,6 +23,7 @@ export default function SearchDocsActions() {
             name: curr.name,
             shortcut: [],
             keywords: "",
+            section: curr.section,
             perform: () => history.push(curr.slug),
           });
         }
