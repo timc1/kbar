@@ -151,25 +151,27 @@ const App = () => {
 };
 
 function RenderResults() {
-  const deepMatches = useDeepMatches();
+  const matches = useDeepMatches();
 
   const { currentRootActionId } = useKBar((state) => ({
     currentRootActionId: state.currentRootActionId,
   }));
 
-  const flattened = React.useMemo(
-    () =>
-      deepMatches.reduce((acc, curr) => {
-        acc.push(curr.name);
-        acc.push(...curr.actions);
-        return acc;
-      }, []),
-    [deepMatches]
-  );
+  const flattened = React.useMemo(() => {
+    let res = [];
+    for (let i = 0; i < matches.length; i++) {
+      let match = matches[i];
+      if (match !== NO_GROUP) res.push(match.name);
+      for (let j = 0; j < match.actions.length; j++) {
+        res.push(match.actions[j]);
+      }
+    }
+    return res;
+  }, [matches]);
 
   return (
     <KBarResults
-      items={flattened.filter((i) => i !== NO_GROUP)}
+      items={flattened}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
           <div style={groupNameStyle}>{item}</div>
@@ -198,12 +200,12 @@ const ResultItem = React.forwardRef(
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
-    const ancestors = React.useMemo(() => {
-      let index = action.ancestors.findIndex(
-        (action) => action.id === currentRootActiveId
-      );
-      return action.ancestors.slice(index + 1);
-    }, [action.ancestors, currentRootActiveId]);
+    // const ancestors = React.useMemo(() => {
+    //   let index = action.ancestors.findIndex(
+    //     (action) => action.id === currentRootActiveId
+    //   );
+    //   return action.ancestors.slice(index + 1);
+    // }, [action.ancestors, currentRootActiveId]);
 
     return (
       <div
@@ -231,8 +233,8 @@ const ResultItem = React.forwardRef(
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>
-              {ancestors.length > 0 &&
-                ancestors.map((ancestor) => (
+              {action.ancestors.length > 0 &&
+                action.ancestors.map((ancestor) => (
                   <React.Fragment key={ancestor.id}>
                     <span
                       style={{
