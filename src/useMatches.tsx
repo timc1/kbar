@@ -1,6 +1,7 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
-import { Action, ActionGroup, ActionTree } from "./types";
+import type { ActionImpl } from "./action/ActionImpl";
+import type { ActionGroup, ActionTree } from "./types";
 import useKBar from "./useKBar";
 
 export const NO_GROUP = "none";
@@ -19,7 +20,7 @@ export default function useMatches() {
         acc[actionId] = action;
       }
 
-      if (action.parent === rootActionId) {
+      if (action.parent?.id === rootActionId) {
         acc[actionId] = action;
       }
       return acc;
@@ -36,7 +37,7 @@ export default function useMatches() {
       }
       acc[section].push(action);
       return acc;
-    }, {} as Record<string, Action[]>);
+    }, {} as Record<string, ActionImpl[]>);
 
     let groups: ActionGroup[] = [];
 

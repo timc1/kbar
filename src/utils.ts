@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Action } from "./types";
+import { BaseAction } from "./types";
 
 export function swallowEvent(event) {
   event.stopPropagation();
@@ -46,11 +46,11 @@ export function randomId() {
   return Math.random().toString(36).substring(2, 9);
 }
 
-export function createAction(params: Omit<Action, "id">): Action {
+export function createAction(params: Omit<BaseAction, "id">) {
   return {
     id: randomId(),
     ...params,
-  };
+  } as BaseAction;
 }
 
 export function noop() {}

@@ -41,7 +41,6 @@ export default function SearchDocsActions() {
             shortcut: ["?"],
             keywords: "find",
             section: "",
-            children: searchActions.map((action) => action.id),
           }
         : null,
     [searchActions]
