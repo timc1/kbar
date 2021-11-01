@@ -33,12 +33,12 @@ export default function useDeepMatches() {
   const getDeepResults = React.useCallback((actions: ActionImpl[]) => {
     let all: ActionImpl[] = [...actions];
     (function collectChildren(actions: ActionImpl[]) {
-      actions.forEach((action) => {
-        if (action.children.length > 0) {
-          all.push(...action.children);
-          collectChildren(action.children);
+      for (let i = 0; i < actions.length; i++) {
+        if (actions[i].children.length > 0) {
+          all.push(...actions[i].children);
+          collectChildren(actions[i].children);
         }
-      });
+      }
     })(actions);
     return all;
   }, []);
@@ -71,38 +71,38 @@ export default function useDeepMatches() {
     return groups;
   }, [matches]);
 
-  return groups;
+  return useThrottledValue(groups);
 }
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
-  // const throttledFiltered = useThrottledValue(filtered);
-  // const throttledSearch = useThrottledValue(search);
+  const throttledFiltered = useThrottledValue(filtered);
+  const throttledSearch = useThrottledValue(search);
 
   return React.useMemo(
     () =>
-      search.trim() === ""
-        ? filtered
-        : matchSorter(filtered, search, {
+      throttledSearch.trim() === ""
+        ? throttledFiltered
+        : matchSorter(throttledFiltered, throttledSearch, {
             keys: ["name", "keywords", "subtitle"],
           }),
-    [filtered, search]
+    [throttledFiltered, throttledSearch]
   );
 }
 
-// function useThrottledValue(value: any, ms: number = 100) {
-//   const [throttledValue, setThrottledValue] = React.useState(value);
-//   const lastRan = React.useRef(Date.now());
+function useThrottledValue(value: any, ms: number = 100) {
+  const [throttledValue, setThrottledValue] = React.useState(value);
+  const lastRan = React.useRef(Date.now());
 
-//   React.useEffect(() => {
-//     const timeout = setTimeout(() => {
-//       setThrottledValue(value);
-//       lastRan.current = Date.now();
-//     }, lastRan.current - (Date.now() - ms));
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setThrottledValue(value);
+      lastRan.current = Date.now();
+    }, lastRan.current - (Date.now() - ms));
 
-//     return () => {
-//       clearTimeout(timeout);
-//     };
-//   }, [ms, value]);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [ms, value]);
 
-//   return throttledValue;
-// }
+  return throttledValue;
+}

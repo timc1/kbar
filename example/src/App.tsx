@@ -233,7 +233,7 @@ const ResultItem = React.forwardRef(
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>
-              {action.ancestors.length > 0 &&
+              {/* {action.ancestors.length > 0 &&
                 action.ancestors.map((ancestor) => (
                   <React.Fragment key={ancestor.id}>
                     <span
@@ -252,7 +252,7 @@ const ResultItem = React.forwardRef(
                       &rsaquo;
                     </span>
                   </React.Fragment>
-                ))}
+                ))} */}
               <span>{action.name}</span>
             </div>
             {action.subtitle && (
