@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: npm install
-        run: npm install
+        run: npx npm@7 install
       - name: eslint
         run: npm run lint
       - name: tsc

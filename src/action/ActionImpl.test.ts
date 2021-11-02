@@ -44,25 +44,4 @@ describe("ActionImpl", () => {
     expect(child.children.length).toEqual(1);
     expect(grandchild.children.length).toEqual(0);
   });
-
-  it("should be able to get ancestors", () => {
-    const parent = ActionImpl.fromJSON(createAction({ name: "parent" }));
-    const child = ActionImpl.fromJSON(
-      createAction({ name: "child", parent: parent.id }),
-      { parent }
-    );
-    const grandchild = ActionImpl.fromJSON(
-      createAction({ name: "grandchild", parent: child.id }),
-      { parent: child }
-    );
-
-    expect(parent.ancestors.length).toEqual(0);
-
-    expect(child.ancestors.length).toEqual(1);
-    expect(child.ancestors[0]).toEqual(parent);
-
-    expect(grandchild.ancestors.length).toEqual(2);
-    expect(grandchild.ancestors[0]).toEqual(parent);
-    expect(grandchild.ancestors[1]).toEqual(child);
-  });
 });
