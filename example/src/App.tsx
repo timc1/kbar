@@ -45,7 +45,6 @@ const groupNameStyle = {
   fontSize: "10px",
   textTransform: "uppercase" as const,
   opacity: 0.5,
-  background: "var(--background)",
 };
 
 const App = () => {
@@ -215,7 +214,7 @@ const ResultItem = React.forwardRef(
         ref={ref}
         style={{
           padding: "12px 16px",
-          background: active ? "var(--a1)" : "var(--background)",
+          background: active ? "var(--a1)" : "transparent",
           borderLeft: `2px solid ${
             active ? "var(--foreground)" : "transparent"
           }`,
