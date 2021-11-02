@@ -17,7 +17,7 @@ import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
 import Blog from "./Blog";
 import { ActionImpl } from "../../src/action";
-import { ActionId, useKBar } from "../../src";
+import { ActionId } from "../../src";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -151,11 +151,8 @@ const App = () => {
 };
 
 function RenderResults() {
-  const matches = useDeepMatches();
-
-  const { currentRootActionId } = useKBar((state) => ({
-    currentRootActionId: state.currentRootActionId,
-  }));
+  const { throttledGroups: matches, throttledRootActionId: rootActionId } =
+    useDeepMatches();
 
   const flattened = React.useMemo(() => {
     let res = [];
@@ -179,7 +176,7 @@ function RenderResults() {
           <ResultItem
             action={item}
             active={active}
-            currentRootActiveId={currentRootActionId}
+            currentRootActiveId={rootActionId}
           />
         )
       }
@@ -200,12 +197,18 @@ const ResultItem = React.forwardRef(
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
-    // const ancestors = React.useMemo(() => {
-    //   let index = action.ancestors.findIndex(
-    //     (action) => action.id === currentRootActiveId
-    //   );
-    //   return action.ancestors.slice(index + 1);
-    // }, [action.ancestors, currentRootActiveId]);
+    const ancestors = React.useMemo(() => {
+      let ancestors = [];
+      (function collect(action: ActionImpl) {
+        if (action.parent && action.parent.id !== currentRootActiveId) {
+          ancestors.push(action.parent);
+          if (action.parent.parent) {
+            collect(action.parent.parent);
+          }
+        }
+      })(action);
+      return ancestors;
+    }, [action, currentRootActiveId]);
 
     return (
       <div
@@ -233,8 +236,8 @@ const ResultItem = React.forwardRef(
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>
-              {/* {action.ancestors.length > 0 &&
-                action.ancestors.map((ancestor) => (
+              {ancestors.length > 0 &&
+                ancestors.map((ancestor) => (
                   <React.Fragment key={ancestor.id}>
                     <span
                       style={{
@@ -252,7 +255,7 @@ const ResultItem = React.forwardRef(
                       &rsaquo;
                     </span>
                   </React.Fragment>
-                ))} */}
+                ))}
               <span>{action.name}</span>
             </div>
             {action.subtitle && (

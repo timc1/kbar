@@ -2,6 +2,7 @@ import { matchSorter } from "match-sorter";
 import * as React from "react";
 import { ActionId, useKBar } from ".";
 import { ActionImpl } from "./action";
+import { useThrottledValue } from "./utils";
 
 export const NO_GROUP = "none";
 
@@ -71,7 +72,16 @@ export default function useDeepMatches() {
     return groups;
   }, [matches]);
 
-  return useThrottledValue(groups);
+  const throttledGroups = useThrottledValue(groups);
+  const throttledRootActionId = useThrottledValue(rootActionId);
+
+  return React.useMemo(
+    () => ({
+      throttledGroups,
+      throttledRootActionId,
+    }),
+    [throttledGroups, throttledRootActionId]
+  );
 }
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
@@ -87,22 +97,4 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
           }),
     [throttledFiltered, throttledSearch]
   );
-}
-
-function useThrottledValue(value: any, ms: number = 100) {
-  const [throttledValue, setThrottledValue] = React.useState(value);
-  const lastRan = React.useRef(Date.now());
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setThrottledValue(value);
-      lastRan.current = Date.now();
-    }, lastRan.current - (Date.now() - ms));
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [ms, value]);
-
-  return throttledValue;
 }
