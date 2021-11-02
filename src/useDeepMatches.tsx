@@ -72,16 +72,20 @@ export default function useDeepMatches() {
     return groups;
   }, [matches]);
 
-  const throttledGroups = useThrottledValue(groups);
-  const throttledRootActionId = useThrottledValue(rootActionId);
+  // ensure that users have an accurate `currentRootActionId`
+  // that syncs with the throttled return value.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoRootActionId = React.useMemo(() => rootActionId, [groups]);
 
-  return React.useMemo(
+  const value = React.useMemo(
     () => ({
-      throttledGroups,
-      throttledRootActionId,
+      throttledGroups: groups,
+      throttledRootActionId: memoRootActionId,
     }),
-    [throttledGroups, throttledRootActionId]
+    [groups, memoRootActionId]
   );
+
+  return useThrottledValue(value);
 }
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
