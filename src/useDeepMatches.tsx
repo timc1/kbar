@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
-import { ActionId, useKBar } from ".";
+import { useKBar } from ".";
 import { ActionImpl } from "./action";
 import { useThrottledValue } from "./utils";
 
@@ -32,16 +32,18 @@ export default function useDeepMatches() {
   }, [actions, rootActionId]);
 
   const getDeepResults = React.useCallback((actions: ActionImpl[]) => {
-    let all: ActionImpl[] = [...actions];
-    (function collectChildren(actions: ActionImpl[]) {
+    return (function collectChildren(
+      actions: ActionImpl[],
+      all = [...actions]
+    ) {
       for (let i = 0; i < actions.length; i++) {
         if (actions[i].children.length > 0) {
           all.push(...actions[i].children);
-          collectChildren(actions[i].children);
+          collectChildren(actions[i].children, all);
         }
       }
+      return all;
     })(actions);
-    return all;
   }, []);
 
   const emptySearch = !search;
@@ -54,21 +56,20 @@ export default function useDeepMatches() {
   const matches = useInternalMatches(filtered, search);
 
   const groups = React.useMemo(() => {
-    const groupMap = matches.reduce((acc, action) => {
+    let groupMap = {};
+    for (let i = 0; i < matches.length; i++) {
+      const action = matches[i];
       const section = action.section || NO_GROUP;
-      if (!acc[section]) {
-        acc[section] = [];
+      if (!groupMap[section]) {
+        groupMap[section] = [];
       }
-      acc[section].push(action);
-      return acc;
-    }, {} as Record<ActionId, ActionImpl[]>);
-
+      groupMap[section].push(action);
+    }
     let groups = [] as any;
     Object.keys(groupMap).forEach((name) => {
       const actions = groupMap[name];
       groups.push({ name, actions });
     });
-
     return groups;
   }, [matches]);
 
@@ -77,20 +78,26 @@ export default function useDeepMatches() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoRootActionId = React.useMemo(() => rootActionId, [groups]);
 
-  const value = React.useMemo(
+  return React.useMemo(
     () => ({
       throttledGroups: groups,
       throttledRootActionId: memoRootActionId,
     }),
     [groups, memoRootActionId]
   );
-
-  return useThrottledValue(value);
 }
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
-  const throttledFiltered = useThrottledValue(filtered);
-  const throttledSearch = useThrottledValue(search);
+  const value = React.useMemo(
+    () => ({
+      filtered,
+      search,
+    }),
+    [filtered, search]
+  );
+
+  const { filtered: throttledFiltered, search: throttledSearch } =
+    useThrottledValue(value);
 
   return React.useMemo(
     () =>
@@ -100,5 +107,5 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
             keys: ["name", "keywords", "subtitle"],
           }),
     [throttledFiltered, throttledSearch]
-  );
+  ) as ActionImpl[];
 }

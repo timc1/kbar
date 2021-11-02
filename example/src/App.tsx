@@ -197,16 +197,15 @@ const ResultItem = React.forwardRef(
     ref: React.Ref<HTMLDivElement>
   ) => {
     const ancestors = React.useMemo(() => {
-      let ancestors = [];
-      (function collect(action: ActionImpl) {
+      return (function collect(action: ActionImpl, ancestors = []) {
         if (action.parent && action.parent.id !== currentRootActiveId) {
           ancestors.push(action.parent);
           if (action.parent.parent) {
-            collect(action.parent.parent);
+            collect(action.parent.parent, ancestors);
           }
         }
+        return ancestors;
       })(action);
-      return ancestors;
     }, [action, currentRootActiveId]);
 
     return (
