@@ -30,7 +30,7 @@ export default function useStore(props: useStoreProps) {
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: actionsInterface.actions,
+    actions: { ...actionsInterface.actions },
   });
 
   const currState = React.useRef(state);
