@@ -8,14 +8,21 @@ export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;
 export default function KBarSearch(
   props: React.InputHTMLAttributes<HTMLInputElement>
 ) {
-  const { query, search, actions, currentRootActionId, activeIndex, showing } =
-    useKBar((state) => ({
-      search: state.searchQuery,
-      currentRootActionId: state.currentRootActionId,
-      actions: state.actions,
-      activeIndex: state.activeIndex,
-      showing: state.visualState === VisualState.showing,
-    }));
+  const {
+    query,
+    search,
+    actions,
+    currentRootActionId,
+    activeIndex,
+    showing,
+    options,
+  } = useKBar((state) => ({
+    search: state.searchQuery,
+    currentRootActionId: state.currentRootActionId,
+    actions: state.actions,
+    activeIndex: state.activeIndex,
+    showing: state.visualState === VisualState.showing,
+  }));
 
   const ownRef = React.useRef<HTMLInputElement>(null);
 
@@ -48,6 +55,7 @@ export default function KBarSearch(
       onChange={(event) => {
         props.onChange?.(event);
         query.setSearch(event.target.value);
+        options?.callbacks?.onQueryChange?.(event.target.value);
       }}
       onKeyDown={(event) => {
         if (currentRootActionId && !search && event.key === "Backspace") {

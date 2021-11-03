@@ -30,12 +30,7 @@ function useToggleHandler() {
         event.defaultPrevented === false
       ) {
         event.preventDefault();
-        query.setVisualState((vs) => {
-          if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
-            return VisualState.animatingIn;
-          }
-          return VisualState.animatingOut;
-        });
+        query.toggle();
       }
       if (event.key === "Escape") {
         if (showing) event.stopPropagation();
