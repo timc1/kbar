@@ -2,6 +2,7 @@ import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
 import { ActionImpl } from "./action";
+import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
@@ -31,18 +32,19 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     parentRef,
   });
 
-  const [activeIndex, setActiveIndex] = React.useState(START_INDEX);
-
-  const { query, search, currentRootActionId } = useKBar((state) => ({
-    search: state.searchQuery,
-    currentRootActionId: state.currentRootActionId,
-  }));
+  const { query, search, currentRootActionId, activeIndex } = useKBar(
+    (state) => ({
+      search: state.searchQuery,
+      currentRootActionId: state.currentRootActionId,
+      activeIndex: state.activeIndex,
+    })
+  );
 
   React.useEffect(() => {
     const handler = (event) => {
       if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
-        setActiveIndex((index) => {
+        query.setActiveIndex((index) => {
           let nextIndex = index > START_INDEX ? index - 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
@@ -56,7 +58,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
         (event.ctrlKey && event.key === "n")
       ) {
         event.preventDefault();
-        setActiveIndex((index) => {
+        query.setActiveIndex((index) => {
           let nextIndex =
             index < itemsRef.current.length - 1 ? index + 1 : index;
           // avoid setting active index on a group
@@ -77,7 +79,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [query]);
 
   // destructuring here to prevent linter warning to pass
   // entire rowVirtualizer in the dependencies array.
@@ -97,13 +99,13 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     // users register actions and bust the `useRegisterActions`
     // cache, we won't want to reset their active index as they
     // are navigating the list.
-    setActiveIndex(
+    query.setActiveIndex(
       // avoid setting active index on a group
       typeof props.items[START_INDEX] === "string"
         ? START_INDEX + 1
         : START_INDEX
     );
-  }, [search, currentRootActionId, props.items]);
+  }, [search, currentRootActionId, props.items, query]);
 
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
@@ -130,6 +132,8 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       }}
     >
       <div
+        role="listbox"
+        id={KBAR_LISTBOX}
         style={{
           height: `${rowVirtualizer.totalSize}px`,
           width: "100%",
@@ -142,8 +146,8 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
             onPointerMove: () =>
               pointerMoved &&
               activeIndex !== virtualRow.index &&
-              setActiveIndex(virtualRow.index),
-            onPointerDown: () => setActiveIndex(virtualRow.index),
+              query.setActiveIndex(virtualRow.index),
+            onPointerDown: () => query.setActiveIndex(virtualRow.index),
             onClick: () => execute(item),
           };
           const active = virtualRow.index === activeIndex;
@@ -151,6 +155,9 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
           return (
             <div
               ref={active ? activeRef : null}
+              id={getListboxItemId(virtualRow.index)}
+              role="option"
+              aria-selected={active}
               key={virtualRow.index}
               style={{
                 position: "absolute",
