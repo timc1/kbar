@@ -22,11 +22,9 @@ export default function useDeepMatches() {
       if (!action.parent && !rootActionId) {
         acc.push(action);
       }
-
       if (action.parent && action.parent.id === rootActionId) {
         acc.push(action);
       }
-
       return acc;
     }, [] as ActionImpl[]);
   }, [actions, rootActionId]);
@@ -55,7 +53,7 @@ export default function useDeepMatches() {
 
   const matches = useInternalMatches(filtered, search);
 
-  const groups = React.useMemo(() => {
+  const results = React.useMemo(() => {
     let groupMap = {};
     for (let i = 0; i < matches.length; i++) {
       const action = matches[i];
@@ -65,25 +63,25 @@ export default function useDeepMatches() {
       }
       groupMap[section].push(action);
     }
-    let groups = [] as any;
+    let results: (string | ActionImpl)[] = [];
     Object.keys(groupMap).forEach((name) => {
-      const actions = groupMap[name];
-      groups.push({ name, actions });
+      if (name !== NO_GROUP) results.push(name);
+      results.push(...groupMap[name]);
     });
-    return groups;
+    return results;
   }, [matches]);
 
   // ensure that users have an accurate `currentRootActionId`
   // that syncs with the throttled return value.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const memoRootActionId = React.useMemo(() => rootActionId, [groups]);
+  const memoRootActionId = React.useMemo(() => rootActionId, [results]);
 
   return React.useMemo(
     () => ({
-      throttledGroups: groups,
-      throttledRootActionId: memoRootActionId,
+      results,
+      rootActionId: memoRootActionId,
     }),
-    [groups, memoRootActionId]
+    [memoRootActionId, results]
   );
 }
 

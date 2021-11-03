@@ -3,7 +3,6 @@ import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarPortal from "../../src/KBarPortal";
-import { NO_GROUP } from "../../src/useMatches";
 import useDeepMatches from "../../src/useDeepMatches";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
@@ -150,24 +149,11 @@ const App = () => {
 };
 
 function RenderResults() {
-  const { throttledGroups: matches, throttledRootActionId: rootActionId } =
-    useDeepMatches();
-
-  const flattened = React.useMemo(() => {
-    let res = [];
-    for (let i = 0; i < matches.length; i++) {
-      let match = matches[i];
-      if (match !== NO_GROUP) res.push(match.name);
-      for (let j = 0; j < match.actions.length; j++) {
-        res.push(match.actions[j]);
-      }
-    }
-    return res;
-  }, [matches]);
+  const { results, rootActionId } = useDeepMatches();
 
   return (
     <KBarResults
-      items={flattened}
+      items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
           <div style={groupNameStyle}>{item}</div>
@@ -175,7 +161,7 @@ function RenderResults() {
           <ResultItem
             action={item}
             active={active}
-            currentRootActiveId={rootActionId}
+            currentRootActionId={rootActionId}
           />
         )
       }
@@ -188,17 +174,17 @@ const ResultItem = React.forwardRef(
     {
       action,
       active,
-      currentRootActiveId,
+      currentRootActionId,
     }: {
       action: ActionImpl;
       active: boolean;
-      currentRootActiveId: ActionId;
+      currentRootActionId: ActionId;
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
     const ancestors = React.useMemo(() => {
       return (function collect(action: ActionImpl, ancestors = []) {
-        if (action.parent && action.parent.id !== currentRootActiveId) {
+        if (action.parent && action.parent.id !== currentRootActionId) {
           ancestors.push(action.parent);
           if (action.parent.parent) {
             collect(action.parent.parent, ancestors);
@@ -206,7 +192,7 @@ const ResultItem = React.forwardRef(
         }
         return ancestors;
       })(action);
-    }, [action, currentRootActiveId]);
+    }, [action, currentRootActionId]);
 
     return (
       <div
