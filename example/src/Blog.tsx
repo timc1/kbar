@@ -23,7 +23,7 @@ const greatgrandchild = createAction({
 
 export default function Blog() {
   const [actions, setActions] = React.useState([
-    ...Array.from(Array(4)).map((_, i) =>
+    ...Array.from(Array(100000)).map((_, i) =>
       createAction({
         name: i.toString(),
         shortcut: [],

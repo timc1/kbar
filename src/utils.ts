@@ -70,3 +70,21 @@ export function getScrollbarWidth() {
   outer.parentNode!.removeChild(outer);
   return scrollbarWidth;
 }
+
+export function useThrottledValue(value: any, ms: number = 100) {
+  const [throttledValue, setThrottledValue] = React.useState(value);
+  const lastRan = React.useRef(Date.now());
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setThrottledValue(value);
+      lastRan.current = Date.now();
+    }, lastRan.current - (Date.now() - ms));
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [ms, value]);
+
+  return throttledValue;
+}

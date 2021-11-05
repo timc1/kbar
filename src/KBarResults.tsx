@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
-import { Action } from "./types";
+import { ActionImpl } from "./action";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
 
-interface RenderParams<T = Action | string> {
+interface RenderParams<T = ActionImpl | string> {
   item: T;
   active: boolean;
 }
@@ -83,7 +83,12 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   // entire rowVirtualizer in the dependencies array.
   const { scrollToIndex } = rowVirtualizer;
   React.useEffect(() => {
-    scrollToIndex(activeIndex);
+    scrollToIndex(activeIndex, {
+      // ensure that if the first item in the list is a group
+      // name and we are focused on the second item, to not
+      // scroll past that group, hiding it.
+      align: activeIndex <= 1 ? "end" : "auto",
+    });
   }, [activeIndex, scrollToIndex]);
 
   React.useEffect(() => {
@@ -133,7 +138,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       >
         {rowVirtualizer.virtualItems.map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
-          const handlers = {
+          const handlers = typeof item !== "string" && {
             onPointerMove: () =>
               pointerMoved &&
               activeIndex !== virtualRow.index &&

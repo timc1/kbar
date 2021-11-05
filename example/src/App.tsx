@@ -3,7 +3,7 @@ import * as React from "react";
 import { KBarAnimator } from "../../src/KBarAnimator";
 import { KBarProvider } from "../../src/KBarContextProvider";
 import KBarPortal from "../../src/KBarPortal";
-import useMatches, { NO_GROUP } from "../../src/useMatches";
+import useDeepMatches from "../../src/useDeepMatches";
 import KBarPositioner from "../../src/KBarPositioner";
 import KBarSearch from "../../src/KBarSearch";
 import KBarResults from "../../src/KBarResults";
@@ -14,8 +14,9 @@ import Docs from "./Docs";
 import SearchDocsActions from "./SearchDocsActions";
 import { createAction } from "../../src/utils";
 import { useAnalytics } from "./utils";
-import { Action } from "../../src";
 import Blog from "./Blog";
+import { ActionImpl } from "../../src/action";
+import { ActionId } from "../../src";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -43,7 +44,6 @@ const groupNameStyle = {
   fontSize: "10px",
   textTransform: "uppercase" as const,
   opacity: 0.5,
-  background: "var(--background)",
 };
 
 const App = () => {
@@ -102,7 +102,7 @@ const App = () => {
         {
           id: "darkTheme",
           name: "Dark",
-          keywords: "dark",
+          keywords: "dark theme",
           section: "",
           perform: () =>
             document.documentElement.setAttribute("data-theme-dark", ""),
@@ -111,7 +111,7 @@ const App = () => {
         {
           id: "lightTheme",
           name: "Light",
-          keywords: "light",
+          keywords: "light theme",
           section: "",
           perform: () =>
             document.documentElement.removeAttribute("data-theme-dark"),
@@ -123,10 +123,7 @@ const App = () => {
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>
-            <KBarSearch
-              style={searchStyle}
-              placeholder="Type a command or search…"
-            />
+            <KBarSearch style={searchStyle} />
             <RenderResults />
           </KBarAnimator>
         </KBarPositioner>
@@ -152,25 +149,20 @@ const App = () => {
 };
 
 function RenderResults() {
-  const groups = useMatches();
-  const flattened = React.useMemo(
-    () =>
-      groups.reduce((acc, curr) => {
-        acc.push(curr.name);
-        acc.push(...curr.actions);
-        return acc;
-      }, []),
-    [groups]
-  );
+  const { results, rootActionId } = useDeepMatches();
 
   return (
     <KBarResults
-      items={flattened.filter((i) => i !== NO_GROUP)}
+      items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
           <div style={groupNameStyle}>{item}</div>
         ) : (
-          <ResultItem action={item} active={active} />
+          <ResultItem
+            action={item}
+            active={active}
+            currentRootActionId={rootActionId}
+          />
         )
       }
     />
@@ -182,18 +174,32 @@ const ResultItem = React.forwardRef(
     {
       action,
       active,
+      currentRootActionId,
     }: {
-      action: Action;
+      action: ActionImpl;
       active: boolean;
+      currentRootActionId: ActionId;
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
+    const ancestors = React.useMemo(() => {
+      return (function collect(action: ActionImpl, ancestors = []) {
+        if (action.parent && action.parent.id !== currentRootActionId) {
+          ancestors.push(action.parent);
+          if (action.parent.parent) {
+            collect(action.parent.parent, ancestors);
+          }
+        }
+        return ancestors;
+      })(action);
+    }, [action, currentRootActionId]);
+
     return (
       <div
         ref={ref}
         style={{
           padding: "12px 16px",
-          background: active ? "var(--a1)" : "var(--background)",
+          background: active ? "var(--a1)" : "transparent",
           borderLeft: `2px solid ${
             active ? "var(--foreground)" : "transparent"
           }`,
@@ -203,10 +209,39 @@ const ResultItem = React.forwardRef(
           cursor: "pointer",
         }}
       >
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+            fontSize: 14,
+          }}
+        >
           {action.icon && action.icon}
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span>{action.name}</span>
+            <div>
+              {ancestors.length > 0 &&
+                ancestors.map((ancestor) => (
+                  <React.Fragment key={ancestor.id}>
+                    <span
+                      style={{
+                        opacity: 0.5,
+                        marginRight: 8,
+                      }}
+                    >
+                      {ancestor.name}
+                    </span>
+                    <span
+                      style={{
+                        marginRight: 8,
+                      }}
+                    >
+                      &rsaquo;
+                    </span>
+                  </React.Fragment>
+                ))}
+              <span>{action.name}</span>
+            </div>
             {action.subtitle && (
               <span style={{ fontSize: 12 }}>{action.subtitle}</span>
             )}
@@ -221,6 +256,7 @@ const ResultItem = React.forwardRef(
                   padding: "4px 6px",
                   background: "rgba(0 0 0 / .1)",
                   borderRadius: "4px",
+                  fontSize: 14,
                 }}
               >
                 {sc}

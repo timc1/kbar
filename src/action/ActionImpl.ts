@@ -14,11 +14,8 @@ export class ActionImpl implements Action {
   section?: string | undefined;
   icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
   subtitle?: string | undefined;
-
   parent?: ActionImpl;
   children: ActionImpl[] = [];
-
-  ancestors: ActionImpl[] = [];
 
   constructor(action: BaseAction, options: ActionImplOptions = {}) {
     this.id = action.id;
@@ -31,8 +28,6 @@ export class ActionImpl implements Action {
     this.subtitle = action.subtitle;
     this.parent = options.parent;
 
-    this.collectAncestors();
-
     if (options.parent) {
       options.parent.addChild(this);
     }
@@ -44,8 +39,11 @@ export class ActionImpl implements Action {
 
   addChild(action: ActionImpl) {
     if (!this.children.find((child) => child === action)) {
+      // add parent's section as children section
+      if (!action.section && this.section) {
+        action.section = this.section;
+      }
       this.children.push(action);
-      action.collectAncestors();
     }
   }
 
@@ -56,16 +54,6 @@ export class ActionImpl implements Action {
       ...this.children.slice(0, index),
       ...this.children.slice(index + 1),
     ];
-  }
-
-  private collectAncestors() {
-    let parent = this.parent;
-    let ancestors: ActionImpl[] = [];
-    while (parent) {
-      ancestors = [parent, ...ancestors];
-      parent = parent.parent;
-    }
-    this.ancestors = ancestors;
   }
 
   static fromJSON(action: BaseAction, options: ActionImplOptions = {}) {

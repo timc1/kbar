@@ -19,14 +19,18 @@ export default function useStore(props: useStoreProps) {
     );
   }
 
-  const actionsInterface = React.useRef(new ActionInterface(props.actions));
+  const actionsInterface = React.useMemo(
+    () => new ActionInterface(props.actions),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   // TODO: at this point useReducer might be a better approach to managing state.
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: { ...actionsInterface.current.actions },
+    actions: { ...actionsInterface.actions },
   });
 
   const currState = React.useRef(state);
@@ -48,23 +52,26 @@ export default function useStore(props: useStoreProps) {
     ...props.options,
   } as KBarOptions);
 
-  const registerActions = React.useCallback((actions: BaseAction[]) => {
-    setState((state) => {
-      return {
-        ...state,
-        actions: actionsInterface.current.add(actions),
-      };
-    });
-
-    return function unregister() {
+  const registerActions = React.useCallback(
+    (actions: BaseAction[]) => {
       setState((state) => {
         return {
           ...state,
-          actions: actionsInterface.current.remove(actions),
+          actions: actionsInterface.add(actions),
         };
       });
-    };
-  }, []);
+
+      return function unregister() {
+        setState((state) => {
+          return {
+            ...state,
+            actions: actionsInterface.remove(actions),
+          };
+        });
+      };
+    },
+    [actionsInterface]
+  );
 
   return React.useMemo(() => {
     return {
