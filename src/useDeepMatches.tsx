@@ -54,7 +54,7 @@ export default function useDeepMatches() {
   const matches = useInternalMatches(filtered, search);
 
   const results = React.useMemo(() => {
-    let groupMap = {};
+    let groupMap: Record<string, ActionImpl[]> = {};
     for (let i = 0; i < matches.length; i++) {
       const action = matches[i];
       const section = action.section || NO_GROUP;
@@ -63,11 +63,16 @@ export default function useDeepMatches() {
       }
       groupMap[section].push(action);
     }
+
     let results: (string | ActionImpl)[] = [];
     Object.keys(groupMap).forEach((name) => {
       if (name !== NO_GROUP) results.push(name);
-      results.push(...groupMap[name]);
+      const actions = groupMap[name];
+      for (let i = 0; i < actions.length; i++) {
+        results.push(actions[i]);
+      }
     });
+
     return results;
   }, [matches]);
 
