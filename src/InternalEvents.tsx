@@ -105,7 +105,7 @@ function useToggleHandler() {
  * underlying page content from scrolling when kbar is open.
  */
 function useDocumentLock() {
-  const { visualState } = useKBar((state) => ({
+  const { visualState, options } = useKBar((state) => ({
     visualState: state.visualState,
   }));
 
@@ -114,21 +114,25 @@ function useDocumentLock() {
       document.body.style.pointerEvents = "none";
       document.body.style.overflow = "hidden";
 
-      let scrollbarWidth = getScrollbarWidth();
-      // take into account the margins explicitly added by the consumer
-      const mr = getComputedStyle(document.body)["margin-right"];
-      if (mr) {
-        // remove non-numeric values; px, rem, em, etc.
-        scrollbarWidth += Number(mr.replace(/\D/g, ""));
+      if (!options.disableScrollbarManagement) {
+        let scrollbarWidth = getScrollbarWidth();
+        // take into account the margins explicitly added by the consumer
+        const mr = getComputedStyle(document.body)["margin-right"];
+        if (mr) {
+          // remove non-numeric values; px, rem, em, etc.
+          scrollbarWidth += Number(mr.replace(/\D/g, ""));
+        }
+        document.body.style.marginRight = scrollbarWidth + "px";
       }
-
-      document.body.style.marginRight = scrollbarWidth + "px";
     } else if (visualState === VisualState.hidden) {
       document.body.style.removeProperty("pointer-events");
       document.body.style.removeProperty("overflow");
-      document.body.style.removeProperty("margin-right");
+
+      if (!options.disableScrollbarManagement) {
+        document.body.style.removeProperty("margin-right");
+      }
     }
-  }, [visualState]);
+  }, [options.disableScrollbarManagement, visualState]);
 }
 
 /**
