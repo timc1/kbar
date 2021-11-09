@@ -34,15 +34,15 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
   style,
   className,
 }) => {
-  const { visualState, currentRootActionId } = useKBar((state) => ({
-    visualState: state.visualState,
-    currentRootActionId: state.currentRootActionId,
-  }));
+  const { visualState, currentRootActionId, query, options } = useKBar(
+    (state) => ({
+      visualState: state.visualState,
+      currentRootActionId: state.currentRootActionId,
+    })
+  );
 
   const outerRef = React.useRef<HTMLDivElement>(null);
   const innerRef = React.useRef<HTMLDivElement>(null);
-
-  const { options, query } = useKBar();
 
   const enterMs = options?.animations?.enterMs || 0;
   const exitMs = options?.animations?.exitMs || 0;
@@ -133,6 +133,7 @@ export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
 
   useOuterClick(outerRef, () => {
     query.setVisualState(VisualState.animatingOut);
+    options.callbacks?.onClose?.();
   });
 
   return (

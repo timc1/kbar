@@ -31,9 +31,18 @@ function useToggleHandler() {
       ) {
         event.preventDefault();
         query.toggle();
+
+        if (showing) {
+          options.callbacks?.onClose?.();
+        } else {
+          options.callbacks?.onOpen?.();
+        }
       }
       if (event.key === "Escape") {
-        if (showing) event.stopPropagation();
+        if (showing) {
+          event.stopPropagation();
+          options.callbacks?.onClose?.();
+        }
 
         query.setVisualState((vs) => {
           if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
@@ -46,7 +55,7 @@ function useToggleHandler() {
 
     window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [query, showing]);
+  }, [options.callbacks, query, showing]);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(
