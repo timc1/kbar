@@ -1,6 +1,5 @@
 import * as React from "react";
-import useRegisterActions from "../../src/useRegisterActions";
-import { createAction } from "../../src/utils";
+import { createAction, useRegisterActions } from "../../src";
 
 const parent = createAction({
   name: "parent",
