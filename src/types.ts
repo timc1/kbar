@@ -32,6 +32,14 @@ export interface KBarOptions {
     enterMs?: number;
     exitMs?: number;
   };
+  /**
+   * `disableScrollBarManagement` ensures that kbar will not
+   * manipulate the document's `margin-right` property when open.
+   * By default, kbar will add additional margin to the document
+   * body when opened in order to prevent any layout shift with
+   * the appearance/disappearance of the scrollbar.
+   */
+  disableScrollbarManagement?: boolean;
 }
 
 export interface KBarProviderProps {
