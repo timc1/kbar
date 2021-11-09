@@ -248,7 +248,10 @@ const ResultItem = React.forwardRef(
           </div>
         </div>
         {action.shortcut?.length ? (
-          <div style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}>
+          <div
+            aria-hidden
+            style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}
+          >
             {action.shortcut.map((sc) => (
               <kbd
                 key={sc}

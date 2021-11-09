@@ -52,14 +52,18 @@ export interface KBarState {
   visualState: VisualState;
   actions: ActionTree;
   currentRootActionId?: ActionId | null;
+  activeIndex: number;
 }
 
 export interface KBarQuery {
   setCurrentRootAction: (actionId?: ActionId | null) => void;
-  setVisualState: (cb: ((vs: VisualState) => any) | VisualState) => void;
+  setVisualState: (
+    cb: ((vs: VisualState) => VisualState) | VisualState
+  ) => void;
   setSearch: (search: string) => void;
   registerActions: (actions: BaseAction[]) => () => void;
   toggle: () => void;
+  setActiveIndex: (cb: number | ((currIndex: number) => number)) => void;
 }
 
 export interface IKBarContext {

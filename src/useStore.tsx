@@ -1,9 +1,9 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
+import { IKBarContext } from ".";
 import { ActionInterface } from "./action";
 import {
   BaseAction,
-  ActionId,
   KBarProviderProps,
   KBarState,
   KBarOptions,
@@ -31,6 +31,7 @@ export default function useStore(props: useStoreProps) {
     currentRootActionId: null,
     visualState: VisualState.hidden,
     actions: { ...actionsInterface.actions },
+    activeIndex: 0,
   });
 
   const currState = React.useRef(state);
@@ -77,21 +78,19 @@ export default function useStore(props: useStoreProps) {
     return {
       getState,
       query: {
-        setCurrentRootAction: (actionId?: ActionId | null) => {
+        setCurrentRootAction: (actionId) => {
           setState((state) => ({
             ...state,
             currentRootActionId: actionId,
           }));
         },
-        setVisualState: (
-          cb: ((vs: VisualState) => VisualState) | VisualState
-        ) => {
+        setVisualState: (cb) => {
           setState((state) => ({
             ...state,
             visualState: typeof cb === "function" ? cb(state.visualState) : cb,
           }));
         },
-        setSearch: (searchQuery: string) =>
+        setSearch: (searchQuery) =>
           setState((state) => ({
             ...state,
             searchQuery,
@@ -107,13 +106,15 @@ export default function useStore(props: useStoreProps) {
               ? VisualState.animatingIn
               : VisualState.animatingOut,
           })),
+        setActiveIndex: (cb) =>
+          setState((state) => ({
+            ...state,
+            activeIndex: typeof cb === "number" ? cb : cb(state.activeIndex),
+          })),
       },
       options: optionsRef.current,
-      subscribe: (
-        collector: <C>(state: KBarState) => C,
-        cb: <C>(collected: C) => void
-      ) => publisher.subscribe(collector, cb),
-    };
+      subscribe: (collector, cb) => publisher.subscribe(collector, cb),
+    } as IKBarContext;
   }, [getState, publisher, registerActions]);
 }
 

@@ -1,6 +1,6 @@
 import KBarPortal from "./KBarPortal";
 import KBarPositioner from "./KBarPositioner";
-import KBarSearch from "./KBarSearch";
+import KBarSearch, { KBAR_LISTBOX, getListboxItemId } from "./KBarSearch";
 import KBarResults from "./KBarResults";
 import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
@@ -18,6 +18,8 @@ export {
   createAction,
   useMatches,
   useDeepMatches,
+  KBAR_LISTBOX,
+  getListboxItemId,
 };
 
 export * from "./KBarContextProvider";
