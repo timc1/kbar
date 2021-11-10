@@ -22,7 +22,7 @@ export default function SearchDocsActions() {
             parent: searchId,
             name: curr.name,
             shortcut: [],
-            keywords: "",
+            keywords: "api reference docs",
             section: curr.section,
             perform: () => history.push(curr.slug),
           });
