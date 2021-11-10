@@ -54,6 +54,14 @@ const App = () => {
   const history = useHistory();
   return (
     <KBarProvider
+      options={{
+        callbacks: {
+          onOpen: () => console.log("open"),
+          onClose: () => console.log("close"),
+          onQueryChange: (query) => console.log("changed", query),
+          onSelectAction: (action) => console.log("executed", action),
+        },
+      }}
       actions={[
         {
           id: "homeAction",

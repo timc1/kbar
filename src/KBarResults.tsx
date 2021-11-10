@@ -32,7 +32,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     parentRef,
   });
 
-  const { query, search, currentRootActionId, activeIndex } = useKBar(
+  const { query, search, currentRootActionId, activeIndex, options } = useKBar(
     (state) => ({
       search: state.searchQuery,
       currentRootActionId: state.currentRootActionId,
@@ -113,12 +113,13 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       if (item.perform) {
         item.perform();
         query.toggle();
-        return;
+      } else {
+        query.setSearch("");
+        query.setCurrentRootAction(item.id);
       }
-      query.setSearch("");
-      query.setCurrentRootAction(item.id);
+      options.callbacks?.onSelectAction?.(item);
     },
-    [query]
+    [query, options]
   );
 
   const pointerMoved = usePointerMovedSinceMount();

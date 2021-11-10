@@ -40,6 +40,12 @@ export interface KBarOptions {
    * the appearance/disappearance of the scrollbar.
    */
   disableScrollbarManagement?: boolean;
+  callbacks?: {
+    onOpen?: () => void;
+    onClose?: () => void;
+    onQueryChange?: (searchQuery: string) => void;
+    onSelectAction?: (action: ActionImpl) => void;
+  };
 }
 
 export interface KBarProviderProps {
