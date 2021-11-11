@@ -1,27 +1,26 @@
 ## kbar
 
-kbar is a simple plug-n-play React component to add a fast, portable, and extensible command+k interface to your site.
+kbar is a simple plug-n-play React component to add a fast, portable, and extensible <kbd>command</kbd> + <kbd>k</kbd> interface to your site.
 
 ![demo](https://user-images.githubusercontent.com/12195101/134022553-af4a29e9-0a3d-40f1-9254-3bd9673f3401.gif)
 
 ### Background
 
-Command+k interfaces are used to create a web experience where any type of action users would be able to do via clicking can be done through a command menu.
+<kbd>Command</kbd> + <kbd>k</kbd> interfaces are used to create a web experience where any type of action users would be able to do via clicking can be done through a command menu.
 
-With macOS's Spotlight and Linear's command+k experience in mind, kbar aims to be a simple
-abstraction to add a fast and extensible command+k menu to your site.
+With macOS's Spotlight and Linear's <kbd>command</kbd> + <kbd>k</kbd> experience in mind, kbar aims to be a simple 
+abstraction to add a fast and extensible <kbd>command</kbd> + <kbd>k</kbd> menu to your site.
 
 ### Features
 
 - Built in animations and fully customizable components
-- Keyboard navigation support; e.g. ctrl n / ctrl p for the navigation wizards
-- Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit t for Twitter
+- Keyboard navigation support; e.g. <kbd>control</kbd> + <kbd>n</kbd> or <kbd>control</kbd> + <kbd>p</kbd> for the navigation wizards
+- Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit <kbd>t</kbd> for Twitter
 - Nested actions enable creation of rich navigation experiences; e.g. hit backspace to navigate to
   the previous action
 - A simple data structure which enables anyone to easily build their own custom components
 
 ### Usage
-
 Have a fully functioning command menu for your site in minutes. First, install kbar.
 
 ```
