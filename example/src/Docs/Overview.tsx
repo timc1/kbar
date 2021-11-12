@@ -14,6 +14,20 @@ export default function Overview() {
         aims to be a simple abstraction to add a fast and extensible command+k
         menu to your site.
       </p>
+      <h3>Features</h3>
+      <ul>
+        <li>Built in animations alongside fully customizable components</li>
+        <li>Keyboard navigation support</li>
+        <li>
+          Keyboard shortcut support for registering keystroke patterns to
+          triggering actions
+        </li>
+        <li>Performance as a priority; large search results, not a problem</li>
+        <li>
+          Simple data structure which enables anyone to easily build advanced
+          custom components
+        </li>
+      </ul>
     </div>
   );
 }

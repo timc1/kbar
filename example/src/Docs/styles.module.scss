@@ -5,6 +5,13 @@
   h1 {
     margin-top: 0;
   }
+
+  code {
+    background: var(--a1);
+    font-family: monospace;
+    padding: 4px;
+    border-radius: 4px;
+  }
 }
 
 .toc {

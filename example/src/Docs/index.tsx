@@ -20,7 +20,13 @@ export default function Docs() {
         if (item.children) {
           return generateRoute(item.children);
         }
-        return <Route key={key} path={item.slug} component={item.component} />;
+        return (
+          <Route
+            key={key}
+            path={item.slug.split("#")[0]}
+            component={item.component}
+          />
+        );
       });
     }
     return generateRoute(data);
@@ -48,8 +54,9 @@ export default function Docs() {
                               to={child.slug}
                               className={classnames(
                                 !child.component && styles.comingSoon,
-                                location.pathname.includes(child.slug) &&
-                                  styles.active
+                                (location.pathname + location.hash).includes(
+                                  child.slug
+                                ) && styles.active
                               )}
                             >
                               {child.name}

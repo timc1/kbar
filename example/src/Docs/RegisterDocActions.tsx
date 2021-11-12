@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useHistory } from "react-router";
-import { useRegisterActions } from "../../src";
-import data from "./Docs/data";
+import { useRegisterActions } from "../../../src";
+import data from "./data";
 
 const searchId = randomId();
 
@@ -22,7 +22,8 @@ export default function SearchDocsActions() {
             parent: searchId,
             name: curr.name,
             shortcut: [],
-            keywords: "",
+            keywords: "api reference docs",
+            section: curr.section,
             perform: () => history.push(curr.slug),
           });
         }

@@ -4,7 +4,7 @@ import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
-import SearchDocsActions from "./SearchDocsActions";
+import RegisterDocActions from "./Docs/RegisterDocActions";
 import { useAnalytics } from "./utils";
 import Blog from "./Blog";
 import { ActionImpl } from "../../src/action";
@@ -130,7 +130,7 @@ const App = () => {
         },
       ]}
     >
-      <SearchDocsActions />
+      <RegisterDocActions />
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>
