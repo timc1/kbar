@@ -50,6 +50,7 @@ export default function useStore(props: useStoreProps) {
       enterMs: 200,
       exitMs: 100,
     },
+    shortcut: "$mod+k",
     ...props.options,
   } as KBarOptions);
 

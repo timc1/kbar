@@ -24,8 +24,12 @@ function useToggleHandler() {
   }));
 
   React.useEffect(() => {
+    const keybinding = Array.isArray(options.shortcut)
+      ? options.shortcut.join(" ")
+      : options.shortcut || "$mod+k";
+
     const unsubscribe = tinykeys(window, {
-      "$mod+k": (event: KeyboardEvent) => {
+      [keybinding]: (event: KeyboardEvent) => {
         event.preventDefault();
         query.toggle();
 
@@ -52,7 +56,7 @@ function useToggleHandler() {
     return () => {
       unsubscribe();
     };
-  }, [options.callbacks, query, showing]);
+  }, [options.callbacks, options.shortcut, query, showing]);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(

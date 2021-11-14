@@ -28,6 +28,7 @@ export interface ActionGroup {
 }
 
 export interface KBarOptions {
+  shortcut?: string | string[];
   animations?: {
     enterMs?: number;
     exitMs?: number;
