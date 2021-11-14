@@ -14,14 +14,19 @@ export function useOuterClick(
   cbRef.current = cb;
 
   React.useEffect(() => {
-    function handleMouseDown(event) {
+    function handler(event) {
       if (dom.current?.contains(event.target)) {
         return;
       }
       cbRef.current();
     }
-    window.addEventListener("mousedown", handleMouseDown);
-    return () => window.removeEventListener("mousedown", handleMouseDown);
+    ["mousedown", "touchstart"].forEach((ev) => {
+      window.addEventListener(ev, handler, true);
+    });
+    return () =>
+      ["mousedown", "touchstart"].forEach((ev) =>
+        window.removeEventListener(ev, handler, true)
+      );
   }, [dom]);
 }
 
