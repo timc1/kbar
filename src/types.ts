@@ -6,7 +6,7 @@ export type ActionId = string;
 export interface BaseAction {
   id: ActionId;
   name: string;
-  shortcut?: string[];
+  shortcut?: string | string[];
   keywords?: string;
   section?: string;
   icon?: string | React.ReactElement | React.ReactNode;

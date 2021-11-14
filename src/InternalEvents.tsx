@@ -1,4 +1,5 @@
 import * as React from "react";
+import tinykeys from "tinykeys";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
 import { getScrollbarWidth } from "./utils";
@@ -23,12 +24,8 @@ function useToggleHandler() {
   }));
 
   React.useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (
-        (event.metaKey || event.ctrlKey) &&
-        event.key === "k" &&
-        event.defaultPrevented === false
-      ) {
+    const unsubscribe = tinykeys(window, {
+      "$mod+k": (event: KeyboardEvent) => {
         event.preventDefault();
         query.toggle();
 
@@ -37,8 +34,8 @@ function useToggleHandler() {
         } else {
           options.callbacks?.onOpen?.();
         }
-      }
-      if (event.key === "Escape") {
+      },
+      Escape: (event: KeyboardEvent) => {
         if (showing) {
           event.stopPropagation();
           options.callbacks?.onClose?.();
@@ -50,11 +47,11 @@ function useToggleHandler() {
           }
           return VisualState.animatingOut;
         });
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
+      },
+    });
+    return () => {
+      unsubscribe();
+    };
   }, [options.callbacks, query, showing]);
 
   const timeoutRef = React.useRef<Timeout>();
@@ -153,55 +150,47 @@ function useShortcuts() {
 
     const inputs = ["input", "select", "button", "textarea"];
 
-    let buffer: string[] = [];
-    let lastKeyStrokeTime = Date.now();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      const key = event.key?.toLowerCase();
-
-      const activeElement = document.activeElement;
-      const ignoreStrokes =
-        activeElement &&
-        (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
-          activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
-          activeElement.attributes.getNamedItem("contenteditable")?.value ===
-            "true");
-
-      if (ignoreStrokes || event.metaKey || key === "shift") {
-        return;
+    const keyBindingMap = {};
+    for (let action of actionsList) {
+      if (!action.shortcut) {
+        continue;
       }
 
-      const currentTime = Date.now();
+      const keybinding = Array.isArray(action.shortcut)
+        ? action.shortcut.join(" ")
+        : action.shortcut;
 
-      if (currentTime - lastKeyStrokeTime > 400) {
-        buffer = [];
-      }
+      keyBindingMap[keybinding] = (event: KeyboardEvent) => {
+        const activeElement = document.activeElement;
+        const ignoreStrokes =
+          activeElement &&
+          (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
+            activeElement.attributes.getNamedItem("role")?.value ===
+              "textbox" ||
+            activeElement.attributes.getNamedItem("contenteditable")?.value ===
+              "true");
 
-      buffer.push(key);
-      lastKeyStrokeTime = currentTime;
-      const bufferString = buffer.join("");
-
-      for (let action of actionsList) {
-        if (!action.shortcut) {
-          continue;
+        if (ignoreStrokes) {
+          return;
         }
-        if (action.shortcut.join("") === bufferString) {
-          event.preventDefault();
-          if (action.children?.length) {
-            query.setCurrentRootAction(action.id);
-            query.toggle();
-          } else {
-            action.perform?.();
-          }
 
-          buffer = [];
-          break;
+        event.preventDefault();
+        if (action.children?.length) {
+          query.setCurrentRootAction(action.id);
+          query.toggle();
+        } else {
+          action.perform?.();
         }
-      }
+      };
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const unsubscribe = tinykeys(window, keyBindingMap, {
+      timeout: 400,
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [actions, query]);
 }
 
