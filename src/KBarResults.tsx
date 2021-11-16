@@ -61,7 +61,6 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
             index < itemsRef.current.length - 1 ? index + 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
-            if (nextIndex === itemsRef.current.length - 1) return index;
             nextIndex += 1;
           }
           return nextIndex;
@@ -92,17 +91,15 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   }, [activeIndex, scrollToIndex]);
 
   React.useEffect(() => {
-    // TODO(tim): fix scenario where async actions load in
-    // and active index is reset to the first item. i.e. when
-    // users register actions and bust the `useRegisterActions`
-    // cache, we won't want to reset their active index as they
-    // are navigating the list.
-    setActiveIndex(
-      // avoid setting active index on a group
-      typeof props.items[START_INDEX] === "string"
-        ? START_INDEX + 1
-        : START_INDEX
-    );
+    setActiveIndex((currIndex) => {
+      // try to keep the active index as async actions roll in.
+      const nextIndex =
+        currIndex <= props.items.length ? currIndex : START_INDEX;
+      // avoid setting active index on a group.
+      return typeof props.items[nextIndex] === "string"
+        ? nextIndex + 1
+        : nextIndex;
+    });
   }, [search, currentRootActionId, props.items]);
 
   const execute = React.useCallback(
