@@ -18,6 +18,7 @@ import {
   KBarSearch,
   KBarResults,
   createAction,
+  useKBar,
 } from "../../src";
 import { ActionImpl2 } from "../../src/action2";
 
@@ -129,6 +130,7 @@ const App = () => {
         },
       ]}
     >
+      <Undo />
       <RegisterDocActions />
       <KBarPortal>
         <KBarPositioner>
@@ -278,6 +280,20 @@ const ResultItem = React.forwardRef(
 );
 
 export default App;
+
+function Undo() {
+  const { actions } = useKBar((state) => ({ actions: state.actions }));
+
+  return (
+    <button
+      onClick={() => {
+        actions["darkTheme"].command.negate();
+      }}
+    >
+      Undo
+    </button>
+  );
+}
 
 function HomeIcon() {
   return (

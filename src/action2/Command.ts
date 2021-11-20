@@ -11,12 +11,19 @@ export class Command implements ICommand {
 
   constructor(command: ICommand) {
     const { perform, negate } = command;
+
     this.perform =
       perform &&
       (() => {
         if (negate) history.add(this);
         perform();
       });
-    this.negate = command.negate;
+
+    this.negate =
+      negate &&
+      (() => {
+        negate();
+        history.remove(this);
+      });
   }
 }

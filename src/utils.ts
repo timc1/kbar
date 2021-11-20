@@ -93,3 +93,17 @@ export function useThrottledValue(value: any, ms: number = 100) {
 
   return throttledValue;
 }
+
+export function shouldRejectKeystrokes() {
+  const inputs = ["input", "select", "button", "textarea"];
+
+  const activeElement = document.activeElement;
+  const ignoreStrokes =
+    activeElement &&
+    (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
+      activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
+      activeElement.attributes.getNamedItem("contenteditable")?.value ===
+        "true");
+
+  return ignoreStrokes;
+}

@@ -1,5 +1,5 @@
+import { Command } from ".";
 import type { Action2, ActionStore } from "../types";
-import { Command } from "./Command";
 
 interface ActionImplOptions {
   store: ActionStore;

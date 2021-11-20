@@ -1,58 +1,65 @@
-import { Command } from "./Command";
+import { shouldRejectKeystrokes } from "../utils";
 
+interface HistoryItem {
+  perform?: () => any;
+  negate?: () => any;
+}
 interface IHistory {
-  stack: Command[];
+  stack: HistoryItem[];
 }
 
 class History implements IHistory {
   static instance: History;
-  reverseStack: Command[] = [];
-  stack: Command[] = [];
+  reverseStack: HistoryItem[] = [];
+  stack: HistoryItem[] = [];
 
   constructor() {
     if (!History.instance) {
       History.instance = this;
 
       window.addEventListener("keydown", (event) => {
-        if (!this.stack.length && !this.reverseStack.length) return;
-
-        const inputs = ["input", "select", "button", "textarea"];
-        const key = event.key?.toLowerCase();
-
-        const activeElement = document.activeElement;
-        const ignoreStrokes =
-          activeElement &&
-          (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
-            activeElement.attributes.getNamedItem("role")?.value ===
-              "textbox" ||
-            activeElement.attributes.getNamedItem("contenteditable")?.value ===
-              "true");
-
-        if (ignoreStrokes) {
+        if (
+          (!this.stack.length && !this.reverseStack.length) ||
+          shouldRejectKeystrokes()
+        ) {
           return;
         }
 
+        const key = event.key?.toLowerCase();
+
         if (event.metaKey && key === "z" && event.shiftKey) {
-          const command = this.reverseStack.pop();
-          if (command?.perform) {
-            command.perform();
-            if (command.negate) {
-              this.stack.push(command);
-            }
-          }
+          this.redo();
         } else if (event.metaKey && key === "z") {
-          const command = this.stack.pop();
-          if (!command?.negate) return;
-          command.negate();
-          this.reverseStack.push(command);
+          this.undo();
         }
       });
     }
     return History.instance;
   }
 
-  add(command: Command) {
-    this.stack.push(command);
+  undo() {
+    const command = this.stack.pop();
+    if (!command?.negate) return;
+    command.negate();
+    this.reverseStack.push(command);
+  }
+
+  redo() {
+    const item = this.reverseStack.pop();
+    if (item?.perform) {
+      item.perform();
+      if (item.negate) {
+        this.stack.push(item);
+      }
+    }
+  }
+
+  add(item: HistoryItem) {
+    this.stack.push(item);
+  }
+
+  remove(item: HistoryItem) {
+    this.stack.filter((i) => i !== item);
   }
 }
 

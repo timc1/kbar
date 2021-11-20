@@ -36,11 +36,11 @@ export type Action2 = {
 
 export type ActionStore = Record<ActionId, ActionImpl2>;
 
-export type ActionTree = Record<string, ActionImpl>;
+export type ActionTree = Record<string, ActionImpl2>;
 
 export interface ActionGroup {
   name: string;
-  actions: ActionImpl[];
+  actions: ActionImpl2[];
 }
 
 export interface KBarOptions {
@@ -60,7 +60,7 @@ export interface KBarOptions {
     onOpen?: () => void;
     onClose?: () => void;
     onQueryChange?: (searchQuery: string) => void;
-    onSelectAction?: (action: ActionImpl) => void;
+    onSelectAction?: (action: ActionImpl2) => void;
   };
 }
 
