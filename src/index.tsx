@@ -5,7 +5,6 @@ import KBarResults from "./KBarResults";
 import useKBar from "./useKBar";
 import useRegisterActions from "./useRegisterActions";
 import { createAction } from "./utils";
-import useMatches from "./useMatches";
 import useDeepMatches from "./useDeepMatches";
 
 export {
@@ -16,7 +15,6 @@ export {
   useKBar,
   useRegisterActions,
   createAction,
-  useMatches,
   useDeepMatches,
   KBAR_LISTBOX,
   getListboxItemId,

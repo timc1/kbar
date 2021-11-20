@@ -4,7 +4,7 @@ import { ActionImpl2 } from "./ActionImpl";
 export class ActionInterface {
   actions: Record<ActionId, ActionImpl2> = {};
 
-  constructor(actions: Action2[]) {
+  constructor(actions: Action2[] = []) {
     this.add(actions);
   }
 
@@ -24,8 +24,7 @@ export class ActionInterface {
 
     for (let i = 0; i < actions.length; i++) {
       let action = actions[i];
-
-      if (!action) return;
+      if (!action) break;
 
       let orderedActions: Action2[] = [action];
 
@@ -39,7 +38,7 @@ export class ActionInterface {
 
       while (orderedActions.length) {
         const action = orderedActions.pop();
-        if (!action) return;
+        if (!action) break;
 
         this.actions[action.id] = ActionImpl2.create(action, {
           store: this.actions,
@@ -53,12 +52,12 @@ export class ActionInterface {
   remove(actions: Action2[]) {
     for (let i = 0; i < actions.length; i++) {
       const actionImpl = this.actions[actions[i].id];
-      if (!actionImpl) return;
+      if (!actionImpl) break;
 
       let children = actionImpl.children;
       while (children) {
         let child = children.pop();
-        if (!child) return;
+        if (!child) break;
         delete this.actions[child.id];
         if (child.parentActionImpl) {
           child.parentActionImpl.removeChild(child);

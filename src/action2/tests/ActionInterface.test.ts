@@ -1,5 +1,5 @@
-import { ActionInterface } from ".";
-import { createAction } from "../utils";
+import { createAction } from "../..";
+import { ActionInterface } from "../ActionInterface";
 
 const parent = createAction({
   name: "parent",

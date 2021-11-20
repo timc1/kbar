@@ -1,5 +1,4 @@
 import * as React from "react";
-import type { ActionImpl } from "./action";
 import { ActionImpl2 } from "./action2/ActionImpl";
 
 export type ActionId = string;
@@ -15,11 +14,6 @@ export interface BaseAction {
   perform?: () => void;
   parent?: ActionId;
 }
-
-export type Action = Omit<BaseAction, "parent"> & {
-  parent?: ActionImpl;
-  children?: ActionImpl[];
-};
 
 export type Action2 = {
   id: ActionId;

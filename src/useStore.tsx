@@ -1,7 +1,6 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
 import { IKBarContext } from ".";
-import { ActionInterface } from "./action";
 import {
   BaseAction,
   KBarProviderProps,
@@ -9,7 +8,6 @@ import {
   KBarOptions,
   VisualState,
 } from "./types";
-import { ActionImpl2 } from "./action2";
 import { ActionInterface as ActionInterface2 } from "./action2";
 
 type useStoreProps = KBarProviderProps;
@@ -27,18 +25,12 @@ export default function useStore(props: useStoreProps) {
     []
   );
 
-  const actionsInterface = React.useMemo(
-    () => new ActionInterface(props.actions),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   // TODO: at this point useReducer might be a better approach to managing state.
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: actionsInterface2.actions, // { ...actionsInterface.actions },
+    actions: actionsInterface2.actions,
     activeIndex: 0,
   });
 

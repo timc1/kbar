@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
-import { ActionImpl } from "./action";
 import { ActionImpl2 } from "./action2";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { usePointerMovedSinceMount } from "./utils";

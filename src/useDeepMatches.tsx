@@ -1,7 +1,7 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
 import { useKBar } from ".";
-import { ActionImpl } from "./action";
+import type { ActionImpl2 } from "./action2";
 import { useThrottledValue } from "./utils";
 
 export const NO_GROUP = "none";
@@ -28,12 +28,12 @@ export default function useDeepMatches() {
         }
       }
       return acc;
-    }, [] as ActionImpl[]);
+    }, [] as ActionImpl2[]);
   }, [actions, rootActionId]);
 
-  const getDeepResults = React.useCallback((actions: ActionImpl[]) => {
+  const getDeepResults = React.useCallback((actions: ActionImpl2[]) => {
     return (function collectChildren(
-      actions: ActionImpl[],
+      actions: ActionImpl2[],
       all = [...actions]
     ) {
       for (let i = 0; i < actions.length; i++) {
@@ -56,7 +56,7 @@ export default function useDeepMatches() {
   const matches = useInternalMatches(filtered, search);
 
   const results = React.useMemo(() => {
-    let groupMap: Record<string, ActionImpl[]> = {};
+    let groupMap: Record<string, ActionImpl2[]> = {};
     for (let i = 0; i < matches.length; i++) {
       const action = matches[i];
       const section = action.section || NO_GROUP;
@@ -66,7 +66,7 @@ export default function useDeepMatches() {
       groupMap[section].push(action);
     }
 
-    let results: (string | ActionImpl)[] = [];
+    let results: (string | ActionImpl2)[] = [];
     Object.keys(groupMap).forEach((name) => {
       if (name !== NO_GROUP) results.push(name);
       const actions = groupMap[name];
@@ -92,7 +92,7 @@ export default function useDeepMatches() {
   );
 }
 
-function useInternalMatches(filtered: ActionImpl[], search: string) {
+function useInternalMatches(filtered: ActionImpl2[], search: string) {
   const value = React.useMemo(
     () => ({
       filtered,
@@ -112,5 +112,5 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
             keys: ["name", "keywords", "subtitle"],
           }),
     [throttledFiltered, throttledSearch]
-  ) as ActionImpl[];
+  ) as ActionImpl2[];
 }
