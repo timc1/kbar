@@ -30,6 +30,7 @@ export type Action2 = {
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
   perform?: () => void;
+  negate?: () => void;
   parent?: ActionId;
 };
 
@@ -64,7 +65,7 @@ export interface KBarOptions {
 }
 
 export interface KBarProviderProps {
-  actions: BaseAction[];
+  actions: Action2[];
   options?: KBarOptions;
 }
 

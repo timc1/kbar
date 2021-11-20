@@ -7,7 +7,6 @@ import Docs from "./Docs";
 import RegisterDocActions from "./Docs/RegisterDocActions";
 import { useAnalytics } from "./utils";
 import Blog from "./Blog";
-import { ActionImpl } from "../../src/action";
 
 import {
   ActionId,
@@ -20,6 +19,7 @@ import {
   KBarResults,
   createAction,
 } from "../../src";
+import { ActionImpl2 } from "../../src/action2";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -109,6 +109,13 @@ const App = () => {
           section: "",
           perform: () =>
             document.documentElement.setAttribute("data-theme-dark", ""),
+          negate: () => {
+            if (
+              document.documentElement.getAttribute("data-theme-dark") !== null
+            ) {
+              document.documentElement.removeAttribute("data-theme-dark");
+            }
+          },
           parent: "theme",
         },
         {
@@ -179,7 +186,7 @@ const ResultItem = React.forwardRef(
       active,
       currentRootActionId,
     }: {
-      action: ActionImpl;
+      action: ActionImpl2;
       active: boolean;
       currentRootActionId: ActionId;
     },

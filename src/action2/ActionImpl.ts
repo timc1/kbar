@@ -1,4 +1,5 @@
 import type { Action2, ActionStore } from "../types";
+import { Command } from "./Command";
 
 interface ActionImplOptions {
   store: ActionStore;
@@ -13,8 +14,14 @@ export class ActionImpl2 implements Action2 {
   section: Action2["section"];
   icon: Action2["icon"];
   subtitle: Action2["subtitle"];
+  /**
+   * @deprecated action.perform deprecated in favor of action.command.perform
+   */
+  perform: Action2["perform"];
+  // TODO: don't want to expose perform/negate directly
+  negate: Action2["negate"];
 
-  command;
+  command: Command;
 
   ancestors: ActionImpl2[] = [];
   children: ActionImpl2[] = [];
@@ -23,6 +30,10 @@ export class ActionImpl2 implements Action2 {
     Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
+    this.command = new Command({
+      perform: action.perform,
+      negate: action.negate,
+    });
 
     if (action.parent) {
       const parentActionImpl = options.store[action.parent];
@@ -32,6 +43,7 @@ export class ActionImpl2 implements Action2 {
       }
     }
   }
+  parent?: string | undefined;
 
   addChild(childActionImpl: ActionImpl2) {
     // add reference to ancestor here as well

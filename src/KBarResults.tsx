@@ -2,12 +2,13 @@ import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
 import { ActionImpl } from "./action";
+import { ActionImpl2 } from "./action2";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
 
-interface RenderParams<T = ActionImpl | string> {
+interface RenderParams<T = ActionImpl2 | string> {
   item: T;
   active: boolean;
 }
@@ -110,8 +111,10 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
       if (typeof item === "string") return;
-      if (item.perform) {
-        item.perform();
+      console.log(item);
+
+      if (item.command.perform) {
+        item.command.perform();
         query.toggle();
       } else {
         query.setSearch("");
