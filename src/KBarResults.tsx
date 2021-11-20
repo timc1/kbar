@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { useKBar } from ".";
-import { ActionImpl2 } from "./action2";
+import { ActionImpl } from "./action";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
 
-interface RenderParams<T = ActionImpl2 | string> {
+interface RenderParams<T = ActionImpl | string> {
   item: T;
   active: boolean;
 }

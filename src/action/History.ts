@@ -4,6 +4,7 @@ interface HistoryItem {
   perform?: () => any;
   negate?: () => any;
 }
+
 interface IHistory {
   stack: HistoryItem[];
 }

@@ -13,14 +13,14 @@ import {
   KBarAnimator,
   KBarProvider,
   KBarPortal,
-  useDeepMatches,
   KBarPositioner,
   KBarSearch,
   KBarResults,
   createAction,
   useKBar,
+  useMatches,
+  ActionImpl,
 } from "../../src";
-import { ActionImpl2 } from "../../src/action2";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -161,7 +161,7 @@ const App = () => {
 };
 
 function RenderResults() {
-  const { results, rootActionId } = useDeepMatches();
+  const { results, rootActionId } = useMatches();
 
   return (
     <KBarResults
@@ -188,7 +188,7 @@ const ResultItem = React.forwardRef(
       active,
       currentRootActionId,
     }: {
-      action: ActionImpl2;
+      action: ActionImpl;
       active: boolean;
       currentRootActionId: ActionId;
     },

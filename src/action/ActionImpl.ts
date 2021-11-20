@@ -1,32 +1,32 @@
 import { Command } from ".";
-import type { Action2, ActionStore } from "../types";
+import type { Action2 as Action, ActionStore } from "../types";
 
 interface ActionImplOptions {
   store: ActionStore;
-  ancestors?: ActionImpl2[];
+  ancestors?: ActionImpl[];
 }
 
-export class ActionImpl2 implements Action2 {
-  id: Action2["id"];
-  name: Action2["name"];
-  shortcut: Action2["shortcut"];
-  keywords: Action2["keywords"];
-  section: Action2["section"];
-  icon: Action2["icon"];
-  subtitle: Action2["subtitle"];
+export class ActionImpl implements Action {
+  id: Action["id"];
+  name: Action["name"];
+  shortcut: Action["shortcut"];
+  keywords: Action["keywords"];
+  section: Action["section"];
+  icon: Action["icon"];
+  subtitle: Action["subtitle"];
   /**
    * @deprecated action.perform deprecated in favor of action.command.perform
    */
-  perform: Action2["perform"];
+  perform: Action["perform"];
   // TODO: don't want to expose perform/negate directly
-  negate: Action2["negate"];
+  negate: Action["negate"];
 
   command: Command;
 
-  ancestors: ActionImpl2[] = [];
-  children: ActionImpl2[] = [];
+  ancestors: ActionImpl[] = [];
+  children: ActionImpl[] = [];
 
-  constructor(action: Action2, options: ActionImplOptions) {
+  constructor(action: Action, options: ActionImplOptions) {
     Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
@@ -45,7 +45,7 @@ export class ActionImpl2 implements Action2 {
   }
   parent?: string | undefined;
 
-  addChild(childActionImpl: ActionImpl2) {
+  addChild(childActionImpl: ActionImpl) {
     // add reference to ancestor here as well
     childActionImpl.ancestors.push(this);
     // we ensure that order of adding always goes
@@ -53,7 +53,7 @@ export class ActionImpl2 implements Action2 {
     this.children.push(childActionImpl);
   }
 
-  removeChild(actionImpl: ActionImpl2) {
+  removeChild(actionImpl: ActionImpl) {
     // recursively remove all children
     const index = this.children.indexOf(actionImpl);
     if (index !== -1) {
@@ -71,7 +71,7 @@ export class ActionImpl2 implements Action2 {
     return this.ancestors[this.ancestors.length - 1];
   }
 
-  static create(action: Action2, options: ActionImplOptions) {
-    return new ActionImpl2(action, options);
+  static create(action: Action, options: ActionImplOptions) {
+    return new ActionImpl(action, options);
   }
 }

@@ -1,15 +1,15 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
 import { useKBar } from ".";
-import type { ActionImpl2 } from "./action2";
+import type { ActionImpl } from "./action";
 import { useThrottledValue } from "./utils";
 
 export const NO_GROUP = "none";
 
-// - nested search only begins when a search query is present
-// - combine all children
-
-export default function useDeepMatches() {
+/**
+ * returns deep matches only when a search query is present
+ */
+export default function useMatches() {
   const { search, actions, rootActionId } = useKBar((state) => ({
     search: state.searchQuery,
     actions: state.actions,
@@ -28,12 +28,12 @@ export default function useDeepMatches() {
         }
       }
       return acc;
-    }, [] as ActionImpl2[]);
+    }, [] as ActionImpl[]);
   }, [actions, rootActionId]);
 
-  const getDeepResults = React.useCallback((actions: ActionImpl2[]) => {
+  const getDeepResults = React.useCallback((actions: ActionImpl[]) => {
     return (function collectChildren(
-      actions: ActionImpl2[],
+      actions: ActionImpl[],
       all = [...actions]
     ) {
       for (let i = 0; i < actions.length; i++) {
@@ -56,7 +56,7 @@ export default function useDeepMatches() {
   const matches = useInternalMatches(filtered, search);
 
   const results = React.useMemo(() => {
-    let groupMap: Record<string, ActionImpl2[]> = {};
+    let groupMap: Record<string, ActionImpl[]> = {};
     for (let i = 0; i < matches.length; i++) {
       const action = matches[i];
       const section = action.section || NO_GROUP;
@@ -66,7 +66,7 @@ export default function useDeepMatches() {
       groupMap[section].push(action);
     }
 
-    let results: (string | ActionImpl2)[] = [];
+    let results: (string | ActionImpl)[] = [];
     Object.keys(groupMap).forEach((name) => {
       if (name !== NO_GROUP) results.push(name);
       const actions = groupMap[name];
@@ -92,7 +92,7 @@ export default function useDeepMatches() {
   );
 }
 
-function useInternalMatches(filtered: ActionImpl2[], search: string) {
+function useInternalMatches(filtered: ActionImpl[], search: string) {
   const value = React.useMemo(
     () => ({
       filtered,
@@ -112,5 +112,10 @@ function useInternalMatches(filtered: ActionImpl2[], search: string) {
             keys: ["name", "keywords", "subtitle"],
           }),
     [throttledFiltered, throttledSearch]
-  ) as ActionImpl2[];
+  ) as ActionImpl[];
 }
+
+/**
+ * @deprecated use useMatches
+ */
+export const useDeepMatches = useMatches;

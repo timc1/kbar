@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActionImpl2 } from "./action2/ActionImpl";
+import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
@@ -15,7 +15,7 @@ export interface BaseAction {
   parent?: ActionId;
 }
 
-export type Action2 = {
+export type Action = {
   id: ActionId;
   name: string;
   shortcut?: string[];
@@ -28,13 +28,13 @@ export type Action2 = {
   parent?: ActionId;
 };
 
-export type ActionStore = Record<ActionId, ActionImpl2>;
+export type ActionStore = Record<ActionId, ActionImpl>;
 
-export type ActionTree = Record<string, ActionImpl2>;
+export type ActionTree = Record<string, ActionImpl>;
 
 export interface ActionGroup {
   name: string;
-  actions: ActionImpl2[];
+  actions: ActionImpl[];
 }
 
 export interface KBarOptions {
@@ -54,12 +54,12 @@ export interface KBarOptions {
     onOpen?: () => void;
     onClose?: () => void;
     onQueryChange?: (searchQuery: string) => void;
-    onSelectAction?: (action: ActionImpl2) => void;
+    onSelectAction?: (action: ActionImpl) => void;
   };
 }
 
 export interface KBarProviderProps {
-  actions: Action2[];
+  actions: Action[];
   options?: KBarOptions;
 }
 

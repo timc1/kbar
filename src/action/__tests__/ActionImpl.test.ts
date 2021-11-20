@@ -1,4 +1,4 @@
-import { ActionImpl2 } from "..";
+import { ActionImpl } from "..";
 import { Action2, createAction } from "../..";
 
 const perform = jest.fn();
@@ -11,10 +11,10 @@ const store = {};
 
 describe("ActionImpl", () => {
   it("should create an instance of ActionImpl2", () => {
-    const action = ActionImpl2.create(createAction(baseAction), {
+    const action = ActionImpl.create(createAction(baseAction), {
       store,
     });
-    expect(action instanceof ActionImpl2).toBe(true);
+    expect(action instanceof ActionImpl).toBe(true);
   });
 
   // it("should be able to add children", () => {

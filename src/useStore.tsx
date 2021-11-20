@@ -8,7 +8,7 @@ import {
   KBarOptions,
   VisualState,
 } from "./types";
-import { ActionInterface as ActionInterface2 } from "./action2";
+import { ActionInterface as ActionInterface2 } from "./action";
 
 type useStoreProps = KBarProviderProps;
 

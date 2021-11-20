@@ -1,16 +1,16 @@
-import type { ActionId, Action2 } from "../types";
-import { ActionImpl2 } from "./ActionImpl";
+import type { ActionId, Action } from "../types";
+import { ActionImpl } from "./ActionImpl";
 
 export class ActionInterface {
-  actions: Record<ActionId, ActionImpl2> = {};
+  actions: Record<ActionId, ActionImpl> = {};
 
-  constructor(actions: Action2[] = []) {
+  constructor(actions: Action[] = []) {
     this.add(actions);
   }
 
-  add(actions: Action2[]) {
+  add(actions: Action[]) {
     // store actions by key for fast read
-    const actionsByKey: Record<ActionId, Action2> = actions.reduce(
+    const actionsByKey: Record<ActionId, Action> = actions.reduce(
       (acc, curr) => {
         acc[curr.id] = curr;
         return acc;
@@ -26,7 +26,7 @@ export class ActionInterface {
       let action = actions[i];
       if (!action) break;
 
-      let orderedActions: Action2[] = [action];
+      let orderedActions: Action[] = [action];
 
       let parent = action.parent;
       while (parent) {
@@ -40,7 +40,7 @@ export class ActionInterface {
         const action = orderedActions.pop();
         if (!action) break;
 
-        this.actions[action.id] = ActionImpl2.create(action, {
+        this.actions[action.id] = ActionImpl.create(action, {
           store: this.actions,
         });
       }
@@ -49,7 +49,7 @@ export class ActionInterface {
     return this.actions;
   }
 
-  remove(actions: Action2[]) {
+  remove(actions: Action[]) {
     for (let i = 0; i < actions.length; i++) {
       const actionImpl = this.actions[actions[i].id];
       if (!actionImpl) break;
