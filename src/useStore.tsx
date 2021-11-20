@@ -9,6 +9,8 @@ import {
   KBarOptions,
   VisualState,
 } from "./types";
+import { ActionImpl2 } from "./action2";
+import { ActionInterface as ActionInterface2 } from "./action2";
 
 type useStoreProps = KBarProviderProps;
 
@@ -18,6 +20,12 @@ export default function useStore(props: useStoreProps) {
       "You must define a list of `actions` when calling KBarProvider"
     );
   }
+
+  const actionsInterface2 = React.useMemo(
+    () => new ActionInterface2(props.actions),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const actionsInterface = React.useMemo(
     () => new ActionInterface(props.actions),
@@ -30,7 +38,7 @@ export default function useStore(props: useStoreProps) {
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: { ...actionsInterface.actions },
+    actions: actionsInterface2.actions, // { ...actionsInterface.actions },
     activeIndex: 0,
   });
 
@@ -58,7 +66,7 @@ export default function useStore(props: useStoreProps) {
       setState((state) => {
         return {
           ...state,
-          actions: actionsInterface.add(actions),
+          actions: actionsInterface2.add(actions), // actionsInterface.add(actions),
         };
       });
 
@@ -66,12 +74,12 @@ export default function useStore(props: useStoreProps) {
         setState((state) => {
           return {
             ...state,
-            actions: actionsInterface.remove(actions),
+            actions: actionsInterface2.remove(actions), // actionsInterface.remove(actions),
           };
         });
       };
     },
-    [actionsInterface]
+    [actionsInterface2]
   );
 
   return React.useMemo(() => {

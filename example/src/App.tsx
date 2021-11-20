@@ -54,14 +54,6 @@ const App = () => {
   const history = useHistory();
   return (
     <KBarProvider
-      options={{
-        callbacks: {
-          onOpen: () => console.log("open"),
-          onClose: () => console.log("close"),
-          onQueryChange: (query) => console.log("changed", query),
-          onSelectAction: (action) => console.log("executed", action),
-        },
-      }}
       actions={[
         {
           id: "homeAction",
@@ -194,16 +186,11 @@ const ResultItem = React.forwardRef(
     ref: React.Ref<HTMLDivElement>
   ) => {
     const ancestors = React.useMemo(() => {
-      return (function collect(action: ActionImpl, ancestors = []) {
-        if (action.parent && action.parent.id !== currentRootActionId) {
-          ancestors.push(action.parent);
-          if (action.parent.parent) {
-            collect(action.parent.parent, ancestors);
-          }
-        }
-        return ancestors;
-      })(action);
-    }, [action, currentRootActionId]);
+      const index = action.ancestors.findIndex(
+        (ancestor) => ancestor.id === currentRootActionId
+      );
+      return action.ancestors.slice(index + 1);
+    }, [action.ancestors, currentRootActionId]);
 
     return (
       <div

@@ -22,8 +22,10 @@ export default function useDeepMatches() {
       if (!action.parent && !rootActionId) {
         acc.push(action);
       }
-      if (action.parent && action.parent.id === rootActionId) {
-        acc.push(action);
+      if (action.id === rootActionId) {
+        for (let i = 0; i < action.children.length; i++) {
+          acc.push(action.children[i]);
+        }
       }
       return acc;
     }, [] as ActionImpl[]);

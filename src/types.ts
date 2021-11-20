@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { ActionImpl } from "./action";
+import { ActionImpl2 } from "./action2/ActionImpl";
 
 export type ActionId = string;
 
@@ -19,6 +20,20 @@ export type Action = Omit<BaseAction, "parent"> & {
   parent?: ActionImpl;
   children?: ActionImpl[];
 };
+
+export type Action2 = {
+  id: ActionId;
+  name: string;
+  shortcut?: string[];
+  keywords?: string;
+  section?: string;
+  icon?: string | React.ReactElement | React.ReactNode;
+  subtitle?: string;
+  perform?: () => void;
+  parent?: ActionId;
+};
+
+export type ActionStore = Record<ActionId, ActionImpl2>;
 
 export type ActionTree = Record<string, ActionImpl>;
 
