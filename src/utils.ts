@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Action } from ".";
+import type { Action } from ".";
 
 export function swallowEvent(event) {
   event.stopPropagation();

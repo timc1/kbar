@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
-import { useKBar } from ".";
-import { ActionImpl } from "./action";
-import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
+import { getListboxItemId, KBAR_LISTBOX, ActionImpl, useKBar } from ".";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;

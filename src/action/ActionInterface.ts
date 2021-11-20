@@ -1,4 +1,4 @@
-import type { ActionId, Action } from "../types";
+import type { ActionId, Action } from "..";
 import { ActionImpl } from "./ActionImpl";
 
 export class ActionInterface {

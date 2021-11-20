@@ -1,6 +1,5 @@
 import * as React from "react";
-import { VisualState } from ".";
-import useKBar from "./useKBar";
+import { useKBar, VisualState } from ".";
 
 export const KBAR_LISTBOX = "kbar-listbox";
 export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;

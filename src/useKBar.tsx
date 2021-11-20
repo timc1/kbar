@@ -1,6 +1,6 @@
 import * as React from "react";
-import { KBarContext } from "./KBarContextProvider";
-import type { KBarQuery, KBarState, KBarOptions } from "./types";
+import { KBarContext } from ".";
+import type { KBarQuery, KBarState, KBarOptions } from ".";
 
 interface BaseKBarReturnType {
   query: KBarQuery;

@@ -1,14 +1,14 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
-import { IKBarContext } from ".";
-import {
+import { ActionInterface } from ".";
+import type {
   BaseAction,
+  IKBarContext,
   KBarProviderProps,
   KBarState,
   KBarOptions,
   VisualState,
-} from "./types";
-import { ActionInterface as ActionInterface2 } from "./action";
+} from ".";
 
 type useStoreProps = KBarProviderProps;
 
@@ -19,8 +19,8 @@ export default function useStore(props: useStoreProps) {
     );
   }
 
-  const actionsInterface2 = React.useMemo(
-    () => new ActionInterface2(props.actions),
+  const actionsInterface = React.useMemo(
+    () => new ActionInterface(props.actions),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
@@ -30,7 +30,7 @@ export default function useStore(props: useStoreProps) {
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: actionsInterface2.actions,
+    actions: actionsInterface.actions,
     activeIndex: 0,
   });
 
@@ -58,7 +58,7 @@ export default function useStore(props: useStoreProps) {
       setState((state) => {
         return {
           ...state,
-          actions: actionsInterface2.add(actions), // actionsInterface.add(actions),
+          actions: actionsInterface.add(actions), // actionsInterface.add(actions),
         };
       });
 
@@ -66,12 +66,12 @@ export default function useStore(props: useStoreProps) {
         setState((state) => {
           return {
             ...state,
-            actions: actionsInterface2.remove(actions), // actionsInterface.remove(actions),
+            actions: actionsInterface.remove(actions), // actionsInterface.remove(actions),
           };
         });
       };
     },
-    [actionsInterface2]
+    [actionsInterface]
   );
 
   return React.useMemo(() => {
