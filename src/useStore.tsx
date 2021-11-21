@@ -1,26 +1,19 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
-import { ActionInterface } from ".";
+import { ActionInterface, VisualState } from ".";
 import type {
   BaseAction,
   IKBarContext,
   KBarProviderProps,
   KBarState,
   KBarOptions,
-  VisualState,
 } from ".";
 
 type useStoreProps = KBarProviderProps;
 
 export default function useStore(props: useStoreProps) {
-  if (!props.actions) {
-    throw new Error(
-      "You must define a list of `actions` when calling KBarProvider"
-    );
-  }
-
   const actionsInterface = React.useMemo(
-    () => new ActionInterface(props.actions),
+    () => new ActionInterface(props.actions || []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );

@@ -9,41 +9,16 @@ export class ActionInterface {
   }
 
   add(actions: Action[]) {
-    // store actions by key for fast read
-    const actionsByKey: Record<ActionId, Action> = actions.reduce(
-      (acc, curr) => {
-        acc[curr.id] = curr;
-        return acc;
-      },
-      {}
-    );
-    // create actions, ensure actions are ordered
-    // from "oldest" to "youngest"; i.e. grandparent
-    // action must be created prior to parent action,
-    // parent must be created prior to child, etc.
-
     for (let i = 0; i < actions.length; i++) {
-      let action = actions[i];
-      if (!action) break;
-
-      let orderedActions: Action[] = [action];
-
-      let parent = action.parent;
-      while (parent) {
-        if (!this.actions[parent]) {
-          orderedActions.push(actionsByKey[parent]);
-        }
-        parent = actionsByKey[parent]?.parent;
+      const action = actions[i];
+      if (action.parent && !this.actions[action.parent]) {
+        throw new Error(
+          `Attempted to create action: ${action.name} without registering its parent first.`
+        );
       }
-
-      while (orderedActions.length) {
-        const action = orderedActions.pop();
-        if (!action) break;
-
-        this.actions[action.id] = ActionImpl.create(action, {
-          store: this.actions,
-        });
-      }
+      this.actions[action.id] = ActionImpl.create(action, {
+        store: this.actions,
+      });
     }
 
     return this.actions;
@@ -51,23 +26,22 @@ export class ActionInterface {
 
   remove(actions: Action[]) {
     for (let i = 0; i < actions.length; i++) {
-      const actionImpl = this.actions[actions[i].id];
+      const action = actions[i];
+      const actionImpl = this.actions[action.id];
       if (!actionImpl) break;
-
       let children = actionImpl.children;
-      while (children) {
+      while (children.length) {
         let child = children.pop();
         if (!child) break;
         delete this.actions[child.id];
         if (child.parentActionImpl) {
           child.parentActionImpl.removeChild(child);
         }
+        children = child.children;
       }
-
       if (actionImpl.parentActionImpl) {
         actionImpl.parentActionImpl.removeChild(actionImpl);
       }
-
       delete this.actions[actionImpl.id];
     }
     return this.actions;

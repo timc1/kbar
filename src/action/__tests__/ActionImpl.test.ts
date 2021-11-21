@@ -1,8 +1,8 @@
 import { ActionImpl } from "..";
-import { Action2, createAction } from "../..";
+import { Action, createAction } from "../..";
 
 const perform = jest.fn();
-const baseAction: Action2 = createAction({
+const baseAction: Action = createAction({
   name: "Test action",
   perform,
 });

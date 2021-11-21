@@ -1,29 +1,22 @@
 import { history } from "./History";
+export class Command {
+  perform?: () => any;
+  negate?: () => any;
 
-interface ICommand {
-  perform?: () => void;
-  negate?: () => void;
-}
-
-export class Command implements ICommand {
-  perform: ICommand["perform"];
-  negate: ICommand["negate"];
-
-  constructor(command: ICommand) {
-    const { perform, negate } = command;
+  constructor(command: { perform?: () => any }) {
+    const { perform } = command;
 
     this.perform =
       perform &&
       (() => {
-        if (negate) history.add(this);
-        perform();
-      });
-
-    this.negate =
-      negate &&
-      (() => {
-        negate();
-        history.remove(this);
+        const negate = perform();
+        if (typeof negate === "function") {
+          this.negate = () => {
+            negate();
+            history.remove(this);
+          };
+          history.add(this);
+        }
       });
   }
 }

@@ -108,14 +108,16 @@ const App = () => {
           name: "Dark",
           keywords: "dark theme",
           section: "",
-          perform: () =>
-            document.documentElement.setAttribute("data-theme-dark", ""),
-          negate: () => {
-            if (
-              document.documentElement.getAttribute("data-theme-dark") !== null
-            ) {
-              document.documentElement.removeAttribute("data-theme-dark");
-            }
+          perform: () => {
+            document.documentElement.setAttribute("data-theme-dark", "");
+            return () => {
+              if (
+                document.documentElement.getAttribute("data-theme-dark") !==
+                null
+              ) {
+                document.documentElement.removeAttribute("data-theme-dark");
+              }
+            };
           },
           parent: "theme",
         },
@@ -131,7 +133,7 @@ const App = () => {
       ]}
     >
       <Undo />
-      <RegisterDocActions />
+      {/* <RegisterDocActions /> */}
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>

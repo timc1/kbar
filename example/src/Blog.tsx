@@ -30,10 +30,10 @@ export default function Blog() {
         perform: () => alert(i),
       })
     ),
-    greatgrandchild,
-    child,
     parent,
+    child,
     grandchild,
+    greatgrandchild,
   ]);
 
   React.useEffect(() => {

@@ -18,8 +18,6 @@ export class ActionImpl implements Action {
    * @deprecated action.perform deprecated in favor of action.command.perform
    */
   perform: Action["perform"];
-  // TODO: don't want to expose perform/negate directly
-  negate: Action["negate"];
 
   command: Command;
 
@@ -32,7 +30,6 @@ export class ActionImpl implements Action {
     this.name = action.name;
     this.command = new Command({
       perform: action.perform,
-      negate: action.negate,
     });
 
     if (action.parent) {

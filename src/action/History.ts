@@ -5,14 +5,10 @@ interface HistoryItem {
   negate?: () => any;
 }
 
-interface IHistory {
-  stack: HistoryItem[];
-}
-
-class History implements IHistory {
+class History {
   static instance: History;
-  reverseStack: HistoryItem[] = [];
-  stack: HistoryItem[] = [];
+  undoStack: HistoryItem[] = [];
+  redoStack: HistoryItem[] = [];
 
   constructor() {
     if (!History.instance) {
@@ -20,14 +16,12 @@ class History implements IHistory {
 
       window.addEventListener("keydown", (event) => {
         if (
-          (!this.stack.length && !this.reverseStack.length) ||
+          (!this.redoStack.length && !this.undoStack.length) ||
           shouldRejectKeystrokes()
         ) {
           return;
         }
-
         const key = event.key?.toLowerCase();
-
         if (event.metaKey && key === "z" && event.shiftKey) {
           this.redo();
         } else if (event.metaKey && key === "z") {
@@ -38,29 +32,29 @@ class History implements IHistory {
     return History.instance;
   }
 
-  undo() {
-    const command = this.stack.pop();
+  private undo() {
+    const command = this.redoStack.pop();
     if (!command?.negate) return;
     command.negate();
-    this.reverseStack.push(command);
+    this.undoStack.push(command);
   }
 
-  redo() {
-    const item = this.reverseStack.pop();
+  private redo() {
+    const item = this.undoStack.pop();
     if (item?.perform) {
       item.perform();
       if (item.negate) {
-        this.stack.push(item);
+        this.redoStack.push(item);
       }
     }
   }
 
   add(item: HistoryItem) {
-    this.stack.push(item);
+    this.redoStack.push(item);
   }
 
   remove(item: HistoryItem) {
-    this.stack.filter((i) => i !== item);
+    this.redoStack.filter((i) => i !== item);
   }
 }
 
