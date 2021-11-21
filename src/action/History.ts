@@ -14,6 +14,8 @@ class History {
     if (!History.instance) {
       History.instance = this;
 
+      if (typeof window === "undefined") return;
+
       window.addEventListener("keydown", (event) => {
         if (
           (!this.redoStack.length && !this.undoStack.length) ||
@@ -33,10 +35,10 @@ class History {
   }
 
   private undo() {
-    const command = this.redoStack.pop();
-    if (!command?.negate) return;
-    command.negate();
-    this.undoStack.push(command);
+    const item = this.redoStack.pop();
+    if (!item?.negate) return;
+    item.negate();
+    this.undoStack.push(item);
   }
 
   private redo() {

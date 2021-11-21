@@ -1,4 +1,4 @@
-import { Command } from ".";
+import { Command } from "./Command";
 import type { Action, ActionStore } from "..";
 
 interface ActionImplOptions {
@@ -31,6 +31,8 @@ export class ActionImpl implements Action {
     this.command = new Command({
       perform: action.perform,
     });
+    // Backward compatibility
+    this.perform = this.command.perform;
 
     if (action.parent) {
       const parentActionImpl = options.store[action.parent];

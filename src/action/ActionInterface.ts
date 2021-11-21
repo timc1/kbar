@@ -13,7 +13,7 @@ export class ActionInterface {
       const action = actions[i];
       if (action.parent && !this.actions[action.parent]) {
         throw new Error(
-          `Attempted to create action: ${action.name} without registering its parent first.`
+          `Attempted to create action "${action.name}" without registering its parent "${action.parent}" first.`
         );
       }
       this.actions[action.id] = ActionImpl.create(action, {

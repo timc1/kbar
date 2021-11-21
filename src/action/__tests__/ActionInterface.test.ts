@@ -1,4 +1,4 @@
-import { createAction } from "../..";
+import { createAction } from "../../utils";
 import { ActionInterface } from "../ActionInterface";
 
 const parent = createAction({
@@ -16,13 +16,17 @@ const grandchild = createAction({
   parent: child.id,
 });
 
-// intentionally unordered to ensure order of actions registered does not matter.
-const dummyActions = [grandchild, parent, child, parent2];
+const dummyActions = [parent, parent2, child, grandchild];
 
 describe("ActionInterface", () => {
   let actionInterface: ActionInterface;
   beforeEach(() => {
     actionInterface = new ActionInterface();
+  });
+
+  it.only("throws an error when children are register before parents", () => {
+    const bad = [grandchild, child, parent];
+    expect(() => actionInterface.add(bad)).toThrow();
   });
 
   it("sets actions internally", () => {

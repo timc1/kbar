@@ -1,5 +1,6 @@
 import { ActionImpl } from "..";
-import { Action, createAction } from "../..";
+import { Action } from "../../types";
+import { createAction } from "../../utils";
 
 const perform = jest.fn();
 const baseAction: Action = createAction({
@@ -17,34 +18,49 @@ describe("ActionImpl", () => {
     expect(action instanceof ActionImpl).toBe(true);
   });
 
-  // it("should be able to add children", () => {
-  //   const parent = ActionImpl2.create(createAction({ name: "parent" }, {store}));
+  it("should be able to add children", () => {
+    const parent = ActionImpl.create(createAction({ name: "parent" }), {
+      store: {},
+    });
 
-  //   expect(parent.children).toEqual([]);
+    expect(parent.children).toEqual([]);
 
-  //   const child = ActionImpl2.create(
-  //     createAction({ name: "child", parent: parent.id }),
-  //     { parent }
-  //   );
+    const child = ActionImpl.create(
+      createAction({ name: "child", parent: parent.id }),
+      {
+        store: {
+          [parent.id]: parent,
+        },
+      }
+    );
 
-  //   parent.addChild(child);
+    expect(parent.children[0]).toEqual(child);
+  });
 
-  //   expect(parent.children[0]).toEqual(child);
-  // });
+  it("should be able to get children", () => {
+    const parent = ActionImpl.create(createAction({ name: "parent" }), {
+      store: {},
+    });
+    const child = ActionImpl.create(
+      createAction({ name: "child", parent: parent.id }),
+      {
+        store: {
+          [parent.id]: parent,
+        },
+      }
+    );
+    const grandchild = ActionImpl.create(
+      createAction({ name: "grandchild", parent: child.id }),
+      {
+        store: {
+          [parent.id]: parent,
+          [child.id]: child,
+        },
+      }
+    );
 
-  // it("should be able to get children", () => {
-  //   const parent = ActionImpl2.create(createAction({ name: "parent" }));
-  //   const child = ActionImpl2.create(
-  //     createAction({ name: "child", parent: parent.id }),
-  //     { parent }
-  //   );
-  //   const grandchild = ActionImpl2.create(
-  //     createAction({ name: "grandchild", parent: child.id }),
-  //     { parent: child }
-  //   );
-
-  //   expect(parent.children.length).toEqual(1);
-  //   expect(child.children.length).toEqual(1);
-  //   expect(grandchild.children.length).toEqual(0);
-  // });
+    expect(parent.children.length).toEqual(1);
+    expect(child.children.length).toEqual(1);
+    expect(grandchild.children.length).toEqual(0);
+  });
 });
