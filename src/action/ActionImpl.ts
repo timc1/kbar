@@ -1,9 +1,10 @@
 import { Command } from "./Command";
-import type { Action, ActionStore } from "..";
+import type { Action, ActionStore, IHistory } from "../types";
 
 interface ActionImplOptions {
   store: ActionStore;
   ancestors?: ActionImpl[];
+  history?: IHistory;
 }
 
 export class ActionImpl implements Action {
@@ -28,9 +29,14 @@ export class ActionImpl implements Action {
     Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
-    this.command = new Command({
-      perform: action.perform,
-    });
+    this.command = new Command(
+      {
+        perform: action.perform,
+      },
+      {
+        history: options.history,
+      }
+    );
     // Backward compatibility
     this.perform = this.command.perform;
 

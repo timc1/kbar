@@ -24,7 +24,7 @@ describe("ActionInterface", () => {
     actionInterface = new ActionInterface();
   });
 
-  it.only("throws an error when children are register before parents", () => {
+  it("throws an error when children are register before parents", () => {
     const bad = [grandchild, child, parent];
     expect(() => actionInterface.add(bad)).toThrow();
   });

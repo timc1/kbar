@@ -1,10 +1,15 @@
-import type { ActionId, Action } from "..";
+import type { ActionId, Action, IHistory } from "..";
 import { ActionImpl } from "./ActionImpl";
 
+interface ActionInterfaceOptions {
+  historyManager?: IHistory;
+}
 export class ActionInterface {
   actions: Record<ActionId, ActionImpl> = {};
+  options: ActionInterfaceOptions;
 
-  constructor(actions: Action[] = []) {
+  constructor(actions: Action[] = [], options: ActionInterfaceOptions = {}) {
+    this.options = options;
     this.add(actions);
   }
 
@@ -17,6 +22,7 @@ export class ActionInterface {
         );
       }
       this.actions[action.id] = ActionImpl.create(action, {
+        history: this.options.historyManager,
         store: this.actions,
       });
     }

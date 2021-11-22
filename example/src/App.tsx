@@ -133,7 +133,7 @@ const App = () => {
       ]}
     >
       <Undo />
-      {/* <RegisterDocActions /> */}
+      <RegisterDocActions />
       <KBarPortal>
         <KBarPositioner>
           <KBarAnimator style={animatorStyle}>

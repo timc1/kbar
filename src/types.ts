@@ -41,6 +41,12 @@ export interface KBarOptions {
     enterMs?: number;
     exitMs?: number;
   };
+  callbacks?: {
+    onOpen?: () => void;
+    onClose?: () => void;
+    onQueryChange?: (searchQuery: string) => void;
+    onSelectAction?: (action: ActionImpl) => void;
+  };
   /**
    * `disableScrollBarManagement` ensures that kbar will not
    * manipulate the document's `margin-right` property when open.
@@ -49,12 +55,7 @@ export interface KBarOptions {
    * the appearance/disappearance of the scrollbar.
    */
   disableScrollbarManagement?: boolean;
-  callbacks?: {
-    onOpen?: () => void;
-    onClose?: () => void;
-    onQueryChange?: (searchQuery: string) => void;
-    onSelectAction?: (action: ActionImpl) => void;
-  };
+  enableHistory?: boolean;
 }
 
 export interface KBarProviderProps {
@@ -96,4 +97,16 @@ export enum VisualState {
   showing = "showing",
   animatingOut = "animating-out",
   hidden = "hidden",
+}
+
+export interface IHistory {
+  undoStack: HistoryItem[];
+  redoStack: HistoryItem[];
+  add: (item: HistoryItem) => void;
+  remove: (item: HistoryItem) => void;
+}
+
+export interface HistoryItem {
+  perform?: () => any;
+  negate?: () => any;
 }

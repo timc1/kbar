@@ -1,11 +1,7 @@
+import { HistoryItem, IHistory } from "../types";
 import { shouldRejectKeystrokes } from "../utils";
 
-interface HistoryItem {
-  perform?: () => any;
-  negate?: () => any;
-}
-
-class History {
+class History implements IHistory {
   static instance: History;
   undoStack: HistoryItem[] = [];
   redoStack: HistoryItem[] = [];
@@ -13,25 +9,28 @@ class History {
   constructor() {
     if (!History.instance) {
       History.instance = this;
-
-      if (typeof window === "undefined") return;
-
-      window.addEventListener("keydown", (event) => {
-        if (
-          (!this.redoStack.length && !this.undoStack.length) ||
-          shouldRejectKeystrokes()
-        ) {
-          return;
-        }
-        const key = event.key?.toLowerCase();
-        if (event.metaKey && key === "z" && event.shiftKey) {
-          this.redo();
-        } else if (event.metaKey && key === "z") {
-          this.undo();
-        }
-      });
+      this.init();
     }
     return History.instance;
+  }
+
+  init() {
+    if (typeof window === "undefined") return;
+
+    window.addEventListener("keydown", (event) => {
+      if (
+        (!this.redoStack.length && !this.undoStack.length) ||
+        shouldRejectKeystrokes()
+      ) {
+        return;
+      }
+      const key = event.key?.toLowerCase();
+      if (event.metaKey && key === "z" && event.shiftKey) {
+        this.redo();
+      } else if (event.metaKey && key === "z") {
+        this.undo();
+      }
+    });
   }
 
   private undo() {
