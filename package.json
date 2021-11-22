@@ -50,7 +50,8 @@
     "@reach/portal": "^0.16.0",
     "fast-equals": "^2.0.3",
     "match-sorter": "^6.3.0",
-    "react-virtual": "^2.8.2"
+    "react-virtual": "^2.8.2",
+    "tiny-invariant": "^1.2.0"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0",

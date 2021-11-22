@@ -1,6 +1,7 @@
 import Portal from "@reach/portal";
 import * as React from "react";
-import { useKBar, VisualState } from ".";
+import { VisualState } from "./types";
+import useKBar from "./useKBar";
 
 interface Props {
   children: React.ReactNode;

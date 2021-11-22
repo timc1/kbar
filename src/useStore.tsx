@@ -1,14 +1,15 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
-import { ActionInterface, VisualState } from ".";
+import { ActionInterface } from "./action/ActionInterface";
+import { history } from "./action/History";
 import type {
-  BaseAction,
+  Action,
   IKBarContext,
+  KBarOptions,
   KBarProviderProps,
   KBarState,
-  KBarOptions,
-} from ".";
-import { history } from "./action/History";
+} from "./types";
+import { VisualState } from "./types";
 
 type useStoreProps = KBarProviderProps;
 
@@ -51,7 +52,7 @@ export default function useStore(props: useStoreProps) {
   }, [state, publisher]);
 
   const registerActions = React.useCallback(
-    (actions: BaseAction[]) => {
+    (actions: Action[]) => {
       setState((state) => {
         return {
           ...state,

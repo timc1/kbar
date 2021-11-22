@@ -1,4 +1,5 @@
-import type { ActionId, Action, IHistory } from "..";
+import invariant from "tiny-invariant";
+import type { ActionId, Action, IHistory } from "../types";
 import { ActionImpl } from "./ActionImpl";
 
 interface ActionInterfaceOptions {
@@ -16,8 +17,9 @@ export class ActionInterface {
   add(actions: Action[]) {
     for (let i = 0; i < actions.length; i++) {
       const action = actions[i];
-      if (action.parent && !this.actions[action.parent]) {
-        throw new Error(
+      if (action.parent) {
+        invariant(
+          this.actions[action.parent],
           `Attempted to create action "${action.name}" without registering its parent "${action.parent}" first.`
         );
       }

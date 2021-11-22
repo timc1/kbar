@@ -1,6 +1,6 @@
 import * as React from "react";
-import type { Action } from ".";
-import { useKBar } from ".";
+import type { Action } from "./types";
+import useKBar from "./useKBar";
 
 export default function useRegisterActions(
   actions: Action[],

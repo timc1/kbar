@@ -3,18 +3,6 @@ import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
-export interface BaseAction {
-  id: ActionId;
-  name: string;
-  shortcut?: string[];
-  keywords?: string;
-  section?: string;
-  icon?: string | React.ReactElement | React.ReactNode;
-  subtitle?: string;
-  perform?: () => void;
-  parent?: ActionId;
-}
-
 export type Action = {
   id: ActionId;
   name: string;
@@ -77,7 +65,7 @@ export interface KBarQuery {
     cb: ((vs: VisualState) => VisualState) | VisualState
   ) => void;
   setSearch: (search: string) => void;
-  registerActions: (actions: BaseAction[]) => () => void;
+  registerActions: (actions: Action[]) => () => void;
   toggle: () => void;
   setActiveIndex: (cb: number | ((currIndex: number) => number)) => void;
 }
