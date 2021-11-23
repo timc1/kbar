@@ -51,7 +51,10 @@ class History implements IHistory {
   add(item: IHistoryItem) {
     const historyItem = HistoryItem.create(item);
     this.undoStack.push(historyItem);
-    return historyItem;
+    return {
+      undo: () => this.undo(historyItem),
+      redo: () => this.redo(historyItem),
+    };
   }
 
   undo(item?: IHistoryItem) {

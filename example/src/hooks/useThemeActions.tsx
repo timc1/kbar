@@ -24,8 +24,25 @@ export default function useThemeActions() {
             <div>Dark theme enabled</div>
             <button
               onClick={() => {
-                actionImpl.command.negate();
+                actionImpl.command.history.undo();
                 toast.dismiss("dark");
+
+                toast.success(
+                  <div>
+                    <div>Dark theme undone</div>
+                    <button
+                      onClick={() => {
+                        actionImpl.command.history.redo();
+                        toast.dismiss("dark-undo");
+                      }}
+                    >
+                      Redo
+                    </button>
+                  </div>,
+                  {
+                    id: "dark-undo",
+                  }
+                );
               }}
             >
               Undo

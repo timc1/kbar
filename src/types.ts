@@ -95,7 +95,7 @@ export interface IHistoryItem {
 export interface IHistory {
   undoStack: IHistoryItem[];
   redoStack: IHistoryItem[];
-  add: (item: IHistoryItem) => any;
+  add: (item: IHistoryItem) => { undo: () => any; redo: () => any };
   undo: (item?: IHistoryItem) => any;
   redo: (item?: IHistoryItem) => any;
 }
