@@ -96,12 +96,12 @@ export function useThrottledValue(value: any, ms: number = 100) {
 
 export function shouldRejectKeystrokes(
   {
-    customIgnoredElements,
+    ignoreWhenFocused,
   }: {
-    customIgnoredElements: string[];
-  } = { customIgnoredElements: [] }
+    ignoreWhenFocused: string[];
+  } = { ignoreWhenFocused: [] }
 ) {
-  const inputs = ["input", "textarea", ...customIgnoredElements].map((el) =>
+  const inputs = ["input", "textarea", ...ignoreWhenFocused].map((el) =>
     el.toLowerCase()
   );
 

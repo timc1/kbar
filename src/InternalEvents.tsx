@@ -157,9 +157,7 @@ function useShortcuts() {
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key?.toLowerCase();
 
-      if (
-        shouldRejectKeystrokes({ customIgnoredElements: ["select", "button"] })
-      )
+      if (shouldRejectKeystrokes({ ignoreWhenFocused: ["select", "button"] }))
         return;
 
       const currentTime = Date.now();
