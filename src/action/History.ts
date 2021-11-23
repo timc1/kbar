@@ -93,6 +93,7 @@ class History implements IHistory {
       return item;
     }
     const index = this.redoStack.findIndex((i) => i === item);
+    if (index === -1) return;
     this.redoStack.splice(index, 1);
     item.perform();
     this.undoStack.push(item);
