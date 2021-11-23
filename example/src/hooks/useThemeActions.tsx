@@ -2,6 +2,28 @@ import useRegisterActions from "../../../src/useRegisterActions";
 import toast from "react-hot-toast";
 import * as React from "react";
 
+function Toast({ title, action, buttonText }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+      <span style={{ fontSize: 14 }}>{title}</span>
+      <button
+        onClick={action}
+        style={{
+          background: "#fff",
+          border: "none",
+          boxShadow: "0 0 0 1px #000",
+          padding: "4px 8px",
+          cursor: "pointer",
+          borderRadius: 4,
+          fontSize: 14,
+        }}
+      >
+        {buttonText}
+      </button>
+    </div>
+  );
+}
+
 export default function useThemeActions() {
   useRegisterActions([
     {
@@ -19,34 +41,30 @@ export default function useThemeActions() {
         const attribute = "data-theme-dark";
         const doc = document.documentElement;
         doc.setAttribute(attribute, "");
-        toast.success(
+        toast(
           <div>
-            <div>Dark theme enabled</div>
-            <button
-              onClick={() => {
+            <Toast
+              title="Dark theme enabled"
+              buttonText="Undo"
+              action={() => {
                 actionImpl.command.history.undo();
                 toast.dismiss("dark");
 
-                toast.success(
-                  <div>
-                    <div>Dark theme undone</div>
-                    <button
-                      onClick={() => {
-                        actionImpl.command.history.redo();
-                        toast.dismiss("dark-undo");
-                      }}
-                    >
-                      Redo
-                    </button>
-                  </div>,
+                toast(
+                  <Toast
+                    title="Dark theme undone"
+                    buttonText="Redo"
+                    action={() => {
+                      actionImpl.command.history.redo();
+                      toast.dismiss("dark-undo");
+                    }}
+                  />,
                   {
                     id: "dark-undo",
                   }
                 );
               }}
-            >
-              Undo
-            </button>
+            />
           </div>,
           {
             id: "dark",
@@ -63,11 +81,42 @@ export default function useThemeActions() {
       name: "Light",
       keywords: "light theme",
       section: "",
-      perform: () => {
+      perform: (actionImpl) => {
         const attribute = "data-theme-dark";
         const doc = document.documentElement;
         const isDark = doc.getAttribute(attribute) !== null;
         document.documentElement.removeAttribute(attribute);
+
+        toast(
+          <div>
+            <Toast
+              title="Light theme enabled"
+              buttonText="Undo"
+              action={() => {
+                actionImpl.command.history.undo();
+                toast.dismiss("light");
+
+                toast(
+                  <Toast
+                    title="Light theme undone"
+                    buttonText="Redo"
+                    action={() => {
+                      actionImpl.command.history.redo();
+                      toast.dismiss("light-undo");
+                    }}
+                  />,
+                  {
+                    id: "light-undo",
+                  }
+                );
+              }}
+            />
+          </div>,
+          {
+            id: "light",
+          }
+        );
+
         return () => {
           if (isDark) doc.setAttribute(attribute, "");
         };

@@ -122,7 +122,11 @@ const App = () => {
           </Route>
         </Switch>
       </Layout>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          position: "bottom-right",
+        }}
+      />
     </KBarProvider>
   );
 };
