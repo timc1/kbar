@@ -1,10 +1,11 @@
 import "./index.scss";
+import { Toaster } from "react-hot-toast";
 import * as React from "react";
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import Layout from "./Layout";
 import Home from "./Home";
 import Docs from "./Docs";
-import RegisterDocActions from "./Docs/RegisterDocActions";
+import useDocsActions from "./hooks/useDocsActions";
 import { useAnalytics } from "./utils";
 import Blog from "./Blog";
 
@@ -17,10 +18,10 @@ import {
   KBarSearch,
   KBarResults,
   createAction,
-  useKBar,
   useMatches,
   ActionImpl,
 } from "../../src";
+import useThemeActions from "./hooks/useThemeActions";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -53,95 +54,58 @@ const groupNameStyle = {
 const App = () => {
   useAnalytics();
   const history = useHistory();
+  const initialActions = [
+    {
+      id: "homeAction",
+      name: "Home",
+      shortcut: ["h"],
+      keywords: "back",
+      section: "Navigation",
+      perform: () => history.push("/"),
+      icon: <HomeIcon />,
+      subtitle: "Subtitles can help add more context.",
+    },
+    {
+      id: "docsAction",
+      name: "Docs",
+      shortcut: ["g", "d"],
+      keywords: "help",
+      section: "Navigation",
+      perform: () => history.push("/docs"),
+    },
+    {
+      id: "contactAction",
+      name: "Contact",
+      shortcut: ["c"],
+      keywords: "email hello",
+      section: "Navigation",
+      perform: () => window.open("mailto:timchang@hey.com", "_blank"),
+    },
+    {
+      id: "twitterAction",
+      name: "Twitter",
+      shortcut: ["t"],
+      keywords: "social contact dm",
+      section: "Navigation",
+      perform: () => window.open("https://twitter.com/timcchang", "_blank"),
+    },
+    createAction({
+      name: "Github",
+      shortcut: ["g", "h"],
+      keywords: "sourcecode",
+      section: "Navigation",
+      perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
+    }),
+  ];
+
   return (
     <KBarProvider
-      actions={[
-        {
-          id: "homeAction",
-          name: "Home",
-          shortcut: ["h"],
-          keywords: "back",
-          section: "Navigation",
-          perform: () => history.push("/"),
-          icon: <HomeIcon />,
-          subtitle: "Subtitles can help add more context.",
-        },
-        {
-          id: "docsAction",
-          name: "Docs",
-          shortcut: ["g", "d"],
-          keywords: "help",
-          section: "Navigation",
-          perform: () => history.push("/docs"),
-        },
-        {
-          id: "contactAction",
-          name: "Contact",
-          shortcut: ["c"],
-          keywords: "email hello",
-          section: "Navigation",
-          perform: () => window.open("mailto:timchang@hey.com", "_blank"),
-        },
-        {
-          id: "twitterAction",
-          name: "Twitter",
-          shortcut: ["t"],
-          keywords: "social contact dm",
-          section: "Navigation",
-          perform: () => window.open("https://twitter.com/timcchang", "_blank"),
-        },
-        createAction({
-          name: "Github",
-          shortcut: ["g", "h"],
-          keywords: "sourcecode",
-          section: "Navigation",
-          perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
-        }),
-        {
-          id: "theme",
-          name: "Change theme…",
-          keywords: "interface color dark light",
-          section: "Preferences",
-        },
-        {
-          id: "darkTheme",
-          name: "Dark",
-          keywords: "dark theme",
-          section: "",
-          perform: () => {
-            document.documentElement.setAttribute("data-theme-dark", "");
-            return () => {
-              if (
-                document.documentElement.getAttribute("data-theme-dark") !==
-                null
-              ) {
-                document.documentElement.removeAttribute("data-theme-dark");
-              }
-            };
-          },
-          parent: "theme",
-        },
-        {
-          id: "lightTheme",
-          name: "Light",
-          keywords: "light theme",
-          section: "",
-          perform: () =>
-            document.documentElement.removeAttribute("data-theme-dark"),
-          parent: "theme",
-        },
-      ]}
+      options={{
+        enableHistory: true,
+      }}
+      actions={initialActions}
     >
-      <Undo />
-      <RegisterDocActions />
-      <KBarPortal>
-        <KBarPositioner>
-          <KBarAnimator style={animatorStyle}>
-            <KBarSearch style={searchStyle} />
-            <RenderResults />
-          </KBarAnimator>
-        </KBarPositioner>
-      </KBarPortal>
+      <CommandBar />
       <Layout>
         <Switch>
           <Route path="/docs" exact>
@@ -158,9 +122,25 @@ const App = () => {
           </Route>
         </Switch>
       </Layout>
+      <Toaster />
     </KBarProvider>
   );
 };
+
+function CommandBar() {
+  useDocsActions();
+  useThemeActions();
+  return (
+    <KBarPortal>
+      <KBarPositioner>
+        <KBarAnimator style={animatorStyle}>
+          <KBarSearch style={searchStyle} />
+          <RenderResults />
+        </KBarAnimator>
+      </KBarPositioner>
+    </KBarPortal>
+  );
+}
 
 function RenderResults() {
   const { results, rootActionId } = useMatches();
@@ -282,20 +262,6 @@ const ResultItem = React.forwardRef(
 );
 
 export default App;
-
-function Undo() {
-  const { actions } = useKBar((state) => ({ actions: state.actions }));
-
-  return (
-    <button
-      onClick={() => {
-        actions["darkTheme"].command.negate();
-      }}
-    >
-      Undo
-    </button>
-  );
-}
 
 function HomeIcon() {
   return (

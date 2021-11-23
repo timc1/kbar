@@ -5,8 +5,8 @@ interface CommandOptions {
 }
 export class Command {
   history?: IHistory;
-  perform?: () => any;
-  negate?: () => any;
+  perform?: (...args: any) => any;
+  negate?: (...args: any) => any;
 
   constructor(command: { perform?: () => any }, options: CommandOptions) {
     this.history = options.history;

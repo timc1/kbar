@@ -11,7 +11,7 @@ export type Action = {
   section?: string;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
-  perform?: () => any;
+  perform?: (currentActionImpl: ActionImpl) => any;
   parent?: ActionId;
 };
 

@@ -31,7 +31,7 @@ export class ActionImpl implements Action {
     this.name = action.name;
     this.command = new Command(
       {
-        perform: action.perform,
+        perform: action.perform && (() => action.perform?.(this)),
       },
       {
         history: options.history,

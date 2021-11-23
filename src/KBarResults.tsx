@@ -111,7 +111,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     (item: RenderParams["item"]) => {
       if (typeof item === "string") return;
       if (item.command.perform) {
-        item.command.perform();
+        item.command.perform(item);
         query.toggle();
       } else {
         query.setSearch("");

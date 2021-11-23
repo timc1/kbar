@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useHistory } from "react-router";
 import { useRegisterActions } from "../../../src";
-import data from "./data";
+import data from "../Docs/data";
 
 const searchId = randomId();
 
-export default function SearchDocsActions() {
+export default function useDocsActions() {
   const history = useHistory();
 
   const searchActions = React.useMemo(() => {
@@ -48,8 +48,6 @@ export default function SearchDocsActions() {
   );
 
   useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean));
-
-  return null;
 }
 
 function randomId() {
