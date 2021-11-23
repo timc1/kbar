@@ -19,11 +19,11 @@ export class Command {
         const history = this.history;
         if (!history) return;
         if (typeof negate === "function") {
-          this.negate = () => {
-            negate();
-            history.remove(this);
-          };
-          history.add(this);
+          const hist = history.add({
+            perform,
+            negate,
+          });
+          this.negate = () => history.undo(hist);
         }
       });
   }

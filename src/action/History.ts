@@ -1,8 +1,23 @@
-import { HistoryItem, IHistory } from "../types";
+import type { IHistory, IHistoryItem } from "../types";
 import { shouldRejectKeystrokes } from "../utils";
+
+class HistoryItem implements IHistoryItem {
+  perform: () => any;
+  negate: () => any;
+
+  constructor(item: IHistoryItem) {
+    this.perform = item.perform;
+    this.negate = item.negate;
+  }
+
+  static create(item: IHistoryItem) {
+    return new HistoryItem(item);
+  }
+}
 
 class History implements IHistory {
   static instance: History;
+
   undoStack: HistoryItem[] = [];
   redoStack: HistoryItem[] = [];
 
@@ -33,29 +48,42 @@ class History implements IHistory {
     });
   }
 
-  private undo() {
-    const item = this.redoStack.pop();
-    if (!item?.negate) return;
-    item.negate();
-    this.undoStack.push(item);
+  add(item: IHistoryItem) {
+    const historyItem = HistoryItem.create(item);
+    this.undoStack.push(historyItem);
+    return historyItem;
   }
 
-  private redo() {
-    const item = this.undoStack.pop();
-    if (item?.perform) {
-      item.perform();
-      if (item.negate) {
-        this.redoStack.push(item);
-      }
+  undo(item?: IHistoryItem) {
+    // if not undoing a specific item, just undo the latest
+    if (!item) {
+      const item = this.undoStack.pop();
+      if (!item) return;
+      item?.negate();
+      this.redoStack.push(item);
+      return item;
     }
-  }
-
-  add(item: HistoryItem) {
+    // else undo the specific item
+    const index = this.undoStack.findIndex((i) => i === item);
+    this.undoStack.splice(index, 1);
+    item.negate();
     this.redoStack.push(item);
+    return item;
   }
 
-  remove(item: HistoryItem) {
-    this.redoStack.filter((i) => i !== item);
+  redo(item?: IHistoryItem) {
+    if (!item) {
+      const item = this.redoStack.pop();
+      if (!item) return;
+      item?.perform();
+      this.undoStack.push(item);
+      return item;
+    }
+    const index = this.redoStack.findIndex((i) => i === item);
+    this.redoStack.splice(index, 1);
+    item.perform();
+    this.undoStack.push(item);
+    return item;
   }
 }
 

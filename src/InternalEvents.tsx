@@ -179,7 +179,7 @@ function useShortcuts() {
             query.setCurrentRootAction(action.id);
             query.toggle();
           } else {
-            action.perform?.();
+            action.command.perform?.();
           }
 
           buffer = [];

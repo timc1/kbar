@@ -87,14 +87,15 @@ export enum VisualState {
   hidden = "hidden",
 }
 
-export interface IHistory {
-  undoStack: HistoryItem[];
-  redoStack: HistoryItem[];
-  add: (item: HistoryItem) => void;
-  remove: (item: HistoryItem) => void;
+export interface IHistoryItem {
+  perform: () => any;
+  negate: () => any;
 }
 
-export interface HistoryItem {
-  perform?: () => any;
-  negate?: () => any;
+export interface IHistory {
+  undoStack: IHistoryItem[];
+  redoStack: IHistoryItem[];
+  add: (item: IHistoryItem) => any;
+  undo: (item?: IHistoryItem) => any;
+  redo: (item?: IHistoryItem) => any;
 }
