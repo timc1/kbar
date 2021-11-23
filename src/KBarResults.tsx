@@ -110,7 +110,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
       if (typeof item === "string") return;
-      if (item.command.perform) {
+      if (item.command) {
         item.command.perform(item);
         query.toggle();
       } else {

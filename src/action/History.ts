@@ -1,7 +1,7 @@
 import type { IHistory, IHistoryItem } from "../types";
 import { shouldRejectKeystrokes } from "../utils";
 
-class HistoryItem implements IHistoryItem {
+export class HistoryItem implements IHistoryItem {
   perform: () => any;
   negate: () => any;
 
@@ -51,10 +51,19 @@ class History implements IHistory {
   add(item: IHistoryItem) {
     const historyItem = HistoryItem.create(item);
     this.undoStack.push(historyItem);
-    return {
-      undo: () => this.undo(historyItem),
-      redo: () => this.redo(historyItem),
-    };
+    return historyItem;
+  }
+
+  remove(item: IHistoryItem) {
+    const undoIndex = this.undoStack.findIndex((i) => i === item);
+    if (undoIndex !== -1) {
+      this.undoStack.splice(undoIndex, 1);
+      return;
+    }
+    const redoIndex = this.redoStack.findIndex((i) => i === item);
+    if (redoIndex !== -1) {
+      this.redoStack.splice(redoIndex, 1);
+    }
   }
 
   undo(item?: IHistoryItem) {
@@ -68,6 +77,7 @@ class History implements IHistory {
     }
     // else undo the specific item
     const index = this.undoStack.findIndex((i) => i === item);
+    if (index === -1) return;
     this.undoStack.splice(index, 1);
     item.negate();
     this.redoStack.push(item);
@@ -87,6 +97,11 @@ class History implements IHistory {
     item.perform();
     this.undoStack.push(item);
     return item;
+  }
+
+  reset() {
+    this.undoStack.splice(0);
+    this.redoStack.splice(0);
   }
 }
 

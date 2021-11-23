@@ -11,7 +11,7 @@ const baseAction: Action = createAction({
 const store = {};
 
 describe("ActionImpl", () => {
-  it("should create an instance of ActionImpl2", () => {
+  it("should create an instance of ActionImpl", () => {
     const action = ActionImpl.create(createAction(baseAction), {
       store,
     });

@@ -16,11 +16,11 @@ export class ActionImpl implements Action {
   icon: Action["icon"];
   subtitle: Action["subtitle"];
   /**
-   * @deprecated action.perform deprecated in favor of action.command.perform
+   * @deprecated use action.command.perform
    */
   perform: Action["perform"];
 
-  command: Command;
+  command?: Command;
 
   ancestors: ActionImpl[] = [];
   children: ActionImpl[] = [];
@@ -29,16 +29,19 @@ export class ActionImpl implements Action {
     Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
-    this.command = new Command(
-      {
-        perform: action.perform && (() => action.perform?.(this)),
-      },
-      {
-        history: options.history,
-      }
-    );
-    // Backward compatibility
-    this.perform = this.command.perform;
+    const perform = action.perform;
+    this.command =
+      perform &&
+      new Command(
+        {
+          perform: () => perform(this),
+        },
+        {
+          history: options.history,
+        }
+      );
+    // Backwards compatibility
+    this.perform = this.command?.perform;
 
     if (action.parent) {
       const parentActionImpl = options.store[action.parent];
