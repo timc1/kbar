@@ -29,29 +29,27 @@ export class ActionInterface {
       });
     }
 
-    return this.actions;
+    return { ...this.actions };
   }
 
   remove(actions: Action[]) {
-    for (let i = 0; i < actions.length; i++) {
-      const action = actions[i];
+    actions.forEach((action) => {
       const actionImpl = this.actions[action.id];
-      if (!actionImpl) break;
+      if (!actionImpl) return;
       let children = actionImpl.children;
       while (children.length) {
         let child = children.pop();
-        if (!child) break;
+        if (!child) return;
         delete this.actions[child.id];
-        if (child.parentActionImpl) {
-          child.parentActionImpl.removeChild(child);
-        }
-        children = child.children;
+        if (child.parentActionImpl) child.parentActionImpl.removeChild(child);
+        if (child.children) children.push(...child.children);
       }
       if (actionImpl.parentActionImpl) {
         actionImpl.parentActionImpl.removeChild(actionImpl);
       }
-      delete this.actions[actionImpl.id];
-    }
-    return this.actions;
+      delete this.actions[action.id];
+    });
+
+    return { ...this.actions };
   }
 }

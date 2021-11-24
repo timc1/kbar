@@ -181,9 +181,14 @@ const ResultItem = React.forwardRef(
     ref: React.Ref<HTMLDivElement>
   ) => {
     const ancestors = React.useMemo(() => {
+      if (!currentRootActionId) return action.ancestors;
       const index = action.ancestors.findIndex(
         (ancestor) => ancestor.id === currentRootActionId
       );
+      // +1 removes the currentRootAction; e.g.
+      // if we are on the "Set theme" parent action,
+      // the UI should not display "Set theme… > Dark"
+      // but rather just "Dark"
       return action.ancestors.slice(index + 1);
     }, [action.ancestors, currentRootActionId]);
 

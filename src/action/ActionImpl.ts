@@ -1,3 +1,4 @@
+import invariant from "tiny-invariant";
 import { Command } from "./Command";
 import type { Action, ActionStore, IHistory } from "../types";
 
@@ -15,6 +16,7 @@ export class ActionImpl implements Action {
   section: Action["section"];
   icon: Action["icon"];
   subtitle: Action["subtitle"];
+  parent?: Action["parent"];
   /**
    * @deprecated use action.command.perform
    */
@@ -45,17 +47,22 @@ export class ActionImpl implements Action {
 
     if (action.parent) {
       const parentActionImpl = options.store[action.parent];
-      // TODO: add invariant; parentActionImpl must exist prior to creating child.
-      if (parentActionImpl) {
-        parentActionImpl.addChild(this);
-      }
+      invariant(
+        parentActionImpl,
+        `attempted to create an action whos parent: ${action.parent} does not exist in the store.`
+      );
+      parentActionImpl.addChild(this);
     }
   }
-  parent?: string | undefined;
 
   addChild(childActionImpl: ActionImpl) {
-    // add reference to ancestor here as well
-    childActionImpl.ancestors.push(this);
+    // add all ancestors for the child action
+    childActionImpl.ancestors.unshift(this);
+    let parent = this.parentActionImpl;
+    while (parent) {
+      childActionImpl.ancestors.unshift(parent);
+      parent = parent.parentActionImpl;
+    }
     // we ensure that order of adding always goes
     // parent -> children, so no need to recurse
     this.children.push(childActionImpl);

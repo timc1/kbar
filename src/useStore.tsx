@@ -36,7 +36,7 @@ export default function useStore(props: useStoreProps) {
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
-    actions: actionsInterface.actions,
+    actions: { ...actionsInterface.actions },
     activeIndex: 0,
   });
 
@@ -56,7 +56,7 @@ export default function useStore(props: useStoreProps) {
       setState((state) => {
         return {
           ...state,
-          actions: actionsInterface.add(actions), // actionsInterface.add(actions),
+          actions: actionsInterface.add(actions),
         };
       });
 
@@ -64,7 +64,7 @@ export default function useStore(props: useStoreProps) {
         setState((state) => {
           return {
             ...state,
-            actions: actionsInterface.remove(actions), // actionsInterface.remove(actions),
+            actions: actionsInterface.remove(actions),
           };
         });
       };
