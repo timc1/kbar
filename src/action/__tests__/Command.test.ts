@@ -2,7 +2,7 @@ import { ActionImpl } from "..";
 import { Action } from "../../types";
 import { createAction } from "../../utils";
 import { Command } from "../Command";
-import { history } from "../History";
+import { history } from "../HistoryImpl";
 
 const negate = jest.fn();
 const perform = jest.fn().mockReturnValue(negate);

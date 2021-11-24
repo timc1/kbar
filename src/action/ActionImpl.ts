@@ -1,11 +1,11 @@
 import invariant from "tiny-invariant";
 import { Command } from "./Command";
-import type { Action, ActionStore, IHistory } from "../types";
+import type { Action, ActionStore, History } from "../types";
 
 interface ActionImplOptions {
   store: ActionStore;
   ancestors?: ActionImpl[];
-  history?: IHistory;
+  history?: History;
 }
 
 export class ActionImpl implements Action {

@@ -1,7 +1,7 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
 import { ActionInterface } from "./action/ActionInterface";
-import { history } from "./action/History";
+import { history } from "./action/HistoryImpl";
 import type {
   Action,
   IKBarContext,

@@ -1,17 +1,17 @@
-import { IHistoryItem } from "..";
-import type { IHistory } from "../types";
+import { HistoryItem } from "..";
+import type { History } from "../types";
 
 interface CommandOptions {
-  history?: IHistory;
+  history?: History;
 }
 export class Command {
   perform: (...args: any) => any;
 
-  private historyItem?: IHistoryItem;
+  private historyItem?: HistoryItem;
 
   history?: {
-    undo: IHistory["undo"];
-    redo: IHistory["redo"];
+    undo: History["undo"];
+    redo: History["redo"];
   };
 
   constructor(

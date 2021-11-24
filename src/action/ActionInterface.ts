@@ -1,9 +1,9 @@
 import invariant from "tiny-invariant";
-import type { ActionId, Action, IHistory } from "../types";
+import type { ActionId, Action, History } from "../types";
 import { ActionImpl } from "./ActionImpl";
 
 interface ActionInterfaceOptions {
-  historyManager?: IHistory;
+  historyManager?: History;
 }
 export class ActionInterface {
   actions: Record<ActionId, ActionImpl> = {};

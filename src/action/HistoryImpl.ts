@@ -1,32 +1,32 @@
-import type { IHistory, IHistoryItem } from "../types";
+import type { History, HistoryItem } from "../types";
 import { shouldRejectKeystrokes } from "../utils";
 
-export class HistoryItem implements IHistoryItem {
-  perform: () => any;
-  negate: () => any;
+export class HistoryItemImpl implements HistoryItem {
+  perform: HistoryItem["perform"];
+  negate: HistoryItem["negate"];
 
-  constructor(item: IHistoryItem) {
+  constructor(item: HistoryItem) {
     this.perform = item.perform;
     this.negate = item.negate;
   }
 
-  static create(item: IHistoryItem) {
-    return new HistoryItem(item);
+  static create(item: HistoryItem) {
+    return new HistoryItemImpl(item);
   }
 }
 
-class History implements IHistory {
-  static instance: History;
+class HistoryImpl implements History {
+  static instance: HistoryImpl;
 
-  undoStack: HistoryItem[] = [];
-  redoStack: HistoryItem[] = [];
+  undoStack: HistoryItemImpl[] = [];
+  redoStack: HistoryItemImpl[] = [];
 
   constructor() {
-    if (!History.instance) {
-      History.instance = this;
+    if (!HistoryImpl.instance) {
+      HistoryImpl.instance = this;
       this.init();
     }
-    return History.instance;
+    return HistoryImpl.instance;
   }
 
   init() {
@@ -48,13 +48,13 @@ class History implements IHistory {
     });
   }
 
-  add(item: IHistoryItem) {
-    const historyItem = HistoryItem.create(item);
+  add(item: HistoryItem) {
+    const historyItem = HistoryItemImpl.create(item);
     this.undoStack.push(historyItem);
     return historyItem;
   }
 
-  remove(item: IHistoryItem) {
+  remove(item: HistoryItem) {
     const undoIndex = this.undoStack.findIndex((i) => i === item);
     if (undoIndex !== -1) {
       this.undoStack.splice(undoIndex, 1);
@@ -66,7 +66,7 @@ class History implements IHistory {
     }
   }
 
-  undo(item?: IHistoryItem) {
+  undo(item?: HistoryItem) {
     // if not undoing a specific item, just undo the latest
     if (!item) {
       const item = this.undoStack.pop();
@@ -84,7 +84,7 @@ class History implements IHistory {
     return item;
   }
 
-  redo(item?: IHistoryItem) {
+  redo(item?: HistoryItem) {
     if (!item) {
       const item = this.redoStack.pop();
       if (!item) return;
@@ -106,6 +106,6 @@ class History implements IHistory {
   }
 }
 
-const history = new History();
+const history = new HistoryImpl();
 Object.freeze(history);
 export { history };
