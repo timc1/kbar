@@ -129,6 +129,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       ref={parentRef}
       style={{
         maxHeight: props.maxHeight || 400,
+        position: "relative",
         overflow: "auto",
       }}
     >
@@ -138,7 +139,6 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
         style={{
           height: `${rowVirtualizer.totalSize}px`,
           width: "100%",
-          position: "relative",
         }}
       >
         {rowVirtualizer.virtualItems.map((virtualRow) => {
