@@ -15,10 +15,13 @@ abstraction to add a fast and extensible <kbd>command</kbd> + <kbd>k</kbd> menu 
 
 - Built in animations and fully customizable components
 - Keyboard navigation support; e.g. <kbd>control</kbd> + <kbd>n</kbd> or <kbd>control</kbd> + <kbd>p</kbd> for the navigation wizards
-- Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit <kbd>t</kbd> for Twitter
+- Keyboard shortcuts support for registering keystrokes to specific actions; e.g. hit <kbd>t</kbd>
+  for Twitter, hit <kbd>?</kbd> to immediate bring up documentation search
 - Nested actions enable creation of rich navigation experiences; e.g. hit backspace to navigate to
   the previous action
 - Performance as a first class priority; tens of thousands of actions? No problem.
+- History management; easily add undo and redo to each action
+- Built in screen reader support
 - A simple data structure which enables anyone to easily build their own custom components
 
 ### Usage
@@ -104,8 +107,9 @@ At this point hitting <kbd>cmd</kbd>+<kbd>k</kbd> will animate in a search input
 
 kbar provides a few utilities to render a performant list of search results.
 
-- `useMatches` at its core returns a list of results based on the current search query, grouped by `action.section`
-- `KBarResults` handles virtualizing your results
+- `useMatches` at its core returns a flattened list of results and group name based on the current
+  search query; i.e. `["Section name", Action, Action, "Another section name", Action, Action]`
+- `KBarResults` renders a performant virtualized list of these results
 
 Combine the two utilities to create a powerful search interface:
 
@@ -124,20 +128,11 @@ import {
 // ...
 
 function RenderResults() {
-  const groups = useMatches();
-  const flattened = React.useMemo(
-    () =>
-      groups.reduce((acc, curr) => {
-        acc.push(curr.name);
-        acc.push(...curr.actions);
-        return acc;
-      }, []),
-    [groups]
-  );
+  const { results } = useMatches();
 
   return (
     <KBarResults
-      items={flattened.filter((i) => i !== NO_GROUP)}
+      items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
           <div>{item}</div>
