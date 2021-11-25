@@ -1,7 +1,7 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
 import type { ActionImpl } from "./action/ActionImpl";
-import useKBar from "./useKBar";
+import {useKBar} from "./useKBar";
 import { useThrottledValue } from "./utils";
 
 export const NO_GROUP = "none";
