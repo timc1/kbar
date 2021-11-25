@@ -2,7 +2,7 @@
 
 kbar is a simple plug-n-play React component to add a fast, portable, and extensible <kbd>command</kbd> + <kbd>k</kbd> interface to your site.
 
-![demo](https://user-images.githubusercontent.com/12195101/134022553-af4a29e9-0a3d-40f1-9254-3bd9673f3401.gif)
+![demo](https://user-images.githubusercontent.com/12195101/143491194-1d3ad5d6-24ac-4e6e-8867-65f643ac2d24.gif)
 
 ## Background
 

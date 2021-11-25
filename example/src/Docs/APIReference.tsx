@@ -38,6 +38,11 @@ export default function APIReference() {
         Only re renders the component when return value deeply changes. All kbar
         components are built using this hook.
       </p>
+      <Heading name="HistoryImpl" />
+      <p>
+        An internal history implementation which maintains a simple in memory
+        list of actions that contain an undoable, negatable action.
+      </p>
     </div>
   );
 }

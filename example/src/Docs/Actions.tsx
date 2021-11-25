@@ -7,40 +7,35 @@ export default function Actions() {
       <h1>Actions</h1>
       <p>
         When a user searches for something in kbar, the result is a list of
-        actions. These actions are represented by a simple object data
-        structure.
+        <code>ActionImpl</code>s. ActionImpls are a more complex, powerful
+        representation of the <code>action</code> object literal that the user
+        defines.
       </p>
       <p>
-        The way users register actions is by passing a list of action objects to{" "}
-        <code>KBarProvider</code> or through <code>useRegisterActions</code>.
+        The way users register actions is by first passing a list of default
+        action objects to <code>KBarProvider</code>, and subsequently using{" "}
+        <code>useRegisterActions</code> to dynamic register actions.
       </p>
       <p>The object looks like this:</p>
       <Code
-        code={`interface BaseAction {
-    id: string;
-    name: string;
-    shortcut?: string[];
-    keywords?: string;
-    perform?: () => void;
-    section?: string;
-    parent?: ActionId | null;
-}`}
+        code={`
+type Action = {
+  id: ActionId;
+  name: string;
+  shortcut?: string[];
+  keywords?: string;
+  section?: string;
+  icon?: string | React.ReactElement | React.ReactNode;
+  subtitle?: string;
+  perform?: (currentActionImpl: ActionImpl) => any;
+  parent?: ActionId;
+};`}
       />
       <p>
-        kbar manages an internal state of action objects. What we do is take the
-        list of actions provided by the user and transform them under the hood
-        into our own representation of these objects, <code>ActionImpl</code>.
+        kbar manages an internal state of action objects. We take the list of
+        actions provided by the user and transform them under the hood into our
+        own representation of these objects, <code>ActionImpl</code>.
       </p>
-      <p>
-        An <code>ActionImpl</code> is an internal implementation of the{" "}
-        <code>Action</code> interface:
-      </p>
-      <Code
-        code={`type Action = Omit<BaseAction, "parent"> &{
-    parent?: ActionImpl;
-    children?: ActionImpl;
-}`}
-      />
       <p>
         You don't need to know too much of the specifics of{" "}
         <code>ActionImpl</code> – we transform what the user passes to us to add

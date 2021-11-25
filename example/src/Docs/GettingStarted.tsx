@@ -19,7 +19,8 @@ export default function GettingStarted() {
       </p>
 
       <Code
-        code={`// app.tsx
+        code={`
+// app.tsx
 import { KBarProvider } from "kbar";
 
 function MyApp() {
@@ -27,8 +28,8 @@ function MyApp() {
     <KBarProvider>
     // ...
     </KBarProvider>
-    );
-  }
+  );
+}
   `}
       />
 
@@ -74,7 +75,6 @@ import {
   KBarAnimator,
   KBarSearch,
   useMatches,
-  NO_GROUP
 } from "kbar";
 
 // ...
@@ -106,11 +106,13 @@ import {
 
       <ul>
         <li>
-          <code>useMatches</code> at its core returns a list of results based on
-          the current search query, grouped by `action.section`
+          <code>useMatches</code> at its core returns a flattened list of
+          results based on the current search query. This is a list of{" "}
+          <code>string</code> and <code>Action</code> types.
         </li>
         <li>
-          <code>KBarResults</code> handles virtualizing your results
+          <code>KBarResults</code> takes the flattened list of results and
+          renders them within a virtualized window.
         </li>
       </ul>
 
@@ -121,7 +123,6 @@ import {
   // ...
   KBarResults,
   useMatches,
-  NO_GROUP,
 } from "kbar";
 
 // ...
@@ -131,20 +132,11 @@ import {
 // ...
 
 function RenderResults() {
-  const groups = useMatches();
-  const flattened = React.useMemo(
-    () =>
-    groups.reduce((acc, curr) => {
-      acc.push(curr.name);
-      acc.push(...curr.actions);
-      return acc;
-    }, []),
-    [groups]
-    );
+  const { results } = useMatches();
     
     return (
       <KBarResults
-      items={flattened.filter((i) => i !== NO_GROUP)}
+      items={results}
       onRender={({ item, active }) =>
       typeof item === "string" ? (
         <div>{item}</div>
