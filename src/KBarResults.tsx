@@ -18,7 +18,7 @@ interface KBarResultsProps {
   maxHeight?: number;
 }
 
-const KBarResults: React.FC<KBarResultsProps> = (props) => {
+export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
 
@@ -185,5 +185,3 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     </div>
   );
 };
-
-export default KBarResults;

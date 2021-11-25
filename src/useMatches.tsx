@@ -9,7 +9,7 @@ export const NO_GROUP = "none";
 /**
  * returns deep matches only when a search query is present
  */
-export default function useMatches() {
+export function useMatches() {
   const { search, actions, rootActionId } = useKBar((state) => ({
     search: state.searchQuery,
     actions: state.actions,

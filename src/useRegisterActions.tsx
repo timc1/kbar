@@ -2,7 +2,7 @@ import * as React from "react";
 import type { Action } from "./types";
 import { useKBar } from "./useKBar";
 
-export default function useRegisterActions(
+export function useRegisterActions(
   actions: Action[],
   dependencies: React.DependencyList = []
 ) {

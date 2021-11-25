@@ -15,7 +15,7 @@ const defaultStyle: React.CSSProperties = {
   padding: "14vh 16px 16px",
 };
 
-export default function KBarPositioner(props: Props) {
+export function KBarPositioner(props: Props) {
   return (
     <div style={defaultStyle} {...props}>
       {props.children}
