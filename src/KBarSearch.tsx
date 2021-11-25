@@ -1,5 +1,5 @@
 import * as React from "react";
-import { VisualState } from ".";
+import { VisualState } from "./types";
 import useKBar from "./useKBar";
 
 export const KBAR_LISTBOX = "kbar-listbox";
@@ -60,7 +60,7 @@ export default function KBarSearch(
       onKeyDown={(event) => {
         if (currentRootActionId && !search && event.key === "Backspace") {
           const parent = actions[currentRootActionId].parent;
-          query.setCurrentRootAction(parent?.id);
+          query.setCurrentRootAction(parent);
         }
       }}
       {...props}

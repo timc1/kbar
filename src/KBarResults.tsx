@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
-import { useKBar } from ".";
-import { ActionImpl } from "./action";
+import { ActionImpl } from "./action/ActionImpl";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
+import useKBar from "./useKBar";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
@@ -110,8 +110,8 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
       if (typeof item === "string") return;
-      if (item.perform) {
-        item.perform();
+      if (item.command) {
+        item.command.perform(item);
         query.toggle();
       } else {
         query.setSearch("");
@@ -129,6 +129,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
       ref={parentRef}
       style={{
         maxHeight: props.maxHeight || 400,
+        position: "relative",
         overflow: "auto",
       }}
     >
@@ -138,7 +139,6 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
         style={{
           height: `${rowVirtualizer.totalSize}px`,
           width: "100%",
-          position: "relative",
         }}
       >
         {rowVirtualizer.virtualItems.map((virtualRow) => {

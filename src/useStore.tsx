@@ -1,26 +1,32 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
-import { IKBarContext } from ".";
-import { ActionInterface } from "./action";
-import {
-  BaseAction,
+import { ActionInterface } from "./action/ActionInterface";
+import { history } from "./action/HistoryImpl";
+import type {
+  Action,
+  IKBarContext,
+  KBarOptions,
   KBarProviderProps,
   KBarState,
-  KBarOptions,
-  VisualState,
 } from "./types";
+import { VisualState } from "./types";
 
 type useStoreProps = KBarProviderProps;
 
 export default function useStore(props: useStoreProps) {
-  if (!props.actions) {
-    throw new Error(
-      "You must define a list of `actions` when calling KBarProvider"
-    );
-  }
+  const optionsRef = React.useRef({
+    animations: {
+      enterMs: 200,
+      exitMs: 100,
+    },
+    ...props.options,
+  } as KBarOptions);
 
   const actionsInterface = React.useMemo(
-    () => new ActionInterface(props.actions),
+    () =>
+      new ActionInterface(props.actions || [], {
+        historyManager: optionsRef.current.enableHistory ? history : undefined,
+      }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
@@ -45,16 +51,8 @@ export default function useStore(props: useStoreProps) {
     publisher.notify();
   }, [state, publisher]);
 
-  const optionsRef = React.useRef({
-    animations: {
-      enterMs: 200,
-      exitMs: 100,
-    },
-    ...props.options,
-  } as KBarOptions);
-
   const registerActions = React.useCallback(
-    (actions: BaseAction[]) => {
+    (actions: Action[]) => {
       setState((state) => {
         return {
           ...state,

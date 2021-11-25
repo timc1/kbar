@@ -18,6 +18,7 @@ export default function Overview() {
       <ul>
         <li>Built in animations alongside fully customizable components</li>
         <li>Keyboard navigation support</li>
+        <li>Undo/redo support</li>
         <li>
           Keyboard shortcut support for registering keystroke patterns to
           triggering actions
@@ -27,6 +28,7 @@ export default function Overview() {
           Simple data structure which enables anyone to easily build advanced
           custom components
         </li>
+        <li>Screen reader support</li>
       </ul>
     </div>
   );

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
-import { getScrollbarWidth } from "./utils";
+import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -151,23 +151,13 @@ function useShortcuts() {
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
-    const inputs = ["input", "select", "button", "textarea"];
-
     let buffer: string[] = [];
     let lastKeyStrokeTime = Date.now();
 
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key?.toLowerCase();
 
-      const activeElement = document.activeElement;
-      const ignoreStrokes =
-        activeElement &&
-        (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
-          activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
-          activeElement.attributes.getNamedItem("contenteditable")?.value ===
-            "true");
-
-      if (ignoreStrokes || event.metaKey || key === "shift") {
+      if (shouldRejectKeystrokes() || event.metaKey || key === "shift") {
         return;
       }
 
@@ -191,7 +181,7 @@ function useShortcuts() {
             query.setCurrentRootAction(action.id);
             query.toggle();
           } else {
-            action.perform?.();
+            action.command?.perform();
           }
 
           buffer = [];

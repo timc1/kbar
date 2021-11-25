@@ -1,70 +1,53 @@
-import type { BaseAction, ActionId } from "../types";
+import invariant from "tiny-invariant";
+import type { ActionId, Action, History } from "../types";
 import { ActionImpl } from "./ActionImpl";
 
+interface ActionInterfaceOptions {
+  historyManager?: History;
+}
 export class ActionInterface {
   actions: Record<ActionId, ActionImpl> = {};
+  options: ActionInterfaceOptions;
 
-  constructor(actions: BaseAction[] = []) {
-    this.actions = this.add(actions);
+  constructor(actions: Action[] = [], options: ActionInterfaceOptions = {}) {
+    this.options = options;
+    this.add(actions);
   }
 
-  add(actions: BaseAction[]) {
-    const actionsByKey: Record<ActionId, BaseAction> = actions.reduce(
-      (acc, curr) => {
-        acc[curr.id] = curr;
-        return acc;
-      },
-      {}
-    );
-
-    actions.forEach((action) => {
-      if (this.actions[action.id]) return;
-
-      let orderedActions: BaseAction[] = [action];
-
-      let parent = action.parent;
-      while (parent) {
-        if (!this.actions[parent]) {
-          orderedActions.push(actionsByKey[parent]);
-        }
-        parent = actionsByKey[parent]?.parent;
+  add(actions: Action[]) {
+    for (let i = 0; i < actions.length; i++) {
+      const action = actions[i];
+      if (action.parent) {
+        invariant(
+          this.actions[action.parent],
+          `Attempted to create action "${action.name}" without registering its parent "${action.parent}" first.`
+        );
       }
-
-      while (orderedActions.length) {
-        const action = orderedActions.pop()!;
-        if (!action) return;
-
-        const parent = action.parent ? this.actions[action.parent] : undefined;
-        this.actions[action.id] = ActionImpl.fromJSON(action, {
-          parent,
-        });
-        if (parent) {
-          parent.addChild(this.actions[action.id]);
-        }
-      }
-    });
+      this.actions[action.id] = ActionImpl.create(action, {
+        history: this.options.historyManager,
+        store: this.actions,
+      });
+    }
 
     return { ...this.actions };
   }
 
-  remove(actions: BaseAction[]) {
+  remove(actions: Action[]) {
     actions.forEach((action) => {
       const actionImpl = this.actions[action.id];
       if (!actionImpl) return;
-      // if is parent action, remove _all_ children
       let children = actionImpl.children;
       while (children.length) {
-        const child = children.pop()!;
+        let child = children.pop();
+        if (!child) return;
         delete this.actions[child.id];
-        if (child.children) {
-          children.push(...child.children);
-        }
+        if (child.parentActionImpl) child.parentActionImpl.removeChild(child);
+        if (child.children) children.push(...child.children);
       }
-      // if child of a parent, remove from parent
-      if (actionImpl.parent) {
-        actionImpl.parent.removeChild(actionImpl);
+      if (actionImpl.parentActionImpl) {
+        actionImpl.parentActionImpl.removeChild(actionImpl);
       }
-      delete this.actions[actionImpl.id];
+      delete this.actions[action.id];
     });
 
     return { ...this.actions };

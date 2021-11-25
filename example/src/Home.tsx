@@ -30,7 +30,7 @@ export default function Home() {
         menu to your site.
       </p>
       <h4>Features</h4>
-      <ul role="list">
+      <ul>
         <li>Built in animations, fully customizable</li>
         <li>
           Keyboard navigation support; e.g. <kbd>ctrl</kbd> <kbd>n</kbd> /{" "}

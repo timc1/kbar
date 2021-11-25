@@ -1,62 +1,92 @@
-import { ReactElement, JSXElementConstructor, ReactNode } from "react";
-import type { BaseAction, Action } from "../types";
+import invariant from "tiny-invariant";
+import { Command } from "./Command";
+import type { Action, ActionStore, History } from "../types";
 
 interface ActionImplOptions {
-  parent?: ActionImpl;
+  store: ActionStore;
+  ancestors?: ActionImpl[];
+  history?: History;
 }
 
 export class ActionImpl implements Action {
-  id: string;
-  name: string;
-  shortcut?: string[] | undefined;
-  keywords?: string | undefined;
-  perform?: (() => void) | undefined;
-  section?: string | undefined;
-  icon?: ReactElement<any, string | JSXElementConstructor<any>> | ReactNode;
-  subtitle?: string | undefined;
-  parent?: ActionImpl;
+  id: Action["id"];
+  name: Action["name"];
+  shortcut: Action["shortcut"];
+  keywords: Action["keywords"];
+  section: Action["section"];
+  icon: Action["icon"];
+  subtitle: Action["subtitle"];
+  parent?: Action["parent"];
+  /**
+   * @deprecated use action.command.perform
+   */
+  perform: Action["perform"];
+
+  command?: Command;
+
+  ancestors: ActionImpl[] = [];
   children: ActionImpl[] = [];
 
-  constructor(action: BaseAction, options: ActionImplOptions = {}) {
+  constructor(action: Action, options: ActionImplOptions) {
+    Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
-    this.shortcut = action.shortcut;
-    this.keywords = action.keywords;
-    this.perform = action.perform;
-    this.section = action.section;
-    this.icon = action.icon;
-    this.subtitle = action.subtitle;
-    this.parent = options.parent;
+    const perform = action.perform;
+    this.command =
+      perform &&
+      new Command(
+        {
+          perform: () => perform(this),
+        },
+        {
+          history: options.history,
+        }
+      );
+    // Backwards compatibility
+    this.perform = this.command?.perform;
 
-    if (options.parent) {
-      options.parent.addChild(this);
-    }
-
-    if (this.parent?.section && !this.section) {
-      this.section = this.parent.section;
-    }
-  }
-
-  addChild(action: ActionImpl) {
-    if (!this.children.find((child) => child === action)) {
-      // add parent's section as children section
-      if (!action.section && this.section) {
-        action.section = this.section;
-      }
-      this.children.push(action);
+    if (action.parent) {
+      const parentActionImpl = options.store[action.parent];
+      invariant(
+        parentActionImpl,
+        `attempted to create an action whos parent: ${action.parent} does not exist in the store.`
+      );
+      parentActionImpl.addChild(this);
     }
   }
 
-  removeChild(action: ActionImpl) {
-    const index = this.children.findIndex((a) => a === action);
-    if (index === -1) return;
-    this.children = [
-      ...this.children.slice(0, index),
-      ...this.children.slice(index + 1),
-    ];
+  addChild(childActionImpl: ActionImpl) {
+    // add all ancestors for the child action
+    childActionImpl.ancestors.unshift(this);
+    let parent = this.parentActionImpl;
+    while (parent) {
+      childActionImpl.ancestors.unshift(parent);
+      parent = parent.parentActionImpl;
+    }
+    // we ensure that order of adding always goes
+    // parent -> children, so no need to recurse
+    this.children.push(childActionImpl);
   }
 
-  static fromJSON(action: BaseAction, options: ActionImplOptions = {}) {
+  removeChild(actionImpl: ActionImpl) {
+    // recursively remove all children
+    const index = this.children.indexOf(actionImpl);
+    if (index !== -1) {
+      this.children.splice(index, 1);
+    }
+    if (actionImpl.children) {
+      actionImpl.children.forEach((child) => {
+        this.removeChild(child);
+      });
+    }
+  }
+
+  // easily access parentActionImpl after creation
+  get parentActionImpl() {
+    return this.ancestors[this.ancestors.length - 1];
+  }
+
+  static create(action: Action, options: ActionImplOptions) {
     return new ActionImpl(action, options);
   }
 }

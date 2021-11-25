@@ -1,9 +1,9 @@
 import * as React from "react";
-import { BaseAction } from "./types";
+import type { Action } from "./types";
 import useKBar from "./useKBar";
 
 export default function useRegisterActions(
-  actions: BaseAction[],
+  actions: Action[],
   dependencies: React.DependencyList = []
 ) {
   const { query } = useKBar();

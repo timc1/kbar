@@ -1,7 +1,7 @@
 import * as React from "react";
-import { useOuterClick } from "./utils";
 import { VisualState } from "./types";
 import useKBar from "./useKBar";
+import { useOuterClick } from "./utils";
 
 interface KBarAnimatorProps {
   style?: React.CSSProperties;

@@ -4,6 +4,7 @@ import GettingStarted from "./GettingStarted";
 import Overview from "./Overview";
 import Shortcuts from "./Shortcuts";
 import State from "./State";
+import UndoRedo from "./UndoRedo";
 
 const data = {
   introduction: {
@@ -41,9 +42,15 @@ const data = {
         section: "Concepts",
       },
       accessingState: {
-        name: "Interfacing with state",
+        name: "State",
         slug: "/docs/concepts/state",
         component: State,
+        section: "Concepts",
+      },
+      history: {
+        name: "Undo/Redo",
+        slug: "/docs/concepts/history",
+        component: UndoRedo,
         section: "Concepts",
       },
     },
@@ -91,6 +98,12 @@ const data = {
       useKBar: {
         name: "useKBar",
         slug: "/docs/api/#useKBar",
+        component: APIReference,
+        section: "API Reference",
+      },
+      historyImpl: {
+        name: "HistoryImpl",
+        slug: "/docs/api/#HistoryImpl",
         component: APIReference,
         section: "API Reference",
       },

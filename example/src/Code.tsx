@@ -9,7 +9,12 @@ interface Props {
 
 export default function Code(props: Props) {
   return (
-    <Highlight {...defaultProps} code={props.code} language="tsx" theme={theme}>
+    <Highlight
+      {...defaultProps}
+      code={props.code.trim()}
+      language="tsx"
+      theme={theme}
+    >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
         <pre className={classnames(className, styles.pre)} style={style}>
           {tokens.map((line, i) => (

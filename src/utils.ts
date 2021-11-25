@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BaseAction } from "./types";
+import type { Action } from "./types";
 
 export function swallowEvent(event) {
   event.stopPropagation();
@@ -51,11 +51,11 @@ export function randomId() {
   return Math.random().toString(36).substring(2, 9);
 }
 
-export function createAction(params: Omit<BaseAction, "id">) {
+export function createAction(params: Omit<Action, "id">) {
   return {
     id: randomId(),
     ...params,
-  } as BaseAction;
+  } as Action;
 }
 
 export function noop() {}
@@ -92,4 +92,26 @@ export function useThrottledValue(value: any, ms: number = 100) {
   }, [ms, value]);
 
   return throttledValue;
+}
+
+export function shouldRejectKeystrokes(
+  {
+    ignoreWhenFocused,
+  }: {
+    ignoreWhenFocused: string[];
+  } = { ignoreWhenFocused: [] }
+) {
+  const inputs = ["input", "textarea", ...ignoreWhenFocused].map((el) =>
+    el.toLowerCase()
+  );
+
+  const activeElement = document.activeElement;
+  const ignoreStrokes =
+    activeElement &&
+    (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
+      activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
+      activeElement.attributes.getNamedItem("contenteditable")?.value ===
+        "true");
+
+  return ignoreStrokes;
 }

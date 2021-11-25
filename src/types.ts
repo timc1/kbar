@@ -1,9 +1,9 @@
 import * as React from "react";
-import type { ActionImpl } from "./action";
+import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
-export interface BaseAction {
+export type Action = {
   id: ActionId;
   name: string;
   shortcut?: string[];
@@ -11,14 +11,11 @@ export interface BaseAction {
   section?: string;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
-  perform?: () => void;
+  perform?: (currentActionImpl: ActionImpl) => any;
   parent?: ActionId;
-}
-
-export type Action = Omit<BaseAction, "parent"> & {
-  parent?: ActionImpl;
-  children?: ActionImpl[];
 };
+
+export type ActionStore = Record<ActionId, ActionImpl>;
 
 export type ActionTree = Record<string, ActionImpl>;
 
@@ -32,6 +29,12 @@ export interface KBarOptions {
     enterMs?: number;
     exitMs?: number;
   };
+  callbacks?: {
+    onOpen?: () => void;
+    onClose?: () => void;
+    onQueryChange?: (searchQuery: string) => void;
+    onSelectAction?: (action: ActionImpl) => void;
+  };
   /**
    * `disableScrollBarManagement` ensures that kbar will not
    * manipulate the document's `margin-right` property when open.
@@ -40,16 +43,11 @@ export interface KBarOptions {
    * the appearance/disappearance of the scrollbar.
    */
   disableScrollbarManagement?: boolean;
-  callbacks?: {
-    onOpen?: () => void;
-    onClose?: () => void;
-    onQueryChange?: (searchQuery: string) => void;
-    onSelectAction?: (action: ActionImpl) => void;
-  };
+  enableHistory?: boolean;
 }
 
 export interface KBarProviderProps {
-  actions: BaseAction[];
+  actions?: Action[];
   options?: KBarOptions;
 }
 
@@ -67,7 +65,7 @@ export interface KBarQuery {
     cb: ((vs: VisualState) => VisualState) | VisualState
   ) => void;
   setSearch: (search: string) => void;
-  registerActions: (actions: BaseAction[]) => () => void;
+  registerActions: (actions: Action[]) => () => void;
   toggle: () => void;
   setActiveIndex: (cb: number | ((currIndex: number) => number)) => void;
 }
@@ -87,4 +85,19 @@ export enum VisualState {
   showing = "showing",
   animatingOut = "animating-out",
   hidden = "hidden",
+}
+
+export interface HistoryItem {
+  perform: () => any;
+  negate: () => any;
+}
+
+export interface History {
+  undoStack: HistoryItem[];
+  redoStack: HistoryItem[];
+  add: (item: HistoryItem) => HistoryItem;
+  remove: (item: HistoryItem) => void;
+  undo: (item?: HistoryItem) => void;
+  redo: (item?: HistoryItem) => void;
+  reset: () => void;
 }
