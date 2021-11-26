@@ -1,4 +1,4 @@
-import useRegisterActions from "../../../src/useRegisterActions";
+import { useRegisterActions } from "../../../src/useRegisterActions";
 import toast from "react-hot-toast";
 import * as React from "react";
 
