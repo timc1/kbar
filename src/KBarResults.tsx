@@ -2,7 +2,7 @@ import * as React from "react";
 import { useVirtual } from "react-virtual";
 import { ActionImpl } from "./action/ActionImpl";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
-import useKBar from "./useKBar";
+import { useKBar } from "./useKBar";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
@@ -18,7 +18,7 @@ interface KBarResultsProps {
   maxHeight?: number;
 }
 
-const KBarResults: React.FC<KBarResultsProps> = (props) => {
+export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
 
@@ -185,5 +185,3 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
     </div>
   );
 };
-
-export default KBarResults;

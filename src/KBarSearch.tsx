@@ -1,11 +1,11 @@
 import * as React from "react";
 import { VisualState } from "./types";
-import useKBar from "./useKBar";
+import { useKBar } from "./useKBar";
 
 export const KBAR_LISTBOX = "kbar-listbox";
 export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;
 
-export default function KBarSearch(
+export function KBarSearch(
   props: React.InputHTMLAttributes<HTMLInputElement>
 ) {
   const {

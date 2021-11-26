@@ -11,7 +11,7 @@ type useKBarReturnType<S = null> = S extends null
   ? BaseKBarReturnType
   : S & BaseKBarReturnType;
 
-export default function useKBar<C = null>(
+export function useKBar<C = null>(
   collector?: (state: KBarState) => C
 ): useKBarReturnType<C> {
   const { query, getState, subscribe, options } = React.useContext(KBarContext);
@@ -47,3 +47,4 @@ export default function useKBar<C = null>(
 
   return render;
 }
+

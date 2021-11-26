@@ -1,11 +1,11 @@
 import * as React from "react";
 import { VisualState } from "./types";
-import useKBar from "./useKBar";
+import { useKBar } from "./useKBar";
 import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
-export default function InternalEvents() {
+export function InternalEvents() {
   useToggleHandler();
   useDocumentLock();
   useShortcuts();

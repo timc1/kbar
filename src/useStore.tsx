@@ -13,7 +13,7 @@ import { VisualState } from "./types";
 
 type useStoreProps = KBarProviderProps;
 
-export default function useStore(props: useStoreProps) {
+export function useStore(props: useStoreProps) {
   const optionsRef = React.useRef({
     animations: {
       enterMs: 200,

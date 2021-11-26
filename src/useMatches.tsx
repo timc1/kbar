@@ -1,7 +1,7 @@
 import { matchSorter } from "match-sorter";
 import * as React from "react";
 import type { ActionImpl } from "./action/ActionImpl";
-import useKBar from "./useKBar";
+import { useKBar } from "./useKBar";
 import { useThrottledValue } from "./utils";
 
 export const NO_GROUP = "none";
@@ -9,7 +9,7 @@ export const NO_GROUP = "none";
 /**
  * returns deep matches only when a search query is present
  */
-export default function useMatches() {
+export function useMatches() {
   const { search, actions, rootActionId } = useKBar((state) => ({
     search: state.searchQuery,
     actions: state.actions,
