@@ -53,8 +53,8 @@ function useToggleHandler() {
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [options.callbacks, query, showing]);
 
   const timeoutRef = React.useRef<Timeout>();
