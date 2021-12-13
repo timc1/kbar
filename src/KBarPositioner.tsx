@@ -1,8 +1,8 @@
 import * as React from "react";
 
 interface Props {
-  children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const defaultStyle: React.CSSProperties = {
@@ -15,10 +15,16 @@ const defaultStyle: React.CSSProperties = {
   padding: "14vh 16px 16px",
 };
 
-export function KBarPositioner(props: Props) {
-  return (
-    <div style={defaultStyle} {...props}>
-      {props.children}
-    </div>
-  );
+function getStyle(style: React.CSSProperties | undefined) {
+  return style ? { ...defaultStyle, ...style } : defaultStyle;
 }
+
+export const KBarPositioner: React.FC<Props> = ({
+  style,
+  children,
+  ...props
+}) => (
+  <div style={getStyle(style)} {...props}>
+    {children}
+  </div>
+);
