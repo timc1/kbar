@@ -8,6 +8,14 @@ interface ActionImplOptions {
   history?: History;
 }
 
+/**
+ * Extends the configured keywords to include the section
+ * This allows section names to be searched for.
+ */
+const extendKeywords = ({ keywords = "", section = "" }: Action): string => {
+  return `${keywords} ${section}`;
+};
+
 export class ActionImpl implements Action {
   id: Action["id"];
   name: Action["name"];
@@ -31,6 +39,7 @@ export class ActionImpl implements Action {
     Object.assign(this, action);
     this.id = action.id;
     this.name = action.name;
+    this.keywords = extendKeywords(action);
     const perform = action.perform;
     this.command =
       perform &&
