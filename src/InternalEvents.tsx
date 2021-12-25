@@ -24,10 +24,12 @@ function useToggleHandler() {
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      const isMetaKey = options?.hotkeys?.metaKey ? event.metaKey : false;
+      const isCtrlKey = options?.hotkeys?.ctrlKey ? event.ctrlKey : false;
       if (
-        (event.metaKey || event.ctrlKey) &&
+        (isMetaKey || isCtrlKey) &&
         event.key === "k" &&
-        event.defaultPrevented === false
+        !event.defaultPrevented
       ) {
         event.preventDefault();
         query.toggle();
@@ -91,7 +93,7 @@ function useToggleHandler() {
         }
       }, ms);
     },
-    [options.animations?.enterMs, options.animations?.exitMs, query]
+    [options.animations?.enterMs, options.animations?.exitMs, query],
   );
 
   React.useEffect(() => {

@@ -102,6 +102,10 @@ const App = () => {
     <KBarProvider
       options={{
         enableHistory: true,
+        hotkeys: {
+          metaKey: true,
+          ctrlKey: false,
+        },
       }}
       actions={initialActions}
     >
@@ -179,12 +183,12 @@ const ResultItem = React.forwardRef(
       active: boolean;
       currentRootActionId: ActionId;
     },
-    ref: React.Ref<HTMLDivElement>
+    ref: React.Ref<HTMLDivElement>,
   ) => {
     const ancestors = React.useMemo(() => {
       if (!currentRootActionId) return action.ancestors;
       const index = action.ancestors.findIndex(
-        (ancestor) => ancestor.id === currentRootActionId
+        (ancestor) => ancestor.id === currentRootActionId,
       );
       // +1 removes the currentRootAction; e.g.
       // if we are on the "Set theme" parent action,
@@ -220,8 +224,8 @@ const ResultItem = React.forwardRef(
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div>
               {ancestors.length > 0 &&
-                ancestors.map((ancestor) => (
-                  <React.Fragment key={ancestor.id}>
+              ancestors.map((ancestor) => (
+                <React.Fragment key={ancestor.id}>
                     <span
                       style={{
                         opacity: 0.5,
@@ -230,15 +234,15 @@ const ResultItem = React.forwardRef(
                     >
                       {ancestor.name}
                     </span>
-                    <span
-                      style={{
-                        marginRight: 8,
-                      }}
-                    >
+                  <span
+                    style={{
+                      marginRight: 8,
+                    }}
+                  >
                       &rsaquo;
                     </span>
-                  </React.Fragment>
-                ))}
+                </React.Fragment>
+              ))}
               <span>{action.name}</span>
             </div>
             {action.subtitle && (
@@ -268,7 +272,7 @@ const ResultItem = React.forwardRef(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 export default App;

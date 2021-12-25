@@ -29,6 +29,10 @@ export interface KBarOptions {
     enterMs?: number;
     exitMs?: number;
   };
+  hotkeys?: {
+    metaKey?: boolean;
+    ctrlKey?: boolean;
+  },
   callbacks?: {
     onOpen?: () => void;
     onClose?: () => void;
@@ -62,7 +66,7 @@ export interface KBarState {
 export interface KBarQuery {
   setCurrentRootAction: (actionId?: ActionId | null) => void;
   setVisualState: (
-    cb: ((vs: VisualState) => VisualState) | VisualState
+    cb: ((vs: VisualState) => VisualState) | VisualState,
   ) => void;
   setSearch: (search: string) => void;
   registerActions: (actions: Action[]) => () => void;
@@ -75,7 +79,7 @@ export interface IKBarContext {
   query: KBarQuery;
   subscribe: (
     collector: <C>(state: KBarState) => C,
-    cb: <C>(collected: C) => void
+    cb: <C>(collected: C) => void,
   ) => void;
   options: KBarOptions;
 }
