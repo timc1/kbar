@@ -38,7 +38,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       search: state.searchQuery,
       currentRootActionId: state.currentRootActionId,
       activeIndex: state.activeIndex,
-    }),
+    })
   );
 
   React.useEffect(() => {
@@ -106,7 +106,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       // avoid setting active index on a group
       typeof props.items[START_INDEX] === "string"
         ? START_INDEX + 1
-        : START_INDEX,
+        : START_INDEX
     );
   }, [search, currentRootActionId, props.items, query]);
 
@@ -122,7 +122,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       }
       options.callbacks?.onSelectAction?.(item);
     },
-    [query, options],
+    [query, options]
   );
 
   const pointerMoved = usePointerMovedSinceMount();
@@ -179,7 +179,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
                 }),
                 {
                   ref: virtualRow.measureRef,
-                },
+                }
               )}
             </div>
           );

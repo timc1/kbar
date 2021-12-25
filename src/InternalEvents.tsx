@@ -93,7 +93,7 @@ function useToggleHandler() {
         }
       }, ms);
     },
-    [options.animations?.enterMs, options.animations?.exitMs, query],
+    [options.animations?.enterMs, options.animations?.exitMs, query]
   );
 
   React.useEffect(() => {
