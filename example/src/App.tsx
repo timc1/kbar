@@ -151,6 +151,7 @@ function RenderResults() {
 
   return (
     <KBarResults
+      continuous
       items={results}
       onRender={({ item, active }) =>
         typeof item === "string" ? (

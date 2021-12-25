@@ -16,12 +16,13 @@ interface KBarResultsProps {
   items: any[];
   onRender: (params: RenderParams) => React.ReactElement;
   maxHeight?: number;
+  continuous?: boolean;
 }
 
 export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
-
+  const { continuous } = props;
   // store a ref to all items so we do not have to pass
   // them as a dependency when setting up event listeners.
   const itemsRef = React.useRef(props.items);
@@ -37,7 +38,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       search: state.searchQuery,
       currentRootActionId: state.currentRootActionId,
       activeIndex: state.activeIndex,
-    })
+    }),
   );
 
   React.useEffect(() => {
@@ -48,7 +49,8 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
           let nextIndex = index > START_INDEX ? index - 1 : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
-            if (nextIndex === 0) return index;
+            const target = continuous ? itemsRef.current.length - 1 : index;
+            if (nextIndex === 0) return target;
             nextIndex -= 1;
           }
           return nextIndex;
@@ -59,8 +61,9 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       ) {
         event.preventDefault();
         query.setActiveIndex((index) => {
+          const target = continuous ? 0 : index;
           let nextIndex =
-            index < itemsRef.current.length - 1 ? index + 1 : index;
+            index < itemsRef.current.length - 1 ? index + 1 : target;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
             if (nextIndex === itemsRef.current.length - 1) return index;
@@ -103,7 +106,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       // avoid setting active index on a group
       typeof props.items[START_INDEX] === "string"
         ? START_INDEX + 1
-        : START_INDEX
+        : START_INDEX,
     );
   }, [search, currentRootActionId, props.items, query]);
 
@@ -119,7 +122,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       }
       options.callbacks?.onSelectAction?.(item);
     },
-    [query, options]
+    [query, options],
   );
 
   const pointerMoved = usePointerMovedSinceMount();
@@ -176,7 +179,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
                 }),
                 {
                   ref: virtualRow.measureRef,
-                }
+                },
               )}
             </div>
           );
