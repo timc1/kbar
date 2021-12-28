@@ -13,7 +13,7 @@ interface ActionImplOptions {
  * This allows section names to be searched for.
  */
 const extendKeywords = ({ keywords = "", section = "" }: Action): string => {
-  return `${keywords} ${section}`;
+  return `${keywords} ${section}`.trim();
 };
 
 export class ActionImpl implements Action {
