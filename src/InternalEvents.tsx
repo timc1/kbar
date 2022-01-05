@@ -144,7 +144,7 @@ function useDocumentLock() {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query } = useKBar((state) => ({
+  const { actions, query, options } = useKBar((state) => ({
     actions: state.actions,
   }));
 
@@ -180,8 +180,10 @@ function useShortcuts() {
           if (action.children?.length) {
             query.setCurrentRootAction(action.id);
             query.toggle();
+            options.callbacks?.onOpen?.();
           } else {
             action.command?.perform();
+            options.callbacks?.onSelectAction?.(action);
           }
 
           buffer = [];
