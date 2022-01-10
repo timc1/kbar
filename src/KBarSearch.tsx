@@ -6,7 +6,7 @@ export const KBAR_LISTBOX = "kbar-listbox";
 export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;
 
 export function KBarSearch(
-  props: React.InputHTMLAttributes<HTMLInputElement>
+  props: React.InputHTMLAttributes<HTMLInputElement> & { defaultPlaceholder?: string },
 ) {
   const {
     query,
@@ -33,12 +33,12 @@ export function KBarSearch(
   }, [currentRootActionId, query]);
 
   const placeholder = React.useMemo(
-    () =>
-      currentRootActionId
+    (): string => {
+      const defaultText = props.defaultPlaceholder ?? "Type a command or search…";
+      return currentRootActionId
         ? actions[currentRootActionId].name
-        : "Type a command or search…",
-    [actions, currentRootActionId]
-  );
+        : defaultText;
+    }, [actions, currentRootActionId, props.defaultPlaceholder]);
 
   return (
     <input
