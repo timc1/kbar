@@ -1,7 +1,7 @@
 import * as React from "react";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
-import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
+import { getScrollbarWidth, shouldRejectKeystrokes, isModKey } from "./utils";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -25,7 +25,7 @@ function useToggleHandler() {
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (
-        (event.metaKey || event.ctrlKey) &&
+        isModKey(event) &&
         event.key === "k" &&
         event.defaultPrevented === false
       ) {

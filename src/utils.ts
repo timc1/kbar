@@ -115,3 +115,12 @@ export function shouldRejectKeystrokes(
 
   return ignoreStrokes;
 }
+
+const SSR = typeof window === "undefined";
+const isMac = !SSR && window.navigator.platform === "MacIntel";
+
+export function isModKey(
+  event: KeyboardEvent | MouseEvent | React.KeyboardEvent
+) {
+  return isMac ? event.metaKey : event.ctrlKey;
+}
