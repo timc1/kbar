@@ -103,7 +103,7 @@ import {
 }
 ```
 
-At this point hitting <kbd>cmd</kbd>+<kbd>k</kbd> will animate in a search input and nothing more.
+At this point hitting <kbd>cmd</kbd>+<kbd>k</kbd> (macOS) or <kbd>ctrl</kbd>+<kbd>k</kbd> (Linux/Windows) will animate in a search input and nothing more.
 
 kbar provides a few utilities to render a performant list of search results.
 
@@ -151,7 +151,7 @@ function RenderResults() {
 }
 ```
 
-Hit <kbd>cmd</kbd>+<kbd>k</kbd> (or <kbd>ctrl</kbd>+<kbd>k</kbd>) and you should see a primitive command menu. kbar allows you to have full control over all
+Hit <kbd>cmd</kbd>+<kbd>k</kbd> (macOS) or <kbd>ctrl</kbd>+<kbd>k</kbd> and you should see a primitive command menu. kbar allows you to have full control over all
 aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get
 an understanding of further capabilities. Looking forward to see what you build.
 

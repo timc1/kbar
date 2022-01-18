@@ -15,8 +15,11 @@ export default function Home() {
             kbar
           </a>
         </b>{" "}
-        is a fully extensible command+k interface for your site. Try it out
-        – press <kbd>cmd</kbd> and <kbd>k</kbd>, or click the logo above.
+        is a fully extensible command+k interface for your site.
+      </p>
+      <p>
+        Try it out – press <kbd>cmd</kbd>+<kbd>k</kbd> (macOS) or{" "}
+        <kbd>ctrl</kbd>+<kbd>k</kbd> (Linux/Windows), or click the logo above.
       </p>
       <h3>Background</h3>
       <p>
