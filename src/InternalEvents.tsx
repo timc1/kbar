@@ -114,6 +114,7 @@ function useDocumentLock() {
   }));
 
   React.useEffect(() => {
+    if (options.disableDocumentLock) return;
     if (visualState === VisualState.animatingIn) {
       document.body.style.pointerEvents = "none";
       document.body.style.overflow = "hidden";
@@ -136,7 +137,7 @@ function useDocumentLock() {
         document.body.style.removeProperty("margin-right");
       }
     }
-  }, [options.disableScrollbarManagement, visualState]);
+  }, [options.disableScrollbarManagement, options.disableDocumentLock, visualState]);
 }
 
 /**
