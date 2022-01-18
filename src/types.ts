@@ -43,6 +43,14 @@ export interface KBarOptions {
    * the appearance/disappearance of the scrollbar.
    */
   disableScrollbarManagement?: boolean;
+  /**
+   * `disableDocumentLock` disables the "document lock" functionality
+   * of kbar, where the body element's scrollbar is hidden and pointer
+   * events are disabled when kbar is open. This is useful if you're using
+   * a custom modal component that has its own implementation of this
+   * functionality.
+   */
+  disableDocumentLock?: boolean;
   enableHistory?: boolean;
 }
 
