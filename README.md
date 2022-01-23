@@ -155,6 +155,49 @@ Hit <kbd>cmd</kbd>+<kbd>k</kbd> (macOS) or <kbd>ctrl</kbd>+<kbd>k</kbd> (Linux/W
 aspects of your command menu – refer to the <a href="https://kbar.vercel.app/docs">docs</a> to get
 an understanding of further capabilities. Looking forward to see what you build.
 
+## Used by
+
+Listed are some of the various usages of kbar in the wild – check them out! Create a PR to add your
+site below.
+
+- [Outline](https://www.getoutline.com/)
+- [zenorocha.com](https://zenorocha.com/)
+- [griko.id](https://griko.id/)
+- [lavya.me](https://www.lavya.me/)
+- [OlivierAlexander.com](https://olivier-alexander-com-git-master-olivierdijkstra.vercel.app/)
+- [dhritigabani.me](https://dhritigabani.me/)
+- [jpedromagalhaes](https://jpedromagalhaes.vercel.app/)
+- [animo](https://demo.animo.id/)
+- [tobyb.xyz](https://www.tobyb.xyz/)
+- [higoralves.dev](https://www.higoralves.dev/)
+- [coderdiaz.dev](https://coderdiaz.dev/)
+- [NextUI](https://nextui.org/)
+- [evm.codes](https://www.evm.codes/)
+- [filiphalas.com](https://filiphalas.com/)
+- [benslv.dev](https://benslv.dev/)
+- [vortex](https://hydralite.io/vortex)
+- [ladislavprix](https://ladislavprix.cz/)
+- [pixiebrix](https://www.pixiebrix.com/)
+- [nfaustino.com](https://nfaustino-com.vercel.app/)
+- [bradleyyeo.com](https://bradleyyeo-com.vercel.app/)
+- [andredevries.dev](https://www.andredevries.dev/)
+- [about-ebon](https://about-ebon.vercel.app/)
+- [frankrocha.dev](https://www.frankrocha.dev/)
+- [cameronbrill.me](https://www.cameronbrill.me/)
+- [codaxx.ml](https://codaxx.ml/)
+- [jeremytenjo.com](https://jeremytenjo.com/)
+- [villivald.com](https://villivald.com/)
+- [maxthestranger](https://code.maxthestranger.com/)
+- [koripallopaikat](https://koripallopaikat.com/)
+- [alexcarpenter.me](https://alexcarpenter.me/)
+- [hackbar](https://github.com/Uier/hackbar)
+- [web3kbar](https://web3kbar.vercel.app/)
+- [burakgur](https://burakgur-com.vercel.app/)
+- [ademilter.com](https://ademilter.com/)
+- [anasaraid.me](https://anasaraid.me/)
+- [daniloleal.co](https://daniloleal.co/)
+- [hyperround](https://github.com/heyAyushh/hyperound)
+
 ## Contributing to kbar
 
 Contributions are welcome!
