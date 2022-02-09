@@ -15,7 +15,12 @@ export function useOuterClick(
 
   React.useEffect(() => {
     function handler(event) {
-      if (dom.current?.contains(event.target)) {
+      if (
+        dom.current?.contains(event.target) ||
+        // Add support for ReactShadowRoot
+        // @ts-expect-error wrong types, the `host` property exists https://stackoverflow.com/a/25340456
+        event.target === dom.current?.getRootNode().host
+      ) {
         return;
       }
       cbRef.current();
