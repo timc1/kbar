@@ -35,7 +35,7 @@ export function KBarSearch(
   const placeholder = React.useMemo(
     (): string => {
       const defaultText = props.defaultPlaceholder ?? "Type a command or search…";
-      return currentRootActionId
+      return currentRootActionId && actions[currentRootActionId]
         ? actions[currentRootActionId].name
         : defaultText;
     }, [actions, currentRootActionId, props.defaultPlaceholder]);
