@@ -176,7 +176,7 @@ const ResultItem = React.forwardRef(
     }: {
       action: ActionImpl;
       active: boolean;
-      currentRootActionId: ActionId;
+      currentRootActionId?: ActionId | null;
     },
     ref: React.Ref<HTMLDivElement>
   ) => {
