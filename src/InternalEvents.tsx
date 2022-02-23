@@ -116,7 +116,6 @@ function useDocumentLock() {
   React.useEffect(() => {
     if (options.disableDocumentLock) return;
     if (visualState === VisualState.animatingIn) {
-      document.body.style.pointerEvents = "none";
       document.body.style.overflow = "hidden";
 
       if (!options.disableScrollbarManagement) {
@@ -130,14 +129,17 @@ function useDocumentLock() {
         document.body.style.marginRight = scrollbarWidth + "px";
       }
     } else if (visualState === VisualState.hidden) {
-      document.body.style.removeProperty("pointer-events");
       document.body.style.removeProperty("overflow");
 
       if (!options.disableScrollbarManagement) {
         document.body.style.removeProperty("margin-right");
       }
     }
-  }, [options.disableScrollbarManagement, options.disableDocumentLock, visualState]);
+  }, [
+    options.disableScrollbarManagement,
+    options.disableDocumentLock,
+    visualState,
+  ]);
 }
 
 /**
