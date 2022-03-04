@@ -36,6 +36,23 @@ export default function Shortcuts() {
         Actions without a <code>perform</code> property will already have this
         implicitly handled.
       </p>
+      <h2>Changing the default command+k shortcut</h2>
+      <p>
+        Say you want to trigger kbar using a different shortcut, <kbd>cmd</kbd>+
+        <kbd>shift</kbd>+<kbd>p</kbd>.
+      </p>
+      <p>
+        You can override the default behavior by passing a valid string sequence
+        to <code>KBarProvider.options.toggleShortcut</code> based on{" "}
+        <a
+          href="https://github.com/jamiebuilds/tinykeys"
+          target="_blank"
+          rel="noreferrer"
+        >
+          tinykeys
+        </a>
+        .
+      </p>
     </div>
   );
 }
