@@ -1,7 +1,8 @@
 import * as React from "react";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
-import { getScrollbarWidth, shouldRejectKeystrokes, isModKey } from "./utils";
+import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
+import tinykeys from "tinykeys";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -23,22 +24,19 @@ function useToggleHandler() {
   }));
 
   React.useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (
-        isModKey(event) &&
-        event.key === "k" &&
-        event.defaultPrevented === false
-      ) {
+    const trigger = options.toggleShortcut || "$mod+k";
+    const unsubscribe = tinykeys(window, {
+      [trigger]: (event) => {
+        if (event.defaultPrevented) return;
         event.preventDefault();
         query.toggle();
-
         if (showing) {
           options.callbacks?.onClose?.();
         } else {
           options.callbacks?.onOpen?.();
         }
-      }
-      if (event.key === "Escape") {
+      },
+      Escape: (event) => {
         if (showing) {
           event.stopPropagation();
           options.callbacks?.onClose?.();
@@ -50,12 +48,12 @@ function useToggleHandler() {
           }
           return VisualState.animatingOut;
         });
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [options.callbacks, query, showing]);
+      },
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [options.callbacks, options.toggleShortcut, query, showing]);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(
@@ -143,6 +141,7 @@ function useDocumentLock() {
 }
 
 /**
+ * TODO: We can simplify this implementation to use `tinykeys`
  * `useShortcuts` registers and listens to keyboard strokes and
  * performs actions for patterns that match the user defined `shortcut`.
  */
@@ -197,7 +196,7 @@ function useShortcuts() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [actions, query]);
+  }, [actions, options.callbacks, query]);
 }
 
 /**

@@ -52,6 +52,11 @@ export interface KBarOptions {
    */
   disableDocumentLock?: boolean;
   enableHistory?: boolean;
+  /**
+   * `toggleShortcut` enables customizing which keyboard shortcut triggers
+   * kbar. Defaults to "$mod+k" (cmd+k / ctrl+k)
+   */
+  toggleShortcut?: string;
 }
 
 export interface KBarProviderProps {
