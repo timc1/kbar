@@ -160,6 +160,7 @@ an understanding of further capabilities. Looking forward to see what you build.
 Listed are some of the various usages of kbar in the wild – check them out! Create a PR to add your
 site below.
 
+- [Seu Job Tech](https://seujob.tech/)
 - [Outline](https://www.getoutline.com/)
 - [zenorocha.com](https://zenorocha.com/)
 - [griko.id](https://griko.id/)
