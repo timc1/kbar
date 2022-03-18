@@ -52,8 +52,7 @@
     "fast-equals": "^2.0.3",
     "match-sorter": "^6.3.0",
     "react-virtual": "^2.8.2",
-    "tiny-invariant": "^1.2.0",
-    "tinykeys": "^1.4.0"
+    "tiny-invariant": "^1.2.0"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0",

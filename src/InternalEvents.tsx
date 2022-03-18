@@ -1,8 +1,8 @@
 import * as React from "react";
+import tinykeys from "./tinykeys";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
 import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
-import tinykeys from "tinykeys";
 
 type Timeout = ReturnType<typeof setTimeout>;
 
@@ -24,19 +24,21 @@ function useToggleHandler() {
   }));
 
   React.useEffect(() => {
-    const trigger = options.toggleShortcut || "$mod+k";
+    const shortcut = options.toggleShortcut || "$mod+k";
+
     const unsubscribe = tinykeys(window, {
-      [trigger]: (event) => {
+      [shortcut]: (event: KeyboardEvent) => {
         if (event.defaultPrevented) return;
         event.preventDefault();
         query.toggle();
+
         if (showing) {
           options.callbacks?.onClose?.();
         } else {
           options.callbacks?.onOpen?.();
         }
       },
-      Escape: (event) => {
+      Escape: (event: KeyboardEvent) => {
         if (showing) {
           event.stopPropagation();
           options.callbacks?.onClose?.();
@@ -134,14 +136,13 @@ function useDocumentLock() {
       }
     }
   }, [
-    options.disableScrollbarManagement,
     options.disableDocumentLock,
+    options.disableScrollbarManagement,
     visualState,
   ]);
 }
 
 /**
- * TODO: We can simplify this implementation to use `tinykeys`
  * `useShortcuts` registers and listens to keyboard strokes and
  * performs actions for patterns that match the user defined `shortcut`.
  */
@@ -153,49 +154,36 @@ function useShortcuts() {
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
-    let buffer: string[] = [];
-    let lastKeyStrokeTime = Date.now();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      const key = event.key?.toLowerCase();
-
-      if (shouldRejectKeystrokes() || event.metaKey || key === "shift") {
-        return;
+    const shortcutsMap = {};
+    for (let action of actionsList) {
+      if (!action.shortcut?.length) {
+        continue;
       }
 
-      const currentTime = Date.now();
+      const shortcut = action.shortcut.join(" ");
 
-      if (currentTime - lastKeyStrokeTime > 400) {
-        buffer = [];
-      }
+      shortcutsMap[shortcut] = (event: KeyboardEvent) => {
+        if (shouldRejectKeystrokes()) return;
 
-      buffer.push(key);
-      lastKeyStrokeTime = currentTime;
-      const bufferString = buffer.join("");
-
-      for (let action of actionsList) {
-        if (!action.shortcut) {
-          continue;
+        event.preventDefault();
+        if (action.children?.length) {
+          query.setCurrentRootAction(action.id);
+          query.toggle();
+          options.callbacks?.onOpen?.();
+        } else {
+          action.command?.perform();
+          options.callbacks?.onSelectAction?.(action);
         }
-        if (action.shortcut.join("") === bufferString) {
-          event.preventDefault();
-          if (action.children?.length) {
-            query.setCurrentRootAction(action.id);
-            query.toggle();
-            options.callbacks?.onOpen?.();
-          } else {
-            action.command?.perform();
-            options.callbacks?.onSelectAction?.(action);
-          }
-
-          buffer = [];
-          break;
-        }
-      }
+      };
     }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const unsubscribe = tinykeys(window, shortcutsMap, {
+      timeout: 400,
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [actions, options.callbacks, query]);
 }
 
