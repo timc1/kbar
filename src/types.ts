@@ -3,16 +3,26 @@ import { ActionImpl } from "./action/ActionImpl";
 
 export type ActionId = string;
 
+export type Priority = number;
+
+export type ActionSection =
+  | string
+  | {
+      name: string;
+      priority: Priority;
+    };
+
 export type Action = {
   id: ActionId;
   name: string;
   shortcut?: string[];
   keywords?: string;
-  section?: string;
+  section?: ActionSection;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
   perform?: (currentActionImpl: ActionImpl) => any;
   parent?: ActionId;
+  priority?: Priority;
 };
 
 export type ActionStore = Record<ActionId, ActionImpl>;

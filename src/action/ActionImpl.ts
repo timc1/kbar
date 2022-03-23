@@ -13,7 +13,9 @@ interface ActionImplOptions {
  * This allows section names to be searched for.
  */
 const extendKeywords = ({ keywords = "", section = "" }: Action): string => {
-  return `${keywords} ${section}`.trim();
+  return `${keywords} ${
+    typeof section === "string" ? section : section.name
+  }`.trim();
 };
 
 export class ActionImpl implements Action {
@@ -29,6 +31,7 @@ export class ActionImpl implements Action {
    * @deprecated use action.command.perform
    */
   perform: Action["perform"];
+  priority: number = 1;
 
   command?: Command;
 

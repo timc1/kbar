@@ -30,7 +30,10 @@ export default function useThemeActions() {
       id: "theme",
       name: "Change theme…",
       keywords: "interface color dark light",
-      section: "Preferences",
+      section: {
+        name: "Preferences",
+        priority: 50,
+      },
     },
     {
       id: "darkTheme",
