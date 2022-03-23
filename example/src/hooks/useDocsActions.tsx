@@ -41,10 +41,7 @@ export default function useDocsActions() {
             name: "Search docs…",
             shortcut: ["?"],
             keywords: "find",
-            section: {
-              name: "Documentation",
-              priority: Priority.HIGH,
-            },
+            section: "Documentation",
           }
         : null,
     [searchActions]
