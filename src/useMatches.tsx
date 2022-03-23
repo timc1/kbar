@@ -13,6 +13,8 @@ function order(a, b) {
   return b.priority - a.priority;
 }
 
+type SectionName = string;
+
 /**
  * returns deep matches only when a search query is present
  */
@@ -63,9 +65,9 @@ export function useMatches() {
   const matches = useInternalMatches(filtered, search);
 
   const results = React.useMemo(() => {
-    let map: Record<string, ActionImpl[]> = {};
-    let list: { name: string; priority: number }[] = [];
-    let ordered: { name: string; actions: ActionImpl[] }[] = [];
+    let map: Record<SectionName, ActionImpl[]> = {};
+    let list: { name: SectionName; priority: number }[] = [];
+    let ordered: { name: SectionName; actions: ActionImpl[] }[] = [];
 
     for (let i = 0; i < matches.length; i++) {
       const action = matches[i];
