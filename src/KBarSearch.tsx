@@ -58,6 +58,7 @@ export function KBarSearch(
         options?.callbacks?.onQueryChange?.(event.target.value);
       }}
       onKeyDown={(event) => {
+        props.onKeyDown?.(event);
         if (currentRootActionId && !search && event.key === "Backspace") {
           const parent = actions[currentRootActionId].parent;
           query.setCurrentRootAction(parent);
