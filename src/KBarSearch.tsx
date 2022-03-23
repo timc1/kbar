@@ -42,6 +42,7 @@ export function KBarSearch(
 
   return (
     <input
+      {...props}
       ref={ownRef}
       autoFocus
       autoComplete="off"
@@ -64,7 +65,6 @@ export function KBarSearch(
           query.setCurrentRootAction(parent);
         }
       }}
-      {...props}
     />
   );
 }
