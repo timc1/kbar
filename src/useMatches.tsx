@@ -2,11 +2,11 @@ import { matchSorter } from "match-sorter";
 import * as React from "react";
 import type { ActionImpl } from "./action/ActionImpl";
 import { useKBar } from "./useKBar";
-import { useThrottledValue } from "./utils";
+import { Priority, useThrottledValue } from "./utils";
 
 export const NO_GROUP = {
   name: "none",
-  priority: -100,
+  priority: Priority.LOW,
 };
 
 function order(a, b) {
@@ -71,7 +71,7 @@ export function useMatches() {
       const action = matches[i];
       const section =
         typeof action.section === "string"
-          ? { name: action.section, priority: 1 }
+          ? { name: action.section, priority: Priority.NORMAL }
           : action.section || NO_GROUP;
       if (!map[section.name]) {
         map[section.name] = [];

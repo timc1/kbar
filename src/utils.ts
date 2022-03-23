@@ -129,3 +129,9 @@ export function isModKey(
 ) {
   return isMac ? event.metaKey : event.ctrlKey;
 }
+
+export const Priority = {
+  HIGH: 1,
+  NORMAL: 0,
+  LOW: -1,
+};
