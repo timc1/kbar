@@ -60,10 +60,7 @@ const App = () => {
       name: "Home",
       shortcut: ["h"],
       keywords: "back",
-      section: {
-        name: "Navigation",
-        priority: 40,
-      },
+      section: "Navigation",
       perform: () => history.push("/"),
       icon: <HomeIcon />,
       subtitle: "Subtitles can help add more context.",
@@ -75,7 +72,6 @@ const App = () => {
       keywords: "help",
       section: "Navigation",
       perform: () => history.push("/docs"),
-      priority: 100,
     },
     {
       id: "contactAction",

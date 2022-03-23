@@ -1,6 +1,7 @@
 import invariant from "tiny-invariant";
 import { Command } from "./Command";
 import type { Action, ActionStore, History } from "../types";
+import { Priority } from "../utils";
 
 interface ActionImplOptions {
   store: ActionStore;
@@ -31,7 +32,7 @@ export class ActionImpl implements Action {
    * @deprecated use action.command.perform
    */
   perform: Action["perform"];
-  priority: number = 1;
+  priority: number = Priority.NORMAL;
 
   command?: Command;
 

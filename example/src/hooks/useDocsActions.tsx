@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useHistory } from "react-router";
-import { useRegisterActions } from "../../../src";
+import { Priority, useRegisterActions } from "../../../src";
 import data from "../Docs/data";
 
 const searchId = randomId();
@@ -41,7 +41,10 @@ export default function useDocsActions() {
             name: "Search docs…",
             shortcut: ["?"],
             keywords: "find",
-            section: "Documentation",
+            section: {
+              name: "Documentation",
+              priority: Priority.HIGH,
+            },
           }
         : null,
     [searchActions]

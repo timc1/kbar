@@ -81,7 +81,7 @@ export function getScrollbarWidth() {
   return scrollbarWidth;
 }
 
-export function useThrottledValue(value: any, ms: number = 100) {
+export function useThrottledValue<T = any>(value: T, ms: number = 100) {
   const [throttledValue, setThrottledValue] = React.useState(value);
   const lastRan = React.useRef(Date.now());
 
