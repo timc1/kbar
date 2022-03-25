@@ -176,7 +176,7 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
   );
 
   const { filtered: throttledFiltered, search: throttledSearch } =
-    useThrottledValue<{ filtered: ActionImpl[]; search: string }>(value);
+    useThrottledValue(value);
 
   return React.useMemo(() => {
     if (throttledSearch.trim() === "") {

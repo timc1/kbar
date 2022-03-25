@@ -2,16 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { useKBar } from "../../useKBar";
-import { KBarProvider } from "../../KBarContextProvider";
+import { useKBar } from "../useKBar";
+import { KBarProvider } from "../KBarContextProvider";
 import { render, fireEvent, RenderResult } from "@testing-library/react";
 import * as React from "react";
-import { createAction, Priority } from "../../utils";
-import { useMatches } from "../../useMatches";
+import { createAction, Priority } from "../utils";
+import { useMatches } from "../useMatches";
 
-jest.mock("../../utils", () => {
+jest.mock("../utils", () => {
   return {
-    ...jest.requireActual("../../utils"),
+    ...jest.requireActual("../utils"),
     // Mock out throttling as we don't need it in our test environment.
     useThrottledValue: (value) => value,
   };
