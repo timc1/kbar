@@ -86,6 +86,8 @@ export function useThrottledValue<T = any>(value: T, ms: number = 100) {
   const lastRan = React.useRef(Date.now());
 
   React.useEffect(() => {
+    if (ms === 0) return;
+
     const timeout = setTimeout(() => {
       setThrottledValue(value);
       lastRan.current = Date.now();
@@ -96,7 +98,7 @@ export function useThrottledValue<T = any>(value: T, ms: number = 100) {
     };
   }, [ms, value]);
 
-  return throttledValue;
+  return ms === 0 ? value : throttledValue;
 }
 
 export function shouldRejectKeystrokes(
