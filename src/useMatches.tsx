@@ -29,18 +29,20 @@ export function useMatches() {
   }));
 
   const rootResults = React.useMemo(() => {
-    return Object.keys(actions).reduce((acc, actionId) => {
-      const action = actions[actionId];
-      if (!action.parent && !rootActionId) {
-        acc.push(action);
-      }
-      if (action.id === rootActionId) {
-        for (let i = 0; i < action.children.length; i++) {
-          acc.push(action.children[i]);
+    return Object.keys(actions)
+      .reduce((acc, actionId) => {
+        const action = actions[actionId];
+        if (!action.parent && !rootActionId) {
+          acc.push(action);
         }
-      }
-      return acc;
-    }, [] as ActionImpl[]);
+        if (action.id === rootActionId) {
+          for (let i = 0; i < action.children.length; i++) {
+            acc.push(action.children[i]);
+          }
+        }
+        return acc;
+      }, [] as ActionImpl[])
+      .sort(order);
   }, [actions, rootActionId]);
 
   const getDeepResults = React.useCallback((actions: ActionImpl[]) => {
