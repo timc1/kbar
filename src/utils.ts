@@ -23,15 +23,12 @@ export function useOuterClick(
       ) {
         return;
       }
+      event.preventDefault();
+      event.stopPropagation();
       cbRef.current();
     }
-    ["mousedown", "touchstart"].forEach((ev) => {
-      window.addEventListener(ev, handler, true);
-    });
-    return () =>
-      ["mousedown", "touchstart"].forEach((ev) =>
-        window.removeEventListener(ev, handler, true)
-      );
+    window.addEventListener("pointerdown", handler, true);
+    return () => window.removeEventListener("pointerdown", handler, true);
   }, [dom]);
 }
 
