@@ -1,6 +1,6 @@
-import { ActionImpl } from "..";
-import { Action } from "../../types";
-import { createAction } from "../../utils";
+import { ActionImpl } from "../action";
+import { Action } from "../types";
+import { createAction } from "../utils";
 
 const perform = jest.fn();
 const baseAction: Action = createAction({

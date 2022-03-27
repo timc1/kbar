@@ -78,11 +78,13 @@ export function getScrollbarWidth() {
   return scrollbarWidth;
 }
 
-export function useThrottledValue(value: any, ms: number = 100) {
+export function useThrottledValue<T = any>(value: T, ms: number = 100) {
   const [throttledValue, setThrottledValue] = React.useState(value);
   const lastRan = React.useRef(Date.now());
 
   React.useEffect(() => {
+    if (ms === 0) return;
+
     const timeout = setTimeout(() => {
       setThrottledValue(value);
       lastRan.current = Date.now();
@@ -93,7 +95,7 @@ export function useThrottledValue(value: any, ms: number = 100) {
     };
   }, [ms, value]);
 
-  return throttledValue;
+  return ms === 0 ? value : throttledValue;
 }
 
 export function shouldRejectKeystrokes(
@@ -126,3 +128,9 @@ export function isModKey(
 ) {
   return isMac ? event.metaKey : event.ctrlKey;
 }
+
+export const Priority = {
+  HIGH: 1,
+  NORMAL: 0,
+  LOW: -1,
+};

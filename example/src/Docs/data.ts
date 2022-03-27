@@ -2,6 +2,7 @@ import Actions from "./Actions";
 import APIReference from "./APIReference";
 import GettingStarted from "./GettingStarted";
 import Overview from "./Overview";
+import Priority from "./Priority";
 import Shortcuts from "./Shortcuts";
 import State from "./State";
 import UndoRedo from "./UndoRedo";
@@ -51,6 +52,12 @@ const data = {
         name: "Undo/Redo",
         slug: "/docs/concepts/history",
         component: UndoRedo,
+        section: "Concepts",
+      },
+      priority: {
+        name: "Priority",
+        slug: "/docs/concepts/priority",
+        component: Priority,
         section: "Concepts",
       },
     },

@@ -1,5 +1,5 @@
-import { createAction } from "./utils";
-export { createAction };
+import { createAction, Priority } from "./utils";
+export { createAction, Priority };
 
 export * from "./useMatches";
 export * from "./KBarPortal";

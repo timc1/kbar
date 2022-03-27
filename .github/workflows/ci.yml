@@ -7,6 +7,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: npm install
         run: npx npm@7 install
+      - name: test
+        run: npm run test
       - name: eslint
         run: npm run lint
       - name: tsc

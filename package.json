@@ -6,12 +6,20 @@
     "build": "rm -rf ./lib & tsc",
     "build:example": "webpack --config ./example/webpack.prod.cjs",
     "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot",
-    "test": "jest",
+    "test": "jest src",
     "lint": "eslint src/**/* example/src/**/* --ext .js,.ts,.tsx",
     "typecheck": "tsc --noEmit"
   },
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
+    ]
+  },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.16.7",
     "@reach/accordion": "^0.16.1",
+    "@testing-library/react": "^12.1.4",
+    "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.0.2",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
@@ -49,8 +57,8 @@
   },
   "dependencies": {
     "@reach/portal": "^0.16.0",
+    "command-score": "^0.1.2",
     "fast-equals": "^2.0.3",
-    "match-sorter": "^6.3.0",
     "react-virtual": "^2.8.2",
     "tiny-invariant": "^1.2.0"
   },
