@@ -29,11 +29,9 @@ const bumpAnimationKeyframes = [
   },
 ];
 
-export const KBarAnimator: React.FC<KBarAnimatorProps> = ({
-  children,
-  style,
-  className,
-}) => {
+export const KBarAnimator: React.FC<
+  React.PropsWithChildren<KBarAnimatorProps>
+> = ({ children, style, className }) => {
   const { visualState, currentRootActionId, query, options } = useKBar(
     (state) => ({
       visualState: state.visualState,
