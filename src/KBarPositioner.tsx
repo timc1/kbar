@@ -19,11 +19,11 @@ function getStyle(style: React.CSSProperties | undefined) {
   return style ? { ...defaultStyle, ...style } : defaultStyle;
 }
 
-export const KBarPositioner: React.FC<Props> = React.forwardRef<
-  HTMLDivElement,
-  Props
->(({ style, children, ...props }, ref) => (
-  <div ref={ref} style={getStyle(style)} {...props}>
-    {children}
-  </div>
-));
+export const KBarPositioner: React.FC<React.PropsWithChildren<Props>> =
+  React.forwardRef<HTMLDivElement, Props>(
+    ({ style, children, ...props }, ref) => (
+      <div ref={ref} style={getStyle(style)} {...props}>
+        {children}
+      </div>
+    )
+  );
