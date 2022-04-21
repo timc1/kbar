@@ -1,6 +1,8 @@
 // Fixes special character issues; `?` -> `shift+/` + build issue
 // https://github.com/jamiebuilds/tinykeys
 
+type KeyBinding = readonly [KeyBindingPress[], (event: KeyboardEvent) => void];
+
 type KeyBindingPress = [string[], string];
 
 /**
@@ -165,9 +167,10 @@ export default function keybindings(
       return;
     }
 
+    let actionableKeyBinding: null | KeyBinding = null;
+
     keyBindings.forEach((keyBinding) => {
       let sequence = keyBinding[0];
-      let callback = keyBinding[1];
 
       let prev = possibleMatches.get(sequence);
       let remainingExpectedPresses = prev ? prev : sequence;
@@ -187,17 +190,30 @@ export default function keybindings(
       } else if (remainingExpectedPresses.length > 1) {
         possibleMatches.set(sequence, remainingExpectedPresses.slice(1));
       } else {
-        possibleMatches.delete(sequence);
-        callback(event);
+        if (!actionableKeyBinding) {
+          actionableKeyBinding = keyBinding;
+        } else {
+          if (sequence.length > actionableKeyBinding[1].length) {
+            actionableKeyBinding = keyBinding;
+          }
+        }
       }
     });
+
+    if (actionableKeyBinding) {
+      (actionableKeyBinding as KeyBinding)[1](event);
+    }
 
     if (timer) {
       clearTimeout(timer);
     }
 
+    let cleanup = possibleMatches.clear.bind(possibleMatches);
     // @ts-ignore
-    timer = setTimeout(possibleMatches.clear.bind(possibleMatches), timeout);
+    timer = setTimeout(() => {
+      cleanup();
+      actionableKeyBinding = null;
+    }, timeout);
   };
 
   target.addEventListener(event, onKeyEvent);
