@@ -189,11 +189,12 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
 
     for (let i = 0; i < throttledFiltered.length; i++) {
       const action = throttledFiltered[i];
-      const score = commandScore(
+      let score = commandScore(
         [action.name, action.keywords, action.subtitle].join(" "),
         throttledSearch
       );
-      if (score > 0) {
+		
+      if (score > 0 || action.alwaysPresent) {
         matches.push({ score, action });
       }
     }

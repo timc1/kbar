@@ -96,6 +96,15 @@ const App = () => {
       section: "Navigation",
       perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
     }),
+	{
+      id: "always",
+      name: "Always Present",
+      shortcut: ["a","l"],
+      keywords: "This item is excluded from search",
+      section: "Navigation",
+      perform: () => window.open("https://twitter.com/timcchang", "_blank"),
+	  alwaysPresent:true,
+    },
   ];
 
   return (
