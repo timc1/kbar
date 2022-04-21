@@ -89,6 +89,15 @@ const App = () => {
       section: "Navigation",
       perform: () => window.open("https://twitter.com/timcchang", "_blank"),
     },
+    {
+      id: "persistent",
+      name: "Persistent item",
+      shortcut: ["p"],
+      keywords: "this item will show up regardless of search",
+      section: "Navigation",
+      perform: () => window.open("https://twitter.com/timcchang", "_blank"),
+      persistent:true
+    },
     createAction({
       name: "Github",
       shortcut: ["g", "h"],

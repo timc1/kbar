@@ -33,6 +33,7 @@ export class ActionImpl implements Action {
    */
   perform: Action["perform"];
   priority: number = Priority.NORMAL;
+  persistent: Action["persistent"];
 
   command?: Command;
 

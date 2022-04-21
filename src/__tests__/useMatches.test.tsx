@@ -89,6 +89,18 @@ function WithPriorityComponent() {
   );
 }
 
+function WithPersistentComponent() {
+  const action1 = createAction({ name: "Action 1", persistent:true });
+
+
+  return (
+    <KBarProvider actions={[action1]}>
+      <Search />
+      <Results />
+    </KBarProvider>
+  );
+}
+
 const setup = (Component: React.ComponentType) => {
   const utils = render(<Component />);
   const input = utils.getByLabelText("search-input");
@@ -139,6 +151,24 @@ describe("useMatches", () => {
       expect(results[1].textContent).toEqual("Action 2");
       expect(results[2].textContent).toEqual("Action 3");
       expect(results[3].textContent).toEqual("Action 1");
+
+      expect(utils.queryAllByText(/Section 1/i));
+    });
+  });
+
+  describe("With persistent", () => {
+    let utils: Utils;
+    beforeEach(() => {
+      utils = setup(WithPersistentComponent);
+    });
+
+    it("returns a persistent item, with an unmatching search query", () => {
+      const { input } = utils;
+      fireEvent.change(input, { target: { value: "random" } });
+      const results = utils.getAllByText(/Action/i);
+      expect(results.length).toEqual(1);
+
+      expect(results[0].textContent).toEqual("Action 1");
 
       expect(utils.queryAllByText(/Section 1/i));
     });
