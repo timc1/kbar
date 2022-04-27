@@ -106,6 +106,12 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         : START_INDEX
     );
   }, [search, currentRootActionId, props.items, query]);
+  
+  /* Make sure that onMount the initial activeIndex is visible
+   * so that it can appear selected */
+  React.useEffect(() => {
+    activeRef.current?.scrollIntoView();
+  }, []);
 
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
