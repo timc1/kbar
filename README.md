@@ -197,6 +197,7 @@ site below.
 - [anasaraid.me](https://anasaraid.me/)
 - [daniloleal.co](https://daniloleal.co/)
 - [hyperround](https://github.com/heyAyushh/hyperound)
+- [shubhamverma.me](https://shubhamverma.me/)
 
 ## Contributing to kbar
 
