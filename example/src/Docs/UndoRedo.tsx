@@ -14,7 +14,7 @@ export default function UndoRedo() {
 <KBarProvider
   // actions={[...]}
   options={{
-    enabledHistory: true
+    enableHistory: true
   }}
 />
       `}
