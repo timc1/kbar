@@ -40,7 +40,11 @@ _entire_ app; however, there are no performance implications by doing so.
 import { KBarProvider } from "kbar";
 
 function MyApp() {
-  return <KBarProvider>// ...</KBarProvider>;
+  return (
+    <KBarProvider>
+      // ...
+    </KBarProvider>
+  );
 }
 ```
 
