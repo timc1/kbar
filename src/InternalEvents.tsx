@@ -156,7 +156,7 @@ function useDocumentLock() {
  * shortcuts to tinykeys, which is handled below.
  */
 const handled = new WeakSet();
-function wrap(handler: (event: KeyboardEvent) => void, key) {
+function wrap(handler: (event: KeyboardEvent) => void) {
   return (event: KeyboardEvent) => {
     if (handled.has(event)) return;
     handler(event);
@@ -204,7 +204,7 @@ function useShortcuts() {
           action.command?.perform();
           options.callbacks?.onSelectAction?.(action);
         }
-      }, shortcut);
+      });
     }
 
     const unsubscribe = tinykeys(window, shortcutsMap, {
