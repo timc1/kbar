@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ActionImpl } from "./action";
 import tinykeys from "./tinykeys";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
@@ -143,6 +144,27 @@ function useDocumentLock() {
 }
 
 /**
+ * Reference: https://github.com/jamiebuilds/tinykeys/issues/37
+ *
+ * Fixes an issue where simultaneous key commands for shortcuts;
+ * ie given two actions with shortcuts ['t','s'] and ['s'], pressing
+ * 't' and 's' consecutively will cause both shortcuts to fire.
+ *
+ * `wrap` sets each keystroke event in a WeakSet, and ensures that
+ * if ['t', 's'] are pressed, then the subsequent ['s'] event will
+ * be ignored. This depends on the order in which we register the
+ * shortcuts to tinykeys, which is handled below.
+ */
+const handled = new WeakSet();
+function wrap(handler: (event: KeyboardEvent) => void, key) {
+  return (event: KeyboardEvent) => {
+    if (handled.has(event)) return;
+    handler(event);
+    handled.add(event);
+  };
+}
+
+/**
  * `useShortcuts` registers and listens to keyboard strokes and
  * performs actions for patterns that match the user defined `shortcut`.
  */
@@ -154,15 +176,23 @@ function useShortcuts() {
   React.useEffect(() => {
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
-    const shortcutsMap = {};
+    let actionsWithShortcuts: ActionImpl[] = [];
     for (let action of actionsList) {
       if (!action.shortcut?.length) {
         continue;
       }
+      actionsWithShortcuts.push(action);
+    }
 
-      const shortcut = action.shortcut.join(" ");
+    actionsWithShortcuts = actionsWithShortcuts.sort(
+      (a, b) => b.shortcut!.join(" ").length - a.shortcut!.join(" ").length
+    );
 
-      shortcutsMap[shortcut] = (event: KeyboardEvent) => {
+    const shortcutsMap = {};
+    for (let action of actionsWithShortcuts) {
+      const shortcut = action.shortcut!.join(" ");
+
+      shortcutsMap[shortcut] = wrap((event: KeyboardEvent) => {
         if (shouldRejectKeystrokes()) return;
 
         event.preventDefault();
@@ -174,7 +204,7 @@ function useShortcuts() {
           action.command?.perform();
           options.callbacks?.onSelectAction?.(action);
         }
-      };
+      }, shortcut);
     }
 
     const unsubscribe = tinykeys(window, shortcutsMap, {
