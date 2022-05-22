@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useHistory } from "react-router";
-import { useRegisterActions } from "../../../src";
+import { useHistory } from "react-router-dom";
+import { Action, useRegisterActions } from "../../../src";
 import data from "../Docs/data";
 
 const searchId = randomId();
@@ -9,13 +9,14 @@ export default function useDocsActions() {
   const history = useHistory();
 
   const searchActions = React.useMemo(() => {
-    let actions = [];
+    let actions: Action[] = [];
     const collectDocs = (tree) => {
       Object.keys(tree).forEach((key) => {
         const curr = tree[key];
         if (curr.children) {
           collectDocs(curr.children);
         }
+
         if (curr.component) {
           actions.push({
             id: randomId(),
@@ -46,8 +47,9 @@ export default function useDocsActions() {
         : null,
     [searchActions]
   );
-
-  useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean));
+  useRegisterActions(
+    [rootSearchAction, ...searchActions].filter(Boolean) as Action[]
+  );
 }
 
 function randomId() {
