@@ -84,7 +84,7 @@ const App = () => {
     {
       id: "twitterAction",
       name: "Twitter",
-      shortcut: ["t"],
+      shortcut: ["g", "t"],
       keywords: "social contact dm",
       section: "Navigation",
       perform: () => window.open("https://twitter.com/timcchang", "_blank"),
