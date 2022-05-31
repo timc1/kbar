@@ -43,8 +43,8 @@
     "jest": "^27.3.1",
     "prettier": "^2.4.1",
     "prism-react-renderer": "^1.2.1",
-    "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0",
+    "react": "^16.0.0 || ^17.0.0",
+    "react-dom": "^16.0.0 || ^17.0.0",
     "react-hot-toast": "^2.1.1",
     "react-router-dom": "^5.3.0",
     "sass": "^1.39.2",
@@ -63,8 +63,8 @@
     "tiny-invariant": "^1.2.0"
   },
   "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0"
+    "react": "^16.0.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "keywords": [
     "command bar",
