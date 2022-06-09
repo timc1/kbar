@@ -6,7 +6,9 @@ export const KBAR_LISTBOX = "kbar-listbox";
 export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;
 
 export function KBarSearch(
-  props: React.InputHTMLAttributes<HTMLInputElement> & { defaultPlaceholder?: string },
+  props: React.InputHTMLAttributes<HTMLInputElement> & {
+    defaultPlaceholder?: string;
+  }
 ) {
   const {
     query,
@@ -26,23 +28,24 @@ export function KBarSearch(
 
   const ownRef = React.useRef<HTMLInputElement>(null);
 
+  const { defaultPlaceholder, ...rest } = props;
+
   React.useEffect(() => {
     query.setSearch("");
     ownRef.current!.focus();
     return () => query.setSearch("");
   }, [currentRootActionId, query]);
 
-  const placeholder = React.useMemo(
-    (): string => {
-      const defaultText = props.defaultPlaceholder ?? "Type a command or search…";
-      return currentRootActionId && actions[currentRootActionId]
-        ? actions[currentRootActionId].name
-        : defaultText;
-    }, [actions, currentRootActionId, props.defaultPlaceholder]);
+  const placeholder = React.useMemo((): string => {
+    const defaultText = defaultPlaceholder ?? "Type a command or search…";
+    return currentRootActionId && actions[currentRootActionId]
+      ? actions[currentRootActionId].name
+      : defaultText;
+  }, [actions, currentRootActionId, defaultPlaceholder]);
 
   return (
     <input
-      {...props}
+      {...rest}
       ref={ownRef}
       autoFocus
       autoComplete="off"
