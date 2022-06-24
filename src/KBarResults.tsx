@@ -16,11 +16,13 @@ interface KBarResultsProps {
   items: any[];
   onRender: (params: RenderParams) => React.ReactElement;
   maxHeight?: number;
+  allowLoop?: boolean;
 }
 
 export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const activeRef = React.useRef<HTMLDivElement>(null);
   const parentRef = React.useRef(null);
+  const loopEnabled = props.allowLoop ?? false;
 
   // store a ref to all items so we do not have to pass
   // them as a dependency when setting up event listeners.
@@ -45,7 +47,12 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
         query.setActiveIndex((index) => {
-          let nextIndex = index > START_INDEX ? index - 1 : index;
+          let nextIndex =
+            index > START_INDEX
+              ? index - 1
+              : loopEnabled
+              ? itemsRef.current.length - 1
+              : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
             if (nextIndex === 0) return index;
@@ -60,7 +67,11 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         event.preventDefault();
         query.setActiveIndex((index) => {
           let nextIndex =
-            index < itemsRef.current.length - 1 ? index + 1 : index;
+            index < itemsRef.current.length - 1
+              ? index + 1
+              : loopEnabled
+              ? 0
+              : index;
           // avoid setting active index on a group
           if (typeof itemsRef.current[nextIndex] === "string") {
             if (nextIndex === itemsRef.current.length - 1) return index;
