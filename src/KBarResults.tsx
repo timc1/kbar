@@ -47,17 +47,23 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
         query.setActiveIndex((index) => {
-          let nextIndex =
-            index > START_INDEX
-              ? index - 1
-              : loopEnabled
-              ? itemsRef.current.length - 1
-              : index;
-          // avoid setting active index on a group
-          if (typeof itemsRef.current[nextIndex] === "string") {
-            if (nextIndex === 0) return index;
-            nextIndex -= 1;
+          // This should be the next index on this operation
+          let nextIndex = index - 1;
+
+          // Checks to validate if the nextIndex is a valid index or not
+          // 1. If the next index is a section header then we will try to find the nearest valid next index
+          while (nextIndex >= START_INDEX && typeof itemsRef.current[nextIndex] === "string") {
+            nextIndex--;
           }
+
+          // 2. If the index goes out of bounds i.e less than 0 in case of pressing ArrowUp
+          // We will check if looping is enabled then set the next index to be last element of list
+          // If looping is not enabled then we need to we need to set the nextIndex to be the current index, i.e we do not move anywhere and the selection remains the same.
+          if (nextIndex < START_INDEX) {
+            if (loopEnabled) nextIndex = itemsRef.current.length - 1;
+            else nextIndex = index;
+          }
+
           return nextIndex;
         });
       } else if (
@@ -66,17 +72,29 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       ) {
         event.preventDefault();
         query.setActiveIndex((index) => {
-          let nextIndex =
-            index < itemsRef.current.length - 1
-              ? index + 1
-              : loopEnabled
-              ? 0
-              : index;
-          // avoid setting active index on a group
-          if (typeof itemsRef.current[nextIndex] === "string") {
-            if (nextIndex === itemsRef.current.length - 1) return index;
-            nextIndex += 1;
+          // This should be the next index on this operation
+          let nextIndex = index + 1;
+
+          // Checks to validate if the nextIndex is a valid index or not
+          // 1. If the next index is a section header then we will try to find the nearest valid next index
+          while (nextIndex < itemsRef.current.length && typeof itemsRef.current[nextIndex] === "string") {
+            nextIndex++;
           }
+
+          // 2. If the index goes out of bounds i.e greater than size of list items in case of pressing ArrowDown
+          // We will check if looping is enabled then set the next index to be first element of list
+          // If looping is not enabled then we need to we need to set the nextIndex to be the current index, i.e we do not move anywhere and the selection remains the same.
+          if (nextIndex >= itemsRef.current.length) {
+            if (loopEnabled) nextIndex = 0;
+            else nextIndex = index;
+          }
+
+          // 3. Final check in case of ArrowDown movement would be that in case of setting the index to first element i.e index = 0, we may have a section header at index 0 instead of a list option
+          // To handle this we will try to find the nearest valid index which is not a section header
+          while (nextIndex < itemsRef.current.length && typeof itemsRef.current[nextIndex] === "string") {
+            nextIndex++;
+          }
+
           return nextIndex;
         });
       } else if (event.key === "Enter") {
@@ -90,7 +108,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [query]);
+  }, [query, loopEnabled]);
 
   // destructuring here to prevent linter warning to pass
   // entire rowVirtualizer in the dependencies array.
