@@ -23,6 +23,7 @@ export type Action = {
   perform?: (currentActionImpl: ActionImpl) => any;
   parent?: ActionId;
   priority?: Priority;
+  supplement?: any;
 };
 
 export type ActionStore = Record<ActionId, ActionImpl>;
