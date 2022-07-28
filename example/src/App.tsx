@@ -152,6 +152,7 @@ function RenderResults() {
   return (
     <KBarResults
       items={results}
+      allowLoop={true}
       onRender={({ item, active }) =>
         typeof item === "string" ? (
           <div style={groupNameStyle}>{item}</div>
