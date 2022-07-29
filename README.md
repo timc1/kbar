@@ -201,6 +201,7 @@ site below.
 - [anasaraid.me](https://anasaraid.me/)
 - [daniloleal.co](https://daniloleal.co/)
 - [hyperround](https://github.com/heyAyushh/hyperound)
+- [Omnivore](https://omnivore.app)
 
 ## Contributing to kbar
 
