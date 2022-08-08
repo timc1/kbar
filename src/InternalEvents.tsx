@@ -169,8 +169,12 @@ function wrap(handler: (event: KeyboardEvent) => void) {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query, options } = useKBar((state) => ({
+  const { actions, query, options, isShowing, currentRootActionId } = useKBar((state) => ({
     actions: state.actions,
+    isShowing:
+      state.visualState === VisualState.showing ||
+      state.visualState === VisualState.animatingIn,
+    currentRootActionId: state.currentRootActionId,
   }));
 
   React.useEffect(() => {
@@ -197,9 +201,14 @@ function useShortcuts() {
 
         event.preventDefault();
         if (action.children?.length) {
-          query.setCurrentRootAction(action.id);
-          query.toggle();
-          options.callbacks?.onOpen?.();
+          if(isShowing && currentRootActionId === null){
+            query.setCurrentRootAction(action.id);
+          }else{
+            query.setCurrentRootAction(action.id);
+            query.toggle();
+            options.callbacks?.onOpen?.();
+          }
+          
         } else {
           action.command?.perform();
           options.callbacks?.onSelectAction?.(action);
@@ -214,7 +223,7 @@ function useShortcuts() {
     return () => {
       unsubscribe();
     };
-  }, [actions, options.callbacks, query]);
+  }, [actions, options.callbacks, query, isShowing, currentRootActionId]);
 }
 
 /**
