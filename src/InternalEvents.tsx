@@ -201,7 +201,12 @@ function useShortcuts() {
 
         event.preventDefault();
         if (action.children?.length) {
-          if(isShowing && currentRootActionId === null){
+          if(isShowing){
+            if(currentRootActionId === action.id){
+              query.toggle();
+              options.callbacks?.onClose?.();
+              return;
+            }
             query.setCurrentRootAction(action.id);
           }else{
             query.setCurrentRootAction(action.id);
