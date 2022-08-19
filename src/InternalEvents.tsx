@@ -193,7 +193,7 @@ function useShortcuts() {
       const shortcut = action.shortcut!.join(" ");
 
       shortcutsMap[shortcut] = wrap((event: KeyboardEvent) => {
-        if (shouldRejectKeystrokes()) return;
+        if (!shortcut.includes('$mod') && shouldRejectKeystrokes()) return;
 
         event.preventDefault();
         if (action.children?.length) {
