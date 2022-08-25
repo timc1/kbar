@@ -5,6 +5,10 @@ import { useKBar } from "./useKBar";
 
 interface Props {
   children: React.ReactNode;
+  /**
+   * @see Docs https://reach.tech/portal#portal-containerRef
+   */
+  containerRef?: React.RefObject<Node>;
 }
 
 export function KBarPortal(props: Props) {
@@ -16,5 +20,5 @@ export function KBarPortal(props: Props) {
     return null;
   }
 
-  return <Portal>{props.children}</Portal>;
+  return <Portal containerRef={props.containerRef}>{props.children}</Portal>;
 }
