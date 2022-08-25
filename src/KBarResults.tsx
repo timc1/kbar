@@ -108,10 +108,13 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   }, [search, currentRootActionId, props.items, query]);
 
   const execute = React.useCallback(
-    (item: RenderParams["item"]) => {
+    (
+        item: RenderParams["item"],
+        ev?: React.BaseSyntheticEvent,
+    ) => {
       if (typeof item === "string") return;
       if (item.command) {
-        item.command.perform(item);
+        item.command.perform(item, ev);
         query.toggle();
       } else {
         query.setSearch("");
@@ -149,7 +152,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
               activeIndex !== virtualRow.index &&
               query.setActiveIndex(virtualRow.index),
             onPointerDown: () => query.setActiveIndex(virtualRow.index),
-            onClick: () => execute(item),
+            onClick: (ev) => execute(item, ev),
           };
           const active = virtualRow.index === activeIndex;
 

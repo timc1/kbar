@@ -49,7 +49,7 @@ export class ActionImpl implements Action {
       perform &&
       new Command(
         {
-          perform: () => perform(this),
+          perform: (ev) => perform(this, ev),
         },
         {
           history: options.history,

@@ -20,7 +20,7 @@ export type Action = {
   section?: ActionSection;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
-  perform?: (currentActionImpl: ActionImpl) => any;
+  perform?: (currentActionImpl: ActionImpl, ev?: React.BaseSyntheticEvent) => any;
   parent?: ActionId;
   priority?: Priority;
 };

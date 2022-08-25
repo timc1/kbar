@@ -27,7 +27,7 @@ type Action = {
   section?: string;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
-  perform?: (currentActionImpl: ActionImpl) => any;
+  perform?: (currentActionImpl: ActionImpl, ev?: React.BaseSyntheticEvent) => any;
   parent?: ActionId;
 };`}
       />

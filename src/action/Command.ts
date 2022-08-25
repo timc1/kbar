@@ -18,8 +18,8 @@ export class Command {
     command: { perform: Command["perform"] },
     options: CommandOptions = {}
   ) {
-    this.perform = () => {
-      const negate = command.perform();
+    this.perform = (item, ev) => {
+      const negate = command.perform(ev);
       // no need for history if non negatable
       if (typeof negate !== "function") return;
       // return if no history enabled
