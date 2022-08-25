@@ -74,7 +74,19 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         // having to calculate the current action to perform based
         // on the `activeIndex`, which we would have needed to add
         // as part of the dependencies array.
-        activeRef.current?.click();
+
+        // calling click() would loose original event meta data, like ctrlKey, altKey, etc.
+        // so we create custom click event and pass those meta data to it.
+        const clickEvent = new MouseEvent("click", {
+          // Not sure if the following list is comprehensive
+          bubbles: event.bubbles,
+          cancelable: event.cancelable,
+          altKey: event.altKey,
+          ctrlKey: event.ctrlKey,
+          metaKey: event.metaKey,
+          shiftKey: event.shiftKey,
+        });
+        activeRef.current?.dispatchEvent(clickEvent);
       }
     };
     window.addEventListener("keydown", handler);
