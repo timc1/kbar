@@ -20,6 +20,10 @@ export class Command {
   ) {
     this.perform = (item, ev) => {
       const negate = command.perform(ev);
+
+      // if boolean, return in so caller can handle toggling logic based on it's value
+      if (typeof negate === "boolean") return negate;
+
       // no need for history if non negatable
       if (typeof negate !== "function") return;
       // return if no history enabled

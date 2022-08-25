@@ -126,7 +126,9 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
     ) => {
       if (typeof item === "string") return;
       if (item.command) {
-        item.command.perform(item, ev);
+        const perfRes = item.command.perform(item, ev);
+        // If the perform returns exactly false, don't hide the KBar (useful when opening a new tab/window)
+        if (perfRes === false) return
         query.toggle();
       } else {
         query.setSearch("");
