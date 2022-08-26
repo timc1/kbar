@@ -57,6 +57,7 @@ export interface KBarOptions {
      * kbar. Defaults to "$mod+k" (cmd+k / ctrl+k)
      */
     toggleShortcut?: string;
+    toggleOnShortcut?: boolean;
 }
 export interface KBarProviderProps {
     actions?: Action[];

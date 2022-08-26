@@ -40,7 +40,7 @@ export default function useDocsActions() {
         ? {
             id: searchId,
             name: "Search docs…",
-            shortcut: ["?"],
+            shortcut: ["$mod+/"],
             keywords: "find",
             section: "Documentation",
           }

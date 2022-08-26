@@ -3,6 +3,7 @@ import { ActionImpl } from "./action";
 import tinykeys from "./tinykeys";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
+import { useMatches } from "./useMatches";
 import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
 
 type Timeout = ReturnType<typeof setTimeout>;
@@ -172,9 +173,16 @@ function useShortcuts() {
   const { actions, query, options } = useKBar((state) => ({
     actions: state.actions,
   }));
+  const { rootActionId } = useMatches()
 
   React.useEffect(() => {
-    const actionsList = Object.keys(actions).map((key) => actions[key]);
+    let actionsList;
+
+    if (rootActionId) {
+      actionsList = Object.keys(actions).map((key) => actions[key]).filter((action) => action.parent === rootActionId)
+    } else {
+      actionsList = Object.keys(actions).map((key) => actions[key]).filter((action) => !action.parent)
+    }
 
     let actionsWithShortcuts: ActionImpl[] = [];
     for (let action of actionsList) {
@@ -198,11 +206,19 @@ function useShortcuts() {
         event.preventDefault();
         if (action.children?.length) {
           query.setCurrentRootAction(action.id);
-          query.toggle();
+
+          if (!shortcut.includes('$mod') && !options.toggleOnShortcut) {
+            query.toggle();
+          }
+
           options.callbacks?.onOpen?.();
         } else {
           action.command?.perform();
           options.callbacks?.onSelectAction?.(action);
+
+          if (options.toggleOnShortcut) {
+            query.toggle();
+          } 
         }
       });
     }
@@ -214,7 +230,7 @@ function useShortcuts() {
     return () => {
       unsubscribe();
     };
-  }, [actions, options.callbacks, query]);
+  }, [actions, options.callbacks, options.toggleOnShortcut, query, rootActionId]);
 }
 
 /**

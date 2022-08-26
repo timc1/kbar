@@ -31,6 +31,7 @@ export default function useThemeActions() {
       name: "Change theme…",
       keywords: "interface color dark light",
       section: "Preferences",
+      shortcut: ["$mod+1"]
     },
     {
       id: "darkTheme",
@@ -75,6 +76,7 @@ export default function useThemeActions() {
         };
       },
       parent: "theme",
+      shortcut: ["$mod+1"]
     },
     {
       id: "lightTheme",
@@ -122,6 +124,7 @@ export default function useThemeActions() {
         };
       },
       parent: "theme",
+      shortcut: ["$mod+2"]
     },
   ]);
 }

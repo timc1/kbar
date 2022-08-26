@@ -68,7 +68,7 @@ const App = () => {
     {
       id: "docsAction",
       name: "Docs",
-      shortcut: ["g", "d"],
+      shortcut: ["$mod+d"],
       keywords: "help",
       section: "Navigation",
       perform: () => history.push("/docs"),
@@ -102,6 +102,7 @@ const App = () => {
     <KBarProvider
       options={{
         enableHistory: true,
+        toggleOnShortcut: true
       }}
       actions={initialActions}
     >
@@ -192,6 +193,9 @@ const ResultItem = React.forwardRef(
       return action.ancestors.slice(index + 1);
     }, [action.ancestors, currentRootActionId]);
 
+    const SSR = typeof window === 'undefined'
+    const isMac = !SSR && window.navigator.platform === "MacIntel"
+
     return (
       <div
         ref={ref}
@@ -250,9 +254,9 @@ const ResultItem = React.forwardRef(
             aria-hidden
             style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}
           >
-            {action.shortcut.map((sc) => (
+            {action.shortcut.map((sc) => sc.split('+').map((k) => (
               <kbd
-                key={sc}
+                key={k}
                 style={{
                   padding: "4px 6px",
                   background: "rgba(0 0 0 / .1)",
@@ -260,9 +264,9 @@ const ResultItem = React.forwardRef(
                   fontSize: 14,
                 }}
               >
-                {sc}
+                {k.replace('$mod', isMac ? '⌘' : 'Ctrl')}
               </kbd>
-            ))}
+            )))}
           </div>
         ) : null}
       </div>
