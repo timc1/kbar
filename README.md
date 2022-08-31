@@ -202,6 +202,7 @@ site below.
 - [daniloleal.co](https://daniloleal.co/)
 - [hyperround](https://github.com/heyAyushh/hyperound)
 - [Omnivore](https://omnivore.app)
+- [tiagohermano.dev](https://tiagohermano.dev/)
 
 ## Contributing to kbar
 
