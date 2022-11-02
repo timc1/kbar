@@ -35,7 +35,7 @@ class HistoryImpl implements History {
     window.addEventListener("keydown", (event) => {
       if (
         (!this.redoStack.length && !this.undoStack.length) ||
-        shouldRejectKeystrokes()
+        shouldRejectKeystrokes('ArrowDown')
       ) {
         return;
       }
