@@ -205,7 +205,7 @@ function useShortcuts() {
           options.callbacks?.onClose?.();
         } else if (action.children?.length) {
           query.setCurrentRootAction(action.id);
-          // When action have children toggle only when kbar is hidden.
+          // When action has children toggle only when kbar is hidden.
           !showing && query.toggle();
           options.callbacks?.onOpen?.();
         } else {
