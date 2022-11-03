@@ -26,13 +26,11 @@ export function KBarSearch(
     showing: state.visualState === VisualState.showing,
   }));
 
-  const ownRef = React.useRef<HTMLInputElement>(null);
-
   const { defaultPlaceholder, ...rest } = props;
 
   React.useEffect(() => {
     query.setSearch("");
-    ownRef.current!.focus();
+    query.getInput().focus();
     return () => query.setSearch("");
   }, [currentRootActionId, query]);
 
@@ -46,7 +44,7 @@ export function KBarSearch(
   return (
     <input
       {...rest}
-      ref={ownRef}
+      ref={query.inputRefSetter}
       autoFocus
       autoComplete="off"
       role="combobox"

@@ -47,4 +47,3 @@ export function useKBar<C = null>(
 
   return render;
 }
-
