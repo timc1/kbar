@@ -169,8 +169,10 @@ function wrap(handler: (event: KeyboardEvent) => void) {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query, options } = useKBar((state) => ({
+  const { actions, query, options, showing, currentRootActionId } = useKBar((state) => ({
     actions: state.actions,
+    showing: state.visualState !== VisualState.hidden,
+    currentRootActionId: state.currentRootActionId,
   }));
 
   React.useEffect(() => {
@@ -196,12 +198,20 @@ function useShortcuts() {
         if (shouldRejectKeystrokes(shortcut)) return;
 
         event.preventDefault();
-        if (action.children?.length) {
-          query.setCurrentRootAction(action.id);
+
+        if (currentRootActionId === action.id && showing) {
+          // Close kbar when user choosed current action double time.
           query.toggle();
+          options.callbacks?.onClose?.();
+        } else if (action.children?.length) {
+          query.setCurrentRootAction(action.id);
+          // When action have children toggle only when kbar is hidden.
+          !showing && query.toggle();
           options.callbacks?.onOpen?.();
         } else {
           action.command?.perform();
+          // When action doesn't have children toggle only when kbar is showing.
+          showing && query.toggle();
           options.callbacks?.onSelectAction?.(action);
         }
       });
@@ -214,7 +224,7 @@ function useShortcuts() {
     return () => {
       unsubscribe();
     };
-  }, [actions, options.callbacks, query]);
+  }, [actions, options.callbacks, query, showing, currentRootActionId]);
 }
 
 /**
