@@ -110,6 +110,7 @@ export function shouldRejectKeystrokes(
   );
 
   const activeElement = document.activeElement;
+
   const ignoreStrokes =
     activeElement &&
     (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||

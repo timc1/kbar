@@ -1,5 +1,6 @@
 import { deepEqual } from "fast-equals";
 import * as React from "react";
+import invariant from "tiny-invariant";
 import { ActionInterface } from "./action/ActionInterface";
 import { history } from "./action/HistoryImpl";
 import type {
@@ -72,6 +73,8 @@ export function useStore(props: useStoreProps) {
     [actionsInterface]
   );
 
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+
   return React.useMemo(() => {
     return {
       getState,
@@ -109,6 +112,16 @@ export function useStore(props: useStoreProps) {
             ...state,
             activeIndex: typeof cb === "number" ? cb : cb(state.activeIndex),
           })),
+        inputRefSetter: (el: HTMLInputElement) => {
+          inputRef.current = el;
+        },
+        getInput: () => {
+          invariant(
+            inputRef.current,
+            "Input is undefined, make sure you apple `query.inputRefSetter` to your search input."
+          );
+          return inputRef.current;
+        },
       },
       options: optionsRef.current,
       subscribe: (collector, cb) => publisher.subscribe(collector, cb),

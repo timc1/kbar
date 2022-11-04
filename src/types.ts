@@ -91,6 +91,8 @@ export interface KBarQuery {
   registerActions: (actions: Action[]) => () => void;
   toggle: () => void;
   setActiveIndex: (cb: number | ((currIndex: number) => number)) => void;
+  inputRefSetter: (el: HTMLInputElement) => void;
+  getInput: () => HTMLInputElement;
 }
 
 export interface IKBarContext {
