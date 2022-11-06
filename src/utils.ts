@@ -107,6 +107,7 @@ export function shouldRejectKeystrokes(
   );
 
   const activeElement = document.activeElement;
+
   const ignoreStrokes =
     activeElement && (shortcut && !shortcut.startsWith('$mod')) &&
     (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||

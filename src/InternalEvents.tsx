@@ -169,13 +169,15 @@ function wrap(handler: (event: KeyboardEvent) => void) {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query, options, showing, currentRootActionId } = useKBar((state) => ({
+  const { actions, query, open, options, currentRootActionId } = useKBar((state) => ({
     actions: state.actions,
-    showing: state.visualState !== VisualState.hidden,
+    open: state.visualState !== VisualState.hidden,
     currentRootActionId: state.currentRootActionId,
   }));
 
   React.useEffect(() => {
+    // if (open) return;
+
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
     let actionsWithShortcuts: ActionImpl[] = [];
@@ -199,19 +201,19 @@ function useShortcuts() {
 
         event.preventDefault();
 
-        if (currentRootActionId === action.id && showing) {
+        if (currentRootActionId === action.id && open) {
           // Close kbar when user choosed current action double time.
           query.toggle();
           options.callbacks?.onClose?.();
         } else if (action.children?.length) {
           query.setCurrentRootAction(action.id);
           // When action has children toggle only when kbar is hidden.
-          !showing && query.toggle();
+          !open && query.toggle();
           options.callbacks?.onOpen?.();
         } else {
           action.command?.perform();
           // When action doesn't have children toggle only when kbar is showing.
-          showing && query.toggle();
+          open && query.toggle();
           options.callbacks?.onSelectAction?.(action);
         }
       });
@@ -224,7 +226,7 @@ function useShortcuts() {
     return () => {
       unsubscribe();
     };
-  }, [actions, options.callbacks, query, showing, currentRootActionId]);
+  }, [actions, open, options.callbacks, query, currentRootActionId]);
 }
 
 /**
@@ -232,7 +234,7 @@ function useShortcuts() {
  * in focus prior to kbar being triggered.
  */
 function useFocusHandler() {
-  const { isShowing } = useKBar((state) => ({
+  const { isShowing, query } = useKBar((state) => ({
     isShowing:
       state.visualState === VisualState.showing ||
       state.visualState === VisualState.animatingIn,
@@ -259,4 +261,21 @@ function useFocusHandler() {
       activeElement.focus();
     }
   }, [isShowing]);
+
+  // When focus is blurred from the search input while kbar is still
+  // open, any keystroke should set focus back to the search input.
+  React.useEffect(() => {
+    function handler(event: KeyboardEvent) {
+      const input = query.getInput();
+      if (event.target !== input) {
+        input.focus();
+      }
+    }
+    if (isShowing) {
+      window.addEventListener("keydown", handler);
+      return () => {
+        window.removeEventListener("keydown", handler);
+      };
+    }
+  }, [isShowing, query]);
 }
