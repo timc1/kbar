@@ -176,8 +176,6 @@ function useShortcuts() {
   }));
 
   React.useEffect(() => {
-    // if (open) return;
-
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
     let actionsWithShortcuts: ActionImpl[] = [];
