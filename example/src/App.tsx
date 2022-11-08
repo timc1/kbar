@@ -20,6 +20,7 @@ import {
   createAction,
   useMatches,
   ActionImpl,
+  Action,
 } from "../../src";
 import useThemeActions from "./hooks/useThemeActions";
 
@@ -54,7 +55,7 @@ const groupNameStyle = {
 const App = () => {
   useAnalytics();
   const history = useHistory();
-  const initialActions = [
+  const initialActions: Action[] = [
     {
       id: "homeAction",
       name: "Home",
@@ -71,7 +72,11 @@ const App = () => {
       shortcut: ["g", "d"],
       keywords: "help",
       section: "Navigation",
-      perform: () => history.push("/docs"),
+      perform: (action, event) => {
+        console.log({ action, event });
+
+        history.push("/docs");
+      },
     },
     {
       id: "contactAction",
@@ -176,7 +181,7 @@ const ResultItem = React.forwardRef(
     }: {
       action: ActionImpl;
       active: boolean;
-      currentRootActionId: ActionId;
+      currentRootActionId?: ActionId | null;
     },
     ref: React.Ref<HTMLDivElement>
   ) => {

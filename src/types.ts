@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ActionImpl } from "./action/ActionImpl";
+import { Command } from "./action/Command";
 
 export type ActionId = string;
 
@@ -20,7 +21,7 @@ export type Action = {
   section?: ActionSection;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
-  perform?: (currentActionImpl: ActionImpl) => any;
+  perform?: (currentActionImpl: ActionImpl, event: KBarEvent) => any;
   parent?: ActionId;
   priority?: Priority;
 };
@@ -113,7 +114,7 @@ export enum VisualState {
 }
 
 export interface HistoryItem {
-  perform: () => any;
+  perform: Command["perform"];
   negate: () => any;
 }
 
@@ -126,3 +127,5 @@ export interface History {
   redo: (item?: HistoryItem) => void;
   reset: () => void;
 }
+
+export type KBarEvent = KeyboardEvent | MouseEvent | PointerEvent;

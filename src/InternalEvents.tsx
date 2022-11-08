@@ -204,7 +204,7 @@ function useShortcuts() {
           query.toggle();
           options.callbacks?.onOpen?.();
         } else {
-          action.command?.perform();
+          action.command?.perform(action, event);
           options.callbacks?.onSelectAction?.(action);
         }
       });

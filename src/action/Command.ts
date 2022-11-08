@@ -1,11 +1,11 @@
-import { HistoryItem } from "..";
+import { ActionImpl, HistoryItem, KBarEvent } from "..";
 import type { History } from "../types";
 
 interface CommandOptions {
   history?: History;
 }
 export class Command {
-  perform: (...args: any) => any;
+  perform: (actionImpl: ActionImpl, event: KBarEvent) => any;
 
   private historyItem?: HistoryItem;
 
@@ -18,8 +18,10 @@ export class Command {
     command: { perform: Command["perform"] },
     options: CommandOptions = {}
   ) {
-    this.perform = () => {
-      const negate = command.perform();
+    this.perform = (...args) => {
+      console.log("args", args);
+
+      const negate = command.perform(...args);
       // no need for history if non negatable
       if (typeof negate !== "function") return;
       // return if no history enabled
@@ -31,7 +33,7 @@ export class Command {
         history.remove(this.historyItem);
       }
       this.historyItem = history.add({
-        perform: command.perform,
+        perform: () => command.perform(...args),
         negate,
       });
 

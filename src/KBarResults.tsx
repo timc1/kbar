@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useVirtual } from "react-virtual";
+import { KBarEvent } from ".";
 import { ActionImpl } from "./action/ActionImpl";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { useKBar } from "./useKBar";
@@ -108,10 +109,10 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   }, [search, currentRootActionId, props.items, query]);
 
   const execute = React.useCallback(
-    (item: RenderParams["item"]) => {
+    (item: RenderParams["item"], event: KBarEvent) => {
       if (typeof item === "string") return;
       if (item.command) {
-        item.command.perform(item);
+        item.command.perform(item, event);
         query.toggle();
       } else {
         query.setSearch("");
@@ -149,7 +150,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
               activeIndex !== virtualRow.index &&
               query.setActiveIndex(virtualRow.index),
             onPointerDown: () => query.setActiveIndex(virtualRow.index),
-            onClick: () => execute(item),
+            onClick: (event) => execute(item, event),
           };
           const active = virtualRow.index === activeIndex;
 
