@@ -225,6 +225,7 @@ function useShortcuts() {
  * in focus prior to kbar being triggered.
  */
 function useFocusHandler() {
+  const rFirstRender = React.useRef(true);
   const { isShowing, query } = useKBar((state) => ({
     isShowing:
       state.visualState === VisualState.showing ||
@@ -234,6 +235,10 @@ function useFocusHandler() {
   const activeElementRef = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
+    if (rFirstRender.current) {
+      rFirstRender.current = false;
+      return;
+    }
     if (isShowing) {
       activeElementRef.current = document.activeElement as HTMLElement;
       return;
