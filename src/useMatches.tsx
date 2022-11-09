@@ -169,13 +169,14 @@ type Match = {
 };
 
 function useInternalMatches(filtered: ActionImpl[], search: string) {
-  const value = React.useMemo(
-    () => ({
+  const value = React.useMemo(() => {
+    const split = search.split(/\s/).map((word) => word.substring(0, 8));
+    const refinedSearch = split.slice(split.length - 3).join(" ");
+    return {
       filtered,
-      search,
-    }),
-    [filtered, search]
-  );
+      search: refinedSearch,
+    };
+  }, [filtered, search]);
 
   const { filtered: throttledFiltered, search: throttledSearch } =
     useThrottledValue(value);
@@ -189,10 +190,12 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
 
     for (let i = 0; i < throttledFiltered.length; i++) {
       const action = throttledFiltered[i];
+      // console.time("command-score");
       const score = commandScore(
         [action.name, action.keywords, action.subtitle].join(" "),
         throttledSearch
       );
+      // console.timeEnd("command-score");
       if (score > 0) {
         matches.push({ score, action });
       }
