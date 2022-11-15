@@ -57,7 +57,7 @@
     "webpack-dev-server": "^4.1.0"
   },
   "dependencies": {
-    "@reach/portal": "^0.16.0",
+    "@radix-ui/react-portal": "^1.0.1",
     "command-score": "^0.1.2",
     "fast-equals": "^2.0.3",
     "react-virtual": "^2.8.2",
