@@ -1,4 +1,4 @@
-import Portal from "@reach/portal";
+import { Portal } from "@radix-ui/react-portal";
 import * as React from "react";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
