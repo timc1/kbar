@@ -42,6 +42,7 @@ function useToggleHandler() {
       Escape: (event: KeyboardEvent) => {
         if (showing) {
           event.stopPropagation();
+          event.preventDefault();
           options.callbacks?.onClose?.();
         }
 
