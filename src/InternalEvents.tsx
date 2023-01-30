@@ -254,7 +254,7 @@ function useFocusHandler() {
     }
 
     const activeElement = activeElementRef.current;
-    if (activeElement) {
+    if (activeElement && activeElement !== currentActiveElement) {
       activeElement.focus();
     }
   }, [isShowing]);
