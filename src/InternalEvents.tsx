@@ -176,8 +176,6 @@ function useShortcuts() {
   }));
 
   React.useEffect(() => {
-    if (open) return;
-
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
     let actionsWithShortcuts: ActionImpl[] = [];
@@ -185,7 +183,9 @@ function useShortcuts() {
       if (!action.shortcut?.length) {
         continue;
       }
-      actionsWithShortcuts.push(action);
+      if (!open || action.shortcut?.reduce((acc, shortcut) => !!(acc && /(\$mod|Alt|Control|Command|Option|Meta)\+/g.test(shortcut)), true)) {
+        actionsWithShortcuts.push(action);
+      }
     }
 
     actionsWithShortcuts = actionsWithShortcuts.sort(
@@ -197,7 +197,7 @@ function useShortcuts() {
       const shortcut = action.shortcut!.join(" ");
 
       shortcutsMap[shortcut] = wrap((event: KeyboardEvent) => {
-        if (shouldRejectKeystrokes()) return;
+        if (!open && shouldRejectKeystrokes()) return;
 
         event.preventDefault();
         if (action.children?.length) {
