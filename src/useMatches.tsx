@@ -193,7 +193,7 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
         [action.name, action.keywords, action.subtitle].join(" "),
         throttledSearch
       );
-      if (score > 0) {
+      if (score > 0 || action.keywords?.split(" ").indexOf("*") !== -1) {
         matches.push({ score, action });
       }
     }
