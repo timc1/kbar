@@ -5,10 +5,10 @@ import { useKBar } from "./useKBar";
 
 interface Props {
   children: React.ReactNode;
-  host?: HTMLElement;
+  container?: HTMLElement;
 }
 
-export function KBarPortal(props: Props) {
+export function KBarPortal({ children, container }: Props) {
   const { showing } = useKBar((state) => ({
     showing: state.visualState !== VisualState.hidden,
   }));
@@ -17,5 +17,5 @@ export function KBarPortal(props: Props) {
     return null;
   }
 
-  return <Portal container={props.host}>{props.children}</Portal>;
+  return <Portal container={container}>{children}</Portal>;
 }
