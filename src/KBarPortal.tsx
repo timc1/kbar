@@ -5,6 +5,7 @@ import { useKBar } from "./useKBar";
 
 interface Props {
   children: React.ReactNode;
+  host?: HTMLElement;
 }
 
 export function KBarPortal(props: Props) {
@@ -16,5 +17,5 @@ export function KBarPortal(props: Props) {
     return null;
   }
 
-  return <Portal>{props.children}</Portal>;
+  return <Portal container={props.host}>{props.children}</Portal>;
 }
