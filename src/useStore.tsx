@@ -37,6 +37,7 @@ export function useStore(props: useStoreProps) {
     searchQuery: "",
     currentRootActionId: null,
     visualState: VisualState.hidden,
+    argv: [],
     actions: { ...actionsInterface.actions },
     activeIndex: 0,
   });
@@ -91,11 +92,13 @@ export function useStore(props: useStoreProps) {
             visualState: typeof cb === "function" ? cb(state.visualState) : cb,
           }));
         },
-        setSearch: (searchQuery) =>
+        setSearch: (searchQuery) =>{
+          const argv = searchQuery.split(' ')
           setState((state) => ({
             ...state,
             searchQuery,
-          })),
+            argv
+          }))},
         registerActions,
         toggle: () =>
           setState((state) => ({

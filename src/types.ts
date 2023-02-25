@@ -18,6 +18,8 @@ export type Action = {
   shortcut?: string[];
   keywords?: string;
   section?: ActionSection;
+  argv?: string[];
+  searchQuery?: string;
   icon?: string | React.ReactElement | React.ReactNode;
   subtitle?: string;
   perform?: (currentActionImpl: ActionImpl) => any;
@@ -78,6 +80,7 @@ export interface KBarState {
   searchQuery: string;
   visualState: VisualState;
   actions: ActionTree;
+  argv: string[];
   currentRootActionId?: ActionId | null;
   activeIndex: number;
 }
