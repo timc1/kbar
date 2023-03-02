@@ -8,6 +8,7 @@ export const getListboxItemId = (id: number) => `kbar-listbox-item-${id}`;
 export function KBarSearch(
   props: React.InputHTMLAttributes<HTMLInputElement> & {
     defaultPlaceholder?: string;
+    preserveSearchQuery?: boolean;
   }
 ) {
   const {
@@ -26,10 +27,10 @@ export function KBarSearch(
     showing: state.visualState === VisualState.showing,
   }));
 
-  const { defaultPlaceholder, ...rest } = props;
+  const { defaultPlaceholder, preserveSearchQuery, ...rest } = props;
 
   React.useEffect(() => {
-    query.setSearch("");
+    query.setSearch(preserveSearchQuery ?? "");
     query.getInput().focus();
     return () => query.setSearch("");
   }, [currentRootActionId, query]);
