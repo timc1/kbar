@@ -10,7 +10,7 @@ export default function Priority() {
         want to control the order in which they appear.
       </p>
       <p>
-        By default, each action has a base priority value of <code>1</code>.
+        By default, each action has a base priority value of <code>0</code> (<code>Priority.NORMAL</code>).
         This means each action will be rendered in the order in which it was
         defined.
       </p>
