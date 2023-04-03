@@ -6,6 +6,7 @@ import { useOuterClick } from "./utils";
 interface KBarAnimatorProps {
   style?: React.CSSProperties;
   className?: string;
+  disableCloseOnOuterClick?: boolean;
 }
 
 const appearanceAnimationKeyframes = [
@@ -31,7 +32,7 @@ const bumpAnimationKeyframes = [
 
 export const KBarAnimator: React.FC<
   React.PropsWithChildren<KBarAnimatorProps>
-> = ({ children, style, className }) => {
+> = ({ children, style, className, disableCloseOnOuterClick }) => {
   const { visualState, currentRootActionId, query, options } = useKBar(
     (state) => ({
       visualState: state.visualState,
@@ -130,6 +131,9 @@ export const KBarAnimator: React.FC<
   }, [currentRootActionId, enterMs]);
 
   useOuterClick(outerRef, () => {
+    if (disableCloseOnOuterClick) {
+      return;
+    }
     query.setVisualState(VisualState.animatingOut);
     options.callbacks?.onClose?.();
   });
