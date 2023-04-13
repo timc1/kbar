@@ -116,7 +116,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       if (typeof item === "string") return;
       if (item.command) {
         item.command.perform(item);
-        query.toggle();
+        if (!options.disableToggleAfterPerform) query.toggle();
       } else {
         query.setSearch("");
         query.setCurrentRootAction(item.id);
