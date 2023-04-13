@@ -70,7 +70,7 @@ export interface KBarOptions {
   /**
    * `disableToggleAfterPerform` disables the default behavior of toggling
    * and hiding kbar after calling perform for an action. This is useful
-   * for applications that want fine-grain control the kbar visible state.
+   * for applications that want fine-grain control of kbar's visible state.
    */
   disableToggleAfterPerform?: boolean;
 }
