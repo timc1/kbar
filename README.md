@@ -203,6 +203,8 @@ site below.
 - [hyperround](https://github.com/heyAyushh/hyperound)
 - [Omnivore](https://omnivore.app)
 - [tiagohermano.dev](https://tiagohermano.dev/)
+- [tryapis.com](https://tryapis.com/)
+- [fillout.com](https://fillout.com/)
 
 ## Contributing to kbar
 
