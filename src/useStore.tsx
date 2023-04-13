@@ -118,7 +118,7 @@ export function useStore(props: useStoreProps) {
         getInput: () => {
           invariant(
             inputRef.current,
-            "Input is undefined, make sure you apple `query.inputRefSetter` to your search input."
+            "Input ref is undefined, make sure you attach `query.inputRefSetter` to your search input."
           );
           return inputRef.current;
         },
