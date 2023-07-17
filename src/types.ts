@@ -80,6 +80,7 @@ export interface KBarState {
   actions: ActionTree;
   currentRootActionId?: ActionId | null;
   activeIndex: number;
+  disabled: boolean;
 }
 
 export interface KBarQuery {
@@ -93,6 +94,7 @@ export interface KBarQuery {
   setActiveIndex: (cb: number | ((currIndex: number) => number)) => void;
   inputRefSetter: (el: HTMLInputElement) => void;
   getInput: () => HTMLInputElement;
+  disable: (disable: boolean) => void;
 }
 
 export interface IKBarContext {
