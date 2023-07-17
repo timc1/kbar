@@ -45,6 +45,7 @@ export interface KBarOptions {
     onQueryChange?: (searchQuery: string) => void;
     onSelectAction?: (action: ActionImpl) => void;
   };
+  disableKBar?: boolean;
   /**
    * `disableScrollBarManagement` ensures that kbar will not
    * manipulate the document's `margin-right` property when open.
@@ -75,14 +76,16 @@ export interface KBarProviderProps {
 }
 
 export interface KBarState {
+  actions: ActionTree;
+  activeIndex: number;
+  currentRootActionId?: ActionId | null;
+  disableKBar: boolean;
   searchQuery: string;
   visualState: VisualState;
-  actions: ActionTree;
-  currentRootActionId?: ActionId | null;
-  activeIndex: number;
 }
 
 export interface KBarQuery {
+  setDisableKBar: (disableKBar: boolean) => void;
   setCurrentRootAction: (actionId?: ActionId | null) => void;
   setVisualState: (
     cb: ((vs: VisualState) => VisualState) | VisualState

@@ -32,18 +32,23 @@ export function useKBar<C = null>(
 
   React.useEffect(() => {
     let unsubscribe;
-    if (collectorRef.current) {
+    if (collectorRef.current && !options.disableKBar) {
       unsubscribe = subscribe(
         (current) => (collectorRef.current as any)(current),
         (collected) => setRender(onCollect(collected))
       );
+    }
+    if(options.disableKBar){
+      if (unsubscribe) {
+       unsubscribe();
+      }
     }
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
     };
-  }, [onCollect, subscribe]);
+  }, [onCollect, options, subscribe]);
 
   return render;
 }

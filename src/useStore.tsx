@@ -79,6 +79,12 @@ export function useStore(props: useStoreProps) {
     return {
       getState,
       query: {
+        setDisableKBar: (disableKBar) => {
+          setState((state) => ({
+            ...state,
+            disableKBar,
+          }));
+        },
         setCurrentRootAction: (actionId) => {
           setState((state) => ({
             ...state,
