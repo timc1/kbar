@@ -116,7 +116,9 @@ export function shouldRejectKeystrokes(
     (inputs.indexOf(activeElement.tagName.toLowerCase()) !== -1 ||
       activeElement.attributes.getNamedItem("role")?.value === "textbox" ||
       activeElement.attributes.getNamedItem("contenteditable")?.value ===
-        "true");
+        "true" ||
+      activeElement.attributes.getNamedItem("contenteditable")?.value ===
+        "plaintext-only");
 
   return ignoreStrokes;
 }
