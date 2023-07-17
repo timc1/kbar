@@ -1,6 +1,6 @@
 {
   "name": "kbar",
-  "version": "0.1.0-beta.40",
+  "version": "0.1.0-beta.41",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
