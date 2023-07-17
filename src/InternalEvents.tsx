@@ -19,12 +19,29 @@ export function InternalEvents() {
  * `useToggleHandler` handles the keyboard events for toggling kbar.
  */
 function useToggleHandler() {
-  const { query, options, visualState, showing } = useKBar((state) => ({
-    visualState: state.visualState,
-    showing: state.visualState !== VisualState.hidden,
-  }));
+  const { query, options, visualState, showing, disabled } = useKBar(
+    (state) => ({
+      visualState: state.visualState,
+      showing: state.visualState !== VisualState.hidden,
+      disabled: state.disabled,
+    })
+  );
 
   React.useEffect(() => {
+    const close = () => {
+      query.setVisualState((vs) => {
+        if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
+          return vs;
+        }
+        return VisualState.animatingOut;
+      });
+    };
+
+    if (disabled) {
+      close();
+      return;
+    }
+
     const shortcut = options.toggleShortcut || "$mod+k";
 
     const unsubscribe = tinykeys(window, {
@@ -46,18 +63,13 @@ function useToggleHandler() {
           options.callbacks?.onClose?.();
         }
 
-        query.setVisualState((vs) => {
-          if (vs === VisualState.hidden || vs === VisualState.animatingOut) {
-            return vs;
-          }
-          return VisualState.animatingOut;
-        });
+        close();
       },
     });
     return () => {
       unsubscribe();
     };
-  }, [options.callbacks, options.toggleShortcut, query, showing]);
+  }, [options.callbacks, options.toggleShortcut, query, showing, disabled]);
 
   const timeoutRef = React.useRef<Timeout>();
   const runAnimateTimer = React.useCallback(
@@ -170,13 +182,14 @@ function wrap(handler: (event: KeyboardEvent) => void) {
  * performs actions for patterns that match the user defined `shortcut`.
  */
 function useShortcuts() {
-  const { actions, query, open, options } = useKBar((state) => ({
+  const { actions, query, open, options, disabled } = useKBar((state) => ({
     actions: state.actions,
     open: state.visualState === VisualState.showing,
+    disabled: state.disabled,
   }));
 
   React.useEffect(() => {
-    if (open) return;
+    if (open || disabled) return;
 
     const actionsList = Object.keys(actions).map((key) => actions[key]);
 
@@ -218,7 +231,7 @@ function useShortcuts() {
     return () => {
       unsubscribe();
     };
-  }, [actions, open, options.callbacks, query]);
+  }, [actions, open, options.callbacks, query, disabled]);
 }
 
 /**

@@ -1,7 +1,13 @@
 import * as React from "react";
 import { useLocation } from "react-router-dom";
+import Code from "../Code";
+import { useKBar } from "../../../src/useKBar";
 
 export default function APIReference() {
+  const { disabled, query } = useKBar((state) => ({
+    disabled: state.disabled,
+  }));
+
   return (
     <div>
       <h1>API Reference</h1>
@@ -38,6 +44,32 @@ export default function APIReference() {
         Only re renders the component when return value deeply changes. All kbar
         components are built using this hook.
       </p>
+
+      <p>For instance, let's disable kbar at any given time.</p>
+      <Code
+        code={`
+import { useKbar } from "kbar";
+
+function MyApp() {
+  const { query, disabled } = useKbar(state => ({
+    disabled: state.disabled
+  }));
+
+  return <button onClick={() => query.disable(!disabled)}>{disabled ? "Disabled" : "Disable"}</button>
+}
+`}
+      />
+
+      <p>Try it!</p>
+
+      <button
+        onClick={() => {
+          query.disable(!disabled);
+        }}
+      >
+        {disabled ? "kbar is disabled" : "kbar is enabled!"}
+      </button>
+
       <Heading name="HistoryImpl" />
       <p>
         An internal history implementation which maintains a simple in memory

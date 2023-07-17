@@ -8,6 +8,7 @@ import type {
   IKBarContext,
   KBarOptions,
   KBarProviderProps,
+  KBarQuery,
   KBarState,
 } from "./types";
 import { VisualState } from "./types";
@@ -39,6 +40,7 @@ export function useStore(props: useStoreProps) {
     visualState: VisualState.hidden,
     actions: { ...actionsInterface.actions },
     activeIndex: 0,
+    disabled: false,
   });
 
   const currState = React.useRef(state);
@@ -76,53 +78,59 @@ export function useStore(props: useStoreProps) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
   return React.useMemo(() => {
+    const query: KBarQuery = {
+      setCurrentRootAction: (actionId) => {
+        setState((state) => ({
+          ...state,
+          currentRootActionId: actionId,
+        }));
+      },
+      setVisualState: (cb) => {
+        setState((state) => ({
+          ...state,
+          visualState: typeof cb === "function" ? cb(state.visualState) : cb,
+        }));
+      },
+      setSearch: (searchQuery) =>
+        setState((state) => ({
+          ...state,
+          searchQuery,
+        })),
+      registerActions,
+      toggle: () =>
+        setState((state) => ({
+          ...state,
+          visualState: [VisualState.animatingOut, VisualState.hidden].includes(
+            state.visualState
+          )
+            ? VisualState.animatingIn
+            : VisualState.animatingOut,
+        })),
+      setActiveIndex: (cb) =>
+        setState((state) => ({
+          ...state,
+          activeIndex: typeof cb === "number" ? cb : cb(state.activeIndex),
+        })),
+      inputRefSetter: (el: HTMLInputElement) => {
+        inputRef.current = el;
+      },
+      getInput: () => {
+        invariant(
+          inputRef.current,
+          "Input ref is undefined, make sure you attach `query.inputRefSetter` to your search input."
+        );
+        return inputRef.current;
+      },
+      disable: (disable: boolean) => {
+        setState((state) => ({
+          ...state,
+          disabled: disable,
+        }));
+      },
+    };
     return {
       getState,
-      query: {
-        setCurrentRootAction: (actionId) => {
-          setState((state) => ({
-            ...state,
-            currentRootActionId: actionId,
-          }));
-        },
-        setVisualState: (cb) => {
-          setState((state) => ({
-            ...state,
-            visualState: typeof cb === "function" ? cb(state.visualState) : cb,
-          }));
-        },
-        setSearch: (searchQuery) =>
-          setState((state) => ({
-            ...state,
-            searchQuery,
-          })),
-        registerActions,
-        toggle: () =>
-          setState((state) => ({
-            ...state,
-            visualState: [
-              VisualState.animatingOut,
-              VisualState.hidden,
-            ].includes(state.visualState)
-              ? VisualState.animatingIn
-              : VisualState.animatingOut,
-          })),
-        setActiveIndex: (cb) =>
-          setState((state) => ({
-            ...state,
-            activeIndex: typeof cb === "number" ? cb : cb(state.activeIndex),
-          })),
-        inputRefSetter: (el: HTMLInputElement) => {
-          inputRef.current = el;
-        },
-        getInput: () => {
-          invariant(
-            inputRef.current,
-            "Input ref is undefined, make sure you attach `query.inputRefSetter` to your search input."
-          );
-          return inputRef.current;
-        },
-      },
+      query,
       options: optionsRef.current,
       subscribe: (collector, cb) => publisher.subscribe(collector, cb),
     } as IKBarContext;
