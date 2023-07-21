@@ -96,7 +96,7 @@ export function useMatches() {
   };
   const fuse = new Fuse(filtered, fuseOptions);
 
-  const matches = useInternalMatches(filtered, search);
+  const matches = useInternalMatches(filtered, search, fuse);
 
   const results = React.useMemo(() => {
     /**
