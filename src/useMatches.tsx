@@ -2,7 +2,7 @@ import * as React from "react";
 import type { ActionImpl } from "./action/ActionImpl";
 import { useKBar } from "./useKBar";
 import { Priority, useThrottledValue } from "./utils";
-import commandScore from "command-score";
+import Fuse from "fuse.js";
 
 export const NO_GROUP = {
   name: "none",
@@ -73,6 +73,28 @@ export function useMatches() {
     if (emptySearch) return rootResults;
     return getDeepResults(rootResults);
   }, [getDeepResults, rootResults, emptySearch]);
+
+  const fuseOptions = {
+    keys: [{
+      name: "name",
+      weight: 0.5
+    },
+    {
+      name: "keywords",
+      getFn: (item) => item.keywords.split(","), // make keyword an array. so fuse can look through words individually
+      weight: 0.5
+    },
+      "subtitle"],
+    includeScore: true,
+    includeMatches: true,
+    threshold: 0.2,
+    minMatchCharLength: 2,
+    tokenize: (str) => {
+      // Example: Preserve hyphens and special characters as separate tokens
+      return str.split(/[\s\-,.!()]+/).filter(Boolean);
+    },
+  };
+  const fuse = new Fuse(filtered, fuseOptions);
 
   const matches = useInternalMatches(filtered, search);
 
@@ -168,7 +190,7 @@ type Match = {
   score: number;
 };
 
-function useInternalMatches(filtered: ActionImpl[], search: string) {
+function useInternalMatches(filtered: ActionImpl[], search: string, fuse: Fuse<ActionImpl>) {
   const value = React.useMemo(
     () => ({
       filtered,
@@ -186,17 +208,13 @@ function useInternalMatches(filtered: ActionImpl[], search: string) {
     }
 
     let matches: Match[] = [];
-
-    for (let i = 0; i < throttledFiltered.length; i++) {
-      const action = throttledFiltered[i];
-      const score = commandScore(
-        [action.name, action.keywords, action.subtitle].join(" "),
-        throttledSearch
-      );
-      if (score > 0) {
-        matches.push({ score, action });
-      }
-    }
+    // Use Fuse's `search` method to perform the search efficiently
+    const searchResults = fuse.search(throttledSearch);
+    // Format the search results to match the existing structure
+    matches = searchResults.map(({ item: action, score }) => ({
+      score: 1 / (score + 1), // Convert the Fuse score to the format used in the original code
+      action,
+    }));
 
     return matches;
   }, [throttledFiltered, throttledSearch]) as Match[];
