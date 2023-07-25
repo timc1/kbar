@@ -88,7 +88,7 @@ export function useMatches() {
     includeScore: true,
     includeMatches: true,
     threshold: 0.2,
-    minMatchCharLength: 2,
+    minMatchCharLength: 1,
     tokenize: (str) => {
       // Example: Preserve hyphens and special characters as separate tokens
       return str.split(/[\s\-,.!()]+/).filter(Boolean);
