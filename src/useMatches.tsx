@@ -9,6 +9,25 @@ export const NO_GROUP = {
   priority: Priority.NORMAL,
 };
 
+const fuseOptions: Fuse.IFuseOptions<ActionImpl> = {
+  keys: [
+    {
+      name: "name",
+      weight: 0.5,
+    },
+    {
+      name: "keywords",
+      getFn: (item) => (item.keywords ?? "").split(","),
+      weight: 0.5,
+    },
+    "subtitle",
+  ],
+  includeScore: true,
+  includeMatches: true,
+  threshold: 0.2,
+  minMatchCharLength: 1,
+};
+
 function order(a, b) {
   /**
    * Larger the priority = higher up the list
@@ -74,29 +93,7 @@ export function useMatches() {
     return getDeepResults(rootResults);
   }, [getDeepResults, rootResults, emptySearch]);
 
-  const fuseOptions = {
-    keys: [
-      {
-        name: "name",
-        weight: 0.5,
-      },
-      {
-        name: "keywords",
-        getFn: (item) => item.keywords.split(","), // make keyword an array. so fuse can look through words individually
-        weight: 0.5,
-      },
-      "subtitle",
-    ],
-    includeScore: true,
-    includeMatches: true,
-    threshold: 0.2,
-    minMatchCharLength: 1,
-    tokenize: (str) => {
-      // Example: Preserve hyphens and special characters as separate tokens
-      return str.split(/[\s\-,.!()]+/).filter(Boolean);
-    },
-  };
-  const fuse = new Fuse(filtered, fuseOptions);
+  const fuse = React.useMemo(() => new Fuse(filtered, fuseOptions), [filtered]);
 
   const matches = useInternalMatches(filtered, search, fuse);
 
