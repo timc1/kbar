@@ -75,16 +75,18 @@ export function useMatches() {
   }, [getDeepResults, rootResults, emptySearch]);
 
   const fuseOptions = {
-    keys: [{
-      name: "name",
-      weight: 0.5
-    },
-    {
-      name: "keywords",
-      getFn: (item) => item.keywords.split(","), // make keyword an array. so fuse can look through words individually
-      weight: 0.5
-    },
-      "subtitle"],
+    keys: [
+      {
+        name: "name",
+        weight: 0.5,
+      },
+      {
+        name: "keywords",
+        getFn: (item) => item.keywords.split(","), // make keyword an array. so fuse can look through words individually
+        weight: 0.5,
+      },
+      "subtitle",
+    ],
     includeScore: true,
     includeMatches: true,
     threshold: 0.2,
@@ -190,7 +192,11 @@ type Match = {
   score: number;
 };
 
-function useInternalMatches(filtered: ActionImpl[], search: string, fuse: Fuse<ActionImpl>) {
+function useInternalMatches(
+  filtered: ActionImpl[],
+  search: string,
+  fuse: Fuse<ActionImpl>
+) {
   const value = React.useMemo(
     () => ({
       filtered,
@@ -212,12 +218,12 @@ function useInternalMatches(filtered: ActionImpl[], search: string, fuse: Fuse<A
     const searchResults = fuse.search(throttledSearch);
     // Format the search results to match the existing structure
     matches = searchResults.map(({ item: action, score }) => ({
-      score: 1 / (score + 1), // Convert the Fuse score to the format used in the original code
+      score: 1 / ((score ?? 0) + 1), // Convert the Fuse score to the format used in the original code
       action,
     }));
 
     return matches;
-  }, [throttledFiltered, throttledSearch]) as Match[];
+  }, [throttledFiltered, throttledSearch, fuse]) as Match[];
 }
 
 /**
