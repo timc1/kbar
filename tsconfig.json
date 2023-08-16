@@ -14,6 +14,7 @@
     "rootDir": "src",
     "outDir": "lib",
     "module": "commonjs",
+    "skipLibCheck": true,
     "typeRoots": [
       "src/types",
       "node_modules/@types"
