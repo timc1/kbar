@@ -205,6 +205,7 @@ site below.
 - [tiagohermano.dev](https://tiagohermano.dev/)
 - [tryapis.com](https://tryapis.com/)
 - [fillout.com](https://fillout.com/)
+- [vinniciusgomes.dev](https://vinniciusgomes.dev/)
 
 ## Contributing to kbar
 
