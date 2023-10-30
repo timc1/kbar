@@ -48,6 +48,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       
       if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
+        event.stopPropagation();
         query.setActiveIndex((index) => {
           let nextIndex = index > START_INDEX ? index - 1 : index;
           // avoid setting active index on a group
@@ -62,6 +63,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         (event.ctrlKey && event.key === "n")
       ) {
         event.preventDefault();
+        event.stopPropagation();
         query.setActiveIndex((index) => {
           let nextIndex =
             index < itemsRef.current.length - 1 ? index + 1 : index;
@@ -74,6 +76,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         });
       } else if (event.key === "Enter") {
         event.preventDefault();
+        event.stopPropagation();
         // storing the active dom element in a ref prevents us from
         // having to calculate the current action to perform based
         // on the `activeIndex`, which we would have needed to add
@@ -81,8 +84,8 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         activeRef.current?.click();
       }
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener("keydown", handler, {capture: true});
+    return () => window.removeEventListener("keydown", handler, {capture: true});
   }, [query]);
 
   // destructuring here to prevent linter warning to pass
