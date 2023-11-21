@@ -1,31 +1,12 @@
 import * as React from "react";
 import type { ActionImpl } from "./action/ActionImpl";
 import { useKBar } from "./useKBar";
-import { Priority, useThrottledValue } from "./utils";
-import Fuse from "fuse.js";
+import { Priority } from "./utils";
+import { useInternalMatches } from "./useInternalMatches";
 
 export const NO_GROUP = {
   name: "none",
   priority: Priority.NORMAL,
-};
-
-const fuseOptions: Fuse.IFuseOptions<ActionImpl> = {
-  keys: [
-    {
-      name: "name",
-      weight: 0.5,
-    },
-    {
-      name: "keywords",
-      getFn: (item) => (item.keywords ?? "").split(","),
-      weight: 0.5,
-    },
-    "subtitle",
-  ],
-  includeScore: true,
-  includeMatches: true,
-  threshold: 0.2,
-  minMatchCharLength: 1,
 };
 
 function order(a, b) {
@@ -41,9 +22,10 @@ type SectionName = string;
  * returns deep matches only when a search query is present
  */
 export function useMatches() {
-  const { search, actions, rootActionId } = useKBar((state) => ({
+  const { search, actions, rootActionId, matcher } = useKBar((state) => ({
     search: state.searchQuery,
     actions: state.actions,
+    matcher: state.matcher,
     rootActionId: state.currentRootActionId,
   }));
 
@@ -93,9 +75,7 @@ export function useMatches() {
     return getDeepResults(rootResults);
   }, [getDeepResults, rootResults, emptySearch]);
 
-  const fuse = React.useMemo(() => new Fuse(filtered, fuseOptions), [filtered]);
-
-  const matches = useInternalMatches(filtered, search, fuse);
+  const matches = useInternalMatches(filtered, search, matcher);
 
   const results = React.useMemo(() => {
     /**
@@ -177,50 +157,6 @@ export function useMatches() {
     }),
     [memoRootActionId, results]
   );
-}
-
-type Match = {
-  action: ActionImpl;
-  /**
-   * Represents the commandScore matchiness value which we use
-   * in addition to the explicitly set `action.priority` to
-   * calculate a more fine tuned fuzzy search.
-   */
-  score: number;
-};
-
-function useInternalMatches(
-  filtered: ActionImpl[],
-  search: string,
-  fuse: Fuse<ActionImpl>
-) {
-  const value = React.useMemo(
-    () => ({
-      filtered,
-      search,
-    }),
-    [filtered, search]
-  );
-
-  const { filtered: throttledFiltered, search: throttledSearch } =
-    useThrottledValue(value);
-
-  return React.useMemo(() => {
-    if (throttledSearch.trim() === "") {
-      return throttledFiltered.map((action) => ({ score: 0, action }));
-    }
-
-    let matches: Match[] = [];
-    // Use Fuse's `search` method to perform the search efficiently
-    const searchResults = fuse.search(throttledSearch);
-    // Format the search results to match the existing structure
-    matches = searchResults.map(({ item: action, score }) => ({
-      score: 1 / ((score ?? 0) + 1), // Convert the Fuse score to the format used in the original code
-      action,
-    }));
-
-    return matches;
-  }, [throttledFiltered, throttledSearch, fuse]) as Match[];
 }
 
 /**

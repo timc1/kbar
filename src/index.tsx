@@ -1,4 +1,5 @@
 import { createAction, Priority } from "./utils";
+
 export { createAction, Priority };
 
 export * from "./useMatches";
@@ -12,3 +13,4 @@ export * from "./KBarContextProvider";
 export * from "./KBarAnimator";
 export * from "./types";
 export * from "./action";
+export { SKIP_ORIGINAL_MATCHER, fuseOptions } from "./useInternalMatches";
