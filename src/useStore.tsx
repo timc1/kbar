@@ -36,6 +36,7 @@ export function useStore(props: useStoreProps) {
   // TODO: at this point useReducer might be a better approach to managing state.
   const [state, setState] = React.useState<KBarState>({
     searchQuery: "",
+    matcher: props?.options?.matcher,
     currentRootActionId: null,
     visualState: VisualState.hidden,
     actions: { ...actionsInterface.actions },

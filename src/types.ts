@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ActionImpl } from "./action/ActionImpl";
+import Fuse from "fuse.js";
 
 export type ActionId = string;
 
@@ -34,6 +35,11 @@ export interface ActionGroup {
   actions: ActionImpl[];
 }
 
+export type Matcher = (
+  actions: ActionImpl[],
+  search: string
+) => {search: string | Fuse.Expression | Symbol,matches: Match[]};
+
 export interface KBarOptions {
   animations?: {
     enterMs?: number;
@@ -67,6 +73,11 @@ export interface KBarOptions {
    * kbar. Defaults to "$mod+k" (cmd+k / ctrl+k)
    */
   toggleShortcut?: string;
+  /**
+   * `matcher` is a function that takes in a list of actions and a search text and
+   * returns a list of matches and a new search text / symbol / Fuse.Expression. The default matcher is a fuzzy search implementation
+   */
+  matcher?: Matcher
 }
 
 export interface KBarProviderProps {
@@ -74,10 +85,21 @@ export interface KBarProviderProps {
   options?: KBarOptions;
 }
 
+export type Match = {
+  action: ActionImpl;
+  /**
+   * Represents the commandScore matchiness value which we use
+   * in addition to the explicitly set `action.priority` to
+   * calculate a more fine tuned fuzzy search.
+   */
+  score: number;
+};
+
 export interface KBarState {
   searchQuery: string;
   visualState: VisualState;
   actions: ActionTree;
+  matcher?: Matcher;
   currentRootActionId?: ActionId | null;
   activeIndex: number;
   disabled: boolean;
