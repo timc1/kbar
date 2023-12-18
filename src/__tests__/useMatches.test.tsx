@@ -89,6 +89,25 @@ function WithPriorityComponent() {
   );
 }
 
+function WithLongNamesComponent() {
+  const action1 = createAction({
+    name: "Action: This is a long name ending by toto",
+  });
+  const action2 = createAction({
+    name: "Action: This is a long name also ending by toto",
+  });
+  const action3 = createAction({
+    name: "Action: This is a long name ending by titi",
+  });
+
+  return (
+    <KBarProvider actions={[action1, action2, action3]}>
+      <Search />
+      <Results />
+    </KBarProvider>
+  );
+}
+
 const setup = (Component: React.ComponentType) => {
   const utils = render(<Component />);
   const input = utils.getByLabelText("search-input");
@@ -141,6 +160,25 @@ describe("useMatches", () => {
       expect(results[3].textContent).toEqual("Action 1");
 
       expect(utils.queryAllByText(/Section 1/i));
+    });
+  });
+  describe("With long names", () => {
+    let utils: Utils;
+    beforeEach(() => {
+      utils = setup(WithLongNamesComponent);
+    });
+
+    it("returns result matching the query even if match is on a word far in the name", () => {
+      const { input } = utils;
+      fireEvent.change(input, { target: { value: "toto" } });
+      const results = utils.getAllByText(/Action/i);
+      expect(results.length).toEqual(2);
+      expect(results[0].textContent).toEqual(
+        "Action: This is a long name ending by toto"
+      );
+      expect(results[1].textContent).toEqual(
+        "Action: This is a long name also ending by toto"
+      );
     });
   });
 });
