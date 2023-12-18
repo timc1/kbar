@@ -22,6 +22,7 @@ const fuseOptions: Fuse.IFuseOptions<ActionImpl> = {
     },
     "subtitle",
   ],
+  ignoreLocation: true,
   includeScore: true,
   includeMatches: true,
   threshold: 0.2,
