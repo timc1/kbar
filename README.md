@@ -206,6 +206,7 @@ site below.
 - [tryapis.com](https://tryapis.com/)
 - [fillout.com](https://fillout.com/)
 - [vinniciusgomes.dev](https://vinniciusgomes.dev/)
+- [emiliosheinz.com](https://emiliosheinz.com)
 
 ## Contributing to kbar
 
