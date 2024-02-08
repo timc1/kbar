@@ -31,11 +31,15 @@ export function KBarSearch(
     query.setSearch(inputValue);
    }, [inputValue, query]);
 
-  const { defaultPlaceholder, ...rest } = props;
+  const { defaultPlaceholder, autoFocus = true, ...rest } = props;
 
   React.useEffect(() => {
     query.setSearch("");
-    query.getInput().focus();
+    
+    if (autoFocus) {
+      query.getInput().focus();
+    }
+    
     return () => query.setSearch("");
   }, [currentRootActionId, query]);
 
@@ -50,7 +54,7 @@ export function KBarSearch(
     <input
       {...rest}
       ref={query.inputRefSetter}
-      autoFocus
+      autoFocus={autoFocus}
       autoComplete="off"
       role="combobox"
       spellCheck="false"
