@@ -20,7 +20,6 @@ import {
   createAction,
   useMatches,
   ActionImpl,
-  useKBar,
 } from "../../src";
 import useThemeActions from "./hooks/useThemeActions";
 
