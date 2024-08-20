@@ -94,19 +94,18 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   // destructuring here to prevent linter warning to pass
   // entire rowVirtualizer in the dependencies array.
   const { scrollToIndex } = rowVirtualizer;
+  
   React.useEffect(() => {
     if (itemsRef.current.length < 1) return;
-    // ensure that if the first item in the list is a group
-    // name and we are focused on the second item, to not
-    // scroll past that group, hiding it.
     const targetIndex = activeIndex <= 1 ? 0 : activeIndex;
-    // Defer scrolling until after animations start, otherwise it will
-    // fail if the height animation starts from 0
-    // The divisor of 16 was chosen based on experimentation.
-    setTimeout(() => {
-      scrollToIndex(targetIndex)
-    }, (options.animations?.enterMs ?? 0) / 16)
-  }, [activeIndex, scrollToIndex, options.animations?.enterMs]);
+    const alignement = activeIndex <= 1 ? "start" : "auto";
+    scrollToIndex(targetIndex, {
+      // ensure that if the first item in the list is a group
+      // name and we are focused on the second item, to not
+      // scroll past that group, hiding it.
+      align: alignement,
+    });
+  }, [activeIndex, scrollToIndex]);
 
   React.useEffect(() => {
     // TODO(tim): fix scenario where async actions load in
@@ -154,6 +153,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
+          position: "relative",
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
