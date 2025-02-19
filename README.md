@@ -206,6 +206,7 @@ site below.
 - [tryapis.com](https://tryapis.com/)
 - [fillout.com](https://fillout.com/)
 - [vinniciusgomes.dev](https://vinniciusgomes.dev/)
+- [Metabase](https://metabase.com) - the app, not the website
 
 ## Contributing to kbar
 
