@@ -251,9 +251,9 @@ const ResultItem = React.forwardRef(
             aria-hidden
             style={{ display: "grid", gridAutoFlow: "column", gap: "4px" }}
           >
-            {action.shortcut.map((sc) => (
+            {action.shortcut.map((sc,idx) => (
               <kbd
-                key={sc}
+              key={`${sc}-${idx}`}
                 style={{
                   padding: "4px 6px",
                   background: "rgba(0 0 0 / .1)",
