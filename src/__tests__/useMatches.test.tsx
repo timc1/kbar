@@ -5,9 +5,11 @@
 import { useKBar } from "../useKBar";
 import { KBarProvider } from "../KBarContextProvider";
 import { render, fireEvent, RenderResult } from "@testing-library/react";
+import UserEvent from "@testing-library/user-event";
 import * as React from "react";
 import { createAction, Priority } from "../utils";
 import { useMatches } from "../useMatches";
+import { Action } from "..";
 
 jest.mock("../utils", () => {
   return {
@@ -108,6 +110,15 @@ function WithLongNamesComponent() {
   );
 }
 
+function WithShortcutsComoonent({ actions }: { actions: Action[] }) {
+  return (
+    <KBarProvider actions={actions}>
+      <Search />
+      <Results />
+    </KBarProvider>
+  );
+}
+
 const setup = (Component: React.ComponentType) => {
   const utils = render(<Component />);
   const input = utils.getByLabelText("search-input");
@@ -179,6 +190,51 @@ describe("useMatches", () => {
       expect(results[1].textContent).toEqual(
         "Action: This is a long name also ending by toto"
       );
+    });
+  });
+
+  describe("Shortcuts", () => {
+    it("triggers a shortcut when the apropriate keys are pressed", async () => {
+      const action1Fn = jest.fn();
+      const action2Fn = jest.fn();
+      const action3Fn = jest.fn();
+
+      render(
+        <KBarProvider
+          actions={[
+            createAction({
+              name: "foo",
+              shortcut: ["t"],
+              perform: action1Fn,
+            }),
+            createAction({
+              name: "bar",
+              shortcut: ["Control+o"],
+              perform: action2Fn,
+            }),
+            createAction({
+              name: "metaFoo",
+              shortcut: ["Control+]"],
+              perform: action3Fn,
+            }),
+          ]}
+        />
+      );
+
+      await UserEvent.keyboard("t");
+      expect(action1Fn).toHaveBeenCalledTimes(1);
+      await UserEvent.keyboard("t");
+      expect(action1Fn).toHaveBeenCalledTimes(2);
+
+      const keyboardState = await UserEvent.keyboard("{Control>}");
+      await UserEvent.keyboard("o", { keyboardState });
+      expect(action2Fn).toHaveBeenCalled();
+
+      await UserEvent.keyboard("]");
+      expect(action3Fn).not.toHaveBeenCalled();
+
+      await UserEvent.keyboard("]", { keyboardState });
+      expect(action3Fn).toHaveBeenCalled();
     });
   });
 });
