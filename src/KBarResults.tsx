@@ -6,6 +6,7 @@ import { useKBar } from "./useKBar";
 import { usePointerMovedSinceMount } from "./utils";
 
 const START_INDEX = 0;
+const SIZE_ESTIMATE = 50;  // arbitrary size estimate
 
 interface RenderParams<T = ActionImpl | string> {
   item: T;
@@ -29,7 +30,7 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
 
   const rowVirtualizer = useVirtualizer({
     count: itemsRef.current.length,
-    estimateSize: () => 66,
+    estimateSize: () => SIZE_ESTIMATE,
     measureElement: (element) => element.clientHeight,
     getScrollElement: () => parentRef.current,
   });
