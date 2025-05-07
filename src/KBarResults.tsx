@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useVirtual } from "react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { ActionImpl } from "./action/ActionImpl";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { useKBar } from "./useKBar";
@@ -19,7 +19,7 @@ interface KBarResultsProps {
 }
 
 export const KBarResults: React.FC<KBarResultsProps> = (props) => {
-  const activeRef = React.useRef<HTMLDivElement>(null);
+  const activeRef = React.useRef<HTMLDivElement | null>(null);
   const parentRef = React.useRef(null);
 
   // store a ref to all items so we do not have to pass
@@ -27,9 +27,11 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   const itemsRef = React.useRef(props.items);
   itemsRef.current = props.items;
 
-  const rowVirtualizer = useVirtual({
-    size: itemsRef.current.length,
-    parentRef,
+  const rowVirtualizer = useVirtualizer({
+    count: itemsRef.current.length,
+    estimateSize: () => 66,
+    measureElement: (element) => element.clientHeight,
+    getScrollElement: () => parentRef.current,
   });
 
   const { query, search, currentRootActionId, activeIndex, options } = useKBar(
@@ -92,13 +94,18 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
   // entire rowVirtualizer in the dependencies array.
   const { scrollToIndex } = rowVirtualizer;
   React.useEffect(() => {
-    scrollToIndex(activeIndex, {
-      // ensure that if the first item in the list is a group
-      // name and we are focused on the second item, to not
-      // scroll past that group, hiding it.
-      align: activeIndex <= 1 ? "end" : "auto",
-    });
-  }, [activeIndex, scrollToIndex]);
+    if (itemsRef.current.length < 1) return;
+    // ensure that if the first item in the list is a group
+    // name and we are focused on the second item, to not
+    // scroll past that group, hiding it.
+    const targetIndex = activeIndex <= 1 ? 0 : activeIndex;
+    // Defer scrolling until after animations start, otherwise it will
+    // fail if the height animation starts from 0
+    // The divisor of 16 was chosen based on experimentation.
+    setTimeout(() => {
+      scrollToIndex(targetIndex)
+    }, (options.animations?.enterMs ?? 0) / 16)
+  }, [activeIndex, scrollToIndex, options.animations?.enterMs]);
 
   React.useEffect(() => {
     // TODO(tim): fix scenario where async actions load in
@@ -144,11 +151,11 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         role="listbox"
         id={KBAR_LISTBOX}
         style={{
-          height: `${rowVirtualizer.totalSize}px`,
+          height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
         }}
       >
-        {rowVirtualizer.virtualItems.map((virtualRow) => {
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
           const handlers = typeof item !== "string" && {
             onPointerMove: () =>
@@ -162,7 +169,11 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
 
           return (
             <div
-              ref={active ? activeRef : null}
+              ref={(elem) => {
+                rowVirtualizer.measureElement(elem);
+                if (active) activeRef.current = elem;
+              }}
+              data-index={virtualRow.index}
               id={getListboxItemId(virtualRow.index)}
               role="option"
               aria-selected={active}
@@ -176,15 +187,10 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
               }}
               {...handlers}
             >
-              {React.cloneElement(
-                props.onRender({
-                  item,
-                  active,
-                }),
-                {
-                  ref: virtualRow.measureRef,
-                }
-              )}
+              {props.onRender({
+                item,
+                active,
+              })}
             </div>
           );
         })}

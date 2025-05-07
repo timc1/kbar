@@ -58,9 +58,9 @@
   },
   "dependencies": {
     "@radix-ui/react-portal": "^1.0.1",
+    "@tanstack/react-virtual": "^3.13.6",
     "fast-equals": "^2.0.3",
     "fuse.js": "^6.6.2",
-    "react-virtual": "^2.8.2",
     "tiny-invariant": "^1.2.0"
   },
   "peerDependencies": {
