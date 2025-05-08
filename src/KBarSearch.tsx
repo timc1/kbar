@@ -36,7 +36,10 @@ export function KBarSearch(
   React.useEffect(() => {
     query.setSearch("");
     query.getInput().focus();
-    return () => query.setSearch("");
+    return () => {
+      query.setSearch("");
+      setInputValue("");
+    }
   }, [currentRootActionId, query]);
 
   const placeholder = React.useMemo((): string => {
