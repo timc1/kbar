@@ -45,7 +45,6 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
       if (event.isComposing) {
         return;
       }
-      
       if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
         event.preventDefault();
         event.stopPropagation();
@@ -84,8 +83,9 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         activeRef.current?.click();
       }
     };
-    window.addEventListener("keydown", handler, {capture: true});
-    return () => window.removeEventListener("keydown", handler, {capture: true});
+    window.addEventListener("keydown", handler, { capture: true });
+    return () =>
+      window.removeEventListener("keydown", handler, { capture: true });
   }, [query]);
 
   // destructuring here to prevent linter warning to pass
@@ -100,19 +100,47 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
     });
   }, [activeIndex, scrollToIndex]);
 
+  // reset active index only when search or root action changes
   React.useEffect(() => {
-    // TODO(tim): fix scenario where async actions load in
-    // and active index is reset to the first item. i.e. when
-    // users register actions and bust the `useRegisterActions`
-    // cache, we won't want to reset their active index as they
-    // are navigating the list.
     query.setActiveIndex(
       // avoid setting active index on a group
-      typeof props.items[START_INDEX] === "string"
+      typeof itemsRef.current[START_INDEX] === "string"
         ? START_INDEX + 1
         : START_INDEX
     );
-  }, [search, currentRootActionId, props.items, query]);
+  }, [search, currentRootActionId, query]);
+
+  // adjust active index when items change (ie when actions load async)
+  React.useEffect(() => {
+    const currentIndex = activeIndex;
+    const maxIndex = itemsRef.current.length - 1;
+
+    if (currentIndex > maxIndex && maxIndex >= 0) {
+      let newIndex = maxIndex;
+      if (typeof itemsRef.current[newIndex] === "string" && newIndex > 0) {
+        newIndex -= 1;
+      }
+      query.setActiveIndex(newIndex);
+    } else if (
+      currentIndex <= maxIndex &&
+      typeof itemsRef.current[currentIndex] === "string"
+    ) {
+      let newIndex = currentIndex + 1;
+      if (
+        newIndex > maxIndex ||
+        typeof itemsRef.current[newIndex] === "string"
+      ) {
+        newIndex = currentIndex - 1;
+      }
+      if (
+        newIndex >= 0 &&
+        newIndex <= maxIndex &&
+        typeof itemsRef.current[newIndex] !== "string"
+      ) {
+        query.setActiveIndex(newIndex);
+      }
+    }
+  }, [props.items, activeIndex, query]);
 
   const execute = React.useCallback(
     (item: RenderParams["item"]) => {
