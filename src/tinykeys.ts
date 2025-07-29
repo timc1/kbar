@@ -1,7 +1,7 @@
-// Fixes special character issues; `?` -> `shift+/` + build issue
-// https://github.com/jamiebuilds/tinykeys
-
-type KeyBindingPress = [string[], string];
+/**
+ * A single press of a keybinding sequence
+ */
+export type KeyBindingPress = [mods: string[], key: string | RegExp];
 
 /**
  * A map of keybinding strings to event handlers.
@@ -10,15 +10,7 @@ export interface KeyBindingMap {
   [keybinding: string]: (event: KeyboardEvent) => void;
 }
 
-/**
- * Options to configure the behavior of keybindings.
- */
-export interface KeyBindingOptions {
-  /**
-   * Key presses will listen to this event (default: "keydown").
-   */
-  event?: "keydown" | "keyup";
-
+export interface KeyBindingHandlerOptions {
   /**
    * Keybinding sequences will wait this long between key presses before
    * cancelling (default: 1000).
@@ -27,6 +19,21 @@ export interface KeyBindingOptions {
    * of your users.
    */
   timeout?: number;
+}
+
+/**
+ * Options to configure the behavior of keybindings.
+ */
+export interface KeyBindingOptions extends KeyBindingHandlerOptions {
+  /**
+   * Key presses will listen to this event (default: "keydown").
+   */
+  event?: "keydown" | "keyup";
+
+  /**
+   * Key presses will use a capture listener (default: false)
+   */
+  capture?: boolean;
 }
 
 /**
@@ -45,16 +52,30 @@ let DEFAULT_TIMEOUT = 1000;
 /**
  * Keybinding sequences should bind to this event by default.
  */
-let DEFAULT_EVENT = "keydown";
+let DEFAULT_EVENT = "keydown" as const;
+
+/**
+ * Platform detection code.
+ * @see https://github.com/jamiebuilds/tinykeys/issues/184
+ */
+let PLATFORM = typeof navigator === "object" ? navigator.platform : "";
+let APPLE_DEVICE = /Mac|iPod|iPhone|iPad/.test(PLATFORM);
 
 /**
  * An alias for creating platform-specific keybinding aliases.
  */
-let MOD =
-  typeof navigator === "object" &&
-  /Mac|iPod|iPhone|iPad/.test(navigator.platform)
-    ? "Meta"
-    : "Control";
+let MOD = APPLE_DEVICE ? "Meta" : "Control";
+
+/**
+ * Meaning of `AltGraph`, from MDN:
+ * - Windows: Both Alt and Ctrl keys are pressed, or AltGr key is pressed
+ * - Mac: ⌥ Option key pressed
+ * - Linux: Level 3 Shift key (or Level 5 Shift key) pressed
+ * - Android: Not supported
+ * @see https://github.com/jamiebuilds/tinykeys/issues/185
+ */
+let ALT_GRAPH_ALIASES =
+  PLATFORM === "Win32" ? ["Control", "Alt"] : APPLE_DEVICE ? ["Alt"] : [];
 
 /**
  * There's a bug in Chrome that causes event.getModifierState not to exist on
@@ -62,7 +83,8 @@ let MOD =
  */
 function getModifierState(event: KeyboardEvent, mod: string) {
   return typeof event.getModifierState === "function"
-    ? event.getModifierState(mod)
+    ? event.getModifierState(mod) ||
+        (ALT_GRAPH_ALIASES.includes(mod) && event.getModifierState("AltGraph"))
     : false;
 }
 
@@ -73,41 +95,45 @@ function getModifierState(event: KeyboardEvent, mod: string) {
  * <sequence> = `<press> <press> <press> ...`
  * <press>    = `<key>` or `<mods>+<key>`
  * <mods>     = `<mod>+<mod>+...`
+ * <key>      = `<KeyboardEvent.key>` or `<KeyboardEvent.code>` (case-insensitive)
+ * <key>      = `(<regex>)` -> `/^<regex>$/` (case-sensitive)
  */
-function parse(str: string): KeyBindingPress[] {
+export function parseKeybinding(str: string): KeyBindingPress[] {
   return str
     .trim()
     .split(" ")
     .map((press) => {
       let mods = press.split(/\b\+/);
-      let key = mods.pop() as string;
+      let key: string | RegExp = mods.pop() as string;
+      let match = key.match(/^\((.+)\)$/);
+      if (match) {
+        key = new RegExp(`^${match[1]}$`);
+      }
       mods = mods.map((mod) => (mod === "$mod" ? MOD : mod));
       return [mods, key];
     });
 }
 
 /**
- * This tells us if a series of events matches a key binding sequence either
- * partially or exactly.
+ * This tells us if a single keyboard event matches a single keybinding press.
  */
-function match(event: KeyboardEvent, press: KeyBindingPress): boolean {
-  // Special characters; `?` `!`
-  if (/^[^A-Za-z0-9]$/.test(event.key) && press[1] === event.key) {
-    return true;
-  }
-
+export function matchKeyBindingPress(
+  event: KeyboardEvent,
+  [mods, key]: KeyBindingPress
+): boolean {
   // prettier-ignore
   return !(
 		// Allow either the `event.key` or the `event.code`
 		// MDN event.key: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
 		// MDN event.code: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
 		(
-			press[1].toUpperCase() !== event.key.toUpperCase() &&
-			press[1] !== event.code
+			key instanceof RegExp ? !(key.test(event.key) || key.test(event.code)) :
+			(key.toUpperCase() !== event.key.toUpperCase() &&
+			key !== event.code)
 		) ||
 
 		// Ensure all the modifiers in the keybinding are pressed.
-		press[0].find(mod => {
+		mods.find(mod => {
 			return !getModifierState(event, mod)
 		}) ||
 
@@ -115,21 +141,19 @@ function match(event: KeyboardEvent, press: KeyBindingPress): boolean {
 		// keybinding. So if they are pressed but aren't part of the current
 		// keybinding press, then we don't have a match.
 		KEYBINDING_MODIFIER_KEYS.find(mod => {
-			return !press[0].includes(mod) && press[1] !== mod && getModifierState(event, mod)
+			return !mods.includes(mod) && key !== mod && getModifierState(event, mod)
 		})
 	)
 }
 
 /**
- * Subscribes to keybindings.
- *
- * Returns an unsubscribe method.
+ * Creates an event listener for handling keybindings.
  *
  * @example
  * ```js
- * import keybindings from "../src/keybindings"
+ * import { createKeybindingsHandler } from "../src/keybindings"
  *
- * keybindings(window, {
+ * let handler = createKeybindingsHandler({
  * 	"Shift+d": () => {
  * 		alert("The 'Shift' and 'd' keys were pressed at the same time")
  * 	},
@@ -140,24 +164,24 @@ function match(event: KeyboardEvent, press: KeyBindingPress): boolean {
  * 		alert("Either 'Control+d' or 'Meta+d' were pressed")
  * 	},
  * })
+ *
+ * window.addEvenListener("keydown", handler)
  * ```
  */
-export default function keybindings(
-  target: Window | HTMLElement,
+export function createKeybindingsHandler(
   keyBindingMap: KeyBindingMap,
-  options: KeyBindingOptions = {}
-): () => void {
+  options: KeyBindingHandlerOptions = {}
+): EventListener {
   let timeout = options.timeout ?? DEFAULT_TIMEOUT;
-  let event = options.event ?? DEFAULT_EVENT;
 
   let keyBindings = Object.keys(keyBindingMap).map((key) => {
-    return [parse(key), keyBindingMap[key]] as const;
+    return [parseKeybinding(key), keyBindingMap[key]] as const;
   });
 
   let possibleMatches = new Map<KeyBindingPress[], KeyBindingPress[]>();
   let timer: number | null = null;
 
-  let onKeyEvent: EventListener = (event) => {
+  return (event) => {
     // Ensure and stop any event that isn't a full keyboard event.
     // Autocomplete option navigation and selection would fire a instanceof Event,
     // instead of the expected KeyboardEvent
@@ -173,7 +197,7 @@ export default function keybindings(
       let remainingExpectedPresses = prev ? prev : sequence;
       let currentExpectedPress = remainingExpectedPresses[0];
 
-      let matches = match(event, currentExpectedPress);
+      let matches = matchKeyBindingPress(event, currentExpectedPress);
 
       if (!matches) {
         // Modifier keydown events shouldn't break sequences
@@ -196,13 +220,40 @@ export default function keybindings(
       clearTimeout(timer);
     }
 
-    // @ts-ignore
     timer = setTimeout(possibleMatches.clear.bind(possibleMatches), timeout);
   };
+}
 
-  target.addEventListener(event, onKeyEvent);
-
+/**
+ * Subscribes to keybindings.
+ *
+ * Returns an unsubscribe method.
+ *
+ * @example
+ * ```js
+ * import { tinykeys } from "../src/tinykeys"
+ *
+ * tinykeys(window, {
+ * 	"Shift+d": () => {
+ * 		alert("The 'Shift' and 'd' keys were pressed at the same time")
+ * 	},
+ * 	"y e e t": () => {
+ * 		alert("The keys 'y', 'e', 'e', and 't' were pressed in order")
+ * 	},
+ * 	"$mod+d": () => {
+ * 		alert("Either 'Control+d' or 'Meta+d' were pressed")
+ * 	},
+ * })
+ * ```
+ */
+export function tinykeys(
+  target: Window | HTMLElement,
+  keyBindingMap: KeyBindingMap,
+  { event = DEFAULT_EVENT, capture, timeout }: KeyBindingOptions = {}
+): () => void {
+  let onKeyEvent = createKeybindingsHandler(keyBindingMap, { timeout });
+  target.addEventListener(event, onKeyEvent, capture);
   return () => {
-    target.removeEventListener(event, onKeyEvent);
+    target.removeEventListener(event, onKeyEvent, capture);
   };
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ActionImpl } from "./action";
-import tinykeys from "./tinykeys";
+import { tinykeys } from "./tinykeys";
 import { VisualState } from "./types";
 import { useKBar } from "./useKBar";
 import { getScrollbarWidth, shouldRejectKeystrokes } from "./utils";
