@@ -26,11 +26,6 @@ export function KBarSearch(
     showing: state.visualState === VisualState.showing,
   }));
 
-  const [inputValue, setInputValue] = React.useState(search);
-  React.useEffect(() => {
-    query.setSearch(inputValue);
-   }, [inputValue, query]);
-
   const { defaultPlaceholder, ...rest } = props;
 
   React.useEffect(() => {
@@ -57,11 +52,11 @@ export function KBarSearch(
       aria-expanded={showing}
       aria-controls={KBAR_LISTBOX}
       aria-activedescendant={getListboxItemId(activeIndex)}
-      value={inputValue}
+      value={search}
       placeholder={placeholder}
       onChange={(event) => {
         props.onChange?.(event);
-        setInputValue(event.target.value);
+        query.setSearch(event.target.value);
         options?.callbacks?.onQueryChange?.(event.target.value);
       }}
       onKeyDown={(event) => {
