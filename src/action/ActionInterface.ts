@@ -17,6 +17,11 @@ export class ActionInterface {
   add(actions: Action[]) {
     for (let i = 0; i < actions.length; i++) {
       const action = actions[i];
+      // Clean up existing action before overwriting to prevent orphaned children
+      const existing = this.actions[action.id];
+      if (existing?.parentActionImpl) {
+        existing.parentActionImpl.removeChild(existing);
+      }
       if (action.parent) {
         invariant(
           this.actions[action.parent],
