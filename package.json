@@ -51,7 +51,7 @@
     "sass": "^1.39.2",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.2.1",
-    "typescript": "^4.4.2",
+    "typescript": "^4.9.5",
     "webpack": "^5.88.2",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.15.1"
@@ -59,7 +59,7 @@
   "dependencies": {
     "@radix-ui/react-portal": "^1.0.1",
     "fast-equals": "^2.0.3",
-    "fuse.js": "^6.6.2",
+    "fuse.js": "^7.5.0",
     "react-virtual": "^2.8.2",
     "tiny-invariant": "^1.2.0"
   },
