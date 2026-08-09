@@ -36,6 +36,15 @@ const fuseOptions: IFuseOptions<ActionImpl> = {
   includeScore: true,
   threshold: 0.2,
   minMatchCharLength: 1,
+  /**
+   * Match each word of the query independently rather than as one contiguous
+   * pattern, so a query may span fields and ignore word order — "social
+   * twitter" (a keyword plus a name) and "get sta" both previously returned
+   * nothing. `all` means every word must match somewhere, so adding a word
+   * narrows the results.
+   */
+  useTokenSearch: true,
+  tokenMatch: "all",
 };
 
 function order(a, b) {
