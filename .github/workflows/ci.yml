@@ -1,15 +1,49 @@
 name: ci
 on: push
+
 jobs:
-  build:
+  checks:
+    name: lint / typecheck / build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: npm install
-        run: npx npm@7 install
-      - name: test
-        run: npm run test
-      - name: eslint
-        run: npm run lint
-      - name: tsc
-        run: npm run typecheck
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+
+  test:
+    name: react ${{ matrix.react }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - react: 17
+            types: 17
+            rtl: 12
+          - react: 18
+            types: 18
+            rtl: 16
+          - react: 19
+            types: 19
+            rtl: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - name: install react ${{ matrix.react }}
+        run: >
+          npm install --no-save --legacy-peer-deps
+          react@${{ matrix.react }}
+          react-dom@${{ matrix.react }}
+          @types/react@${{ matrix.types }}
+          @types/react-dom@${{ matrix.types }}
+          @testing-library/react@${{ matrix.rtl }}
+      - run: npm run typecheck
+      - run: npm test
