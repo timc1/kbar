@@ -18,12 +18,12 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.7",
-    "@reach/accordion": "^0.16.1",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^27.0.2",
-    "@types/react": "^17.0.64",
-    "@types/react-dom": "^17.0.20",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
@@ -44,8 +44,8 @@
     "jest": "^27.3.1",
     "prettier": "^2.4.1",
     "prism-react-renderer": "^1.2.1",
-    "react": "^16.0.0 || ^17.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-hot-toast": "^2.1.1",
     "react-router-dom": "^5.3.0",
     "sass": "^1.39.2",
@@ -57,15 +57,15 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "@radix-ui/react-portal": "^1.0.1",
+    "@radix-ui/react-portal": "^1.1.17",
+    "@tanstack/react-virtual": "^3.14.9",
     "fast-equals": "^2.0.3",
     "fuse.js": "^7.5.0",
-    "react-virtual": "^2.8.2",
     "tiny-invariant": "^1.2.0"
   },
   "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0"
   },
   "keywords": [
     "command bar",

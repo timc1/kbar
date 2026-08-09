@@ -71,7 +71,7 @@ function useToggleHandler() {
     };
   }, [options.callbacks, options.toggleShortcut, query, showing, disabled]);
 
-  const timeoutRef = React.useRef<Timeout>();
+  const timeoutRef = React.useRef<Timeout | undefined>(undefined);
   const runAnimateTimer = React.useCallback(
     (vs: VisualState.animatingIn | VisualState.animatingOut) => {
       let ms = 0;

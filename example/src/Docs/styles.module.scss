@@ -49,22 +49,26 @@
     }
   }
 
-  [data-reach-accordion-button] {
-    background: none;
-    border: none;
-    text-align: left;
-    width: 100%;
+  summary {
     cursor: pointer;
-    padding: 0;
     color: var(--foreground);
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    h3 {
+      display: inline;
+    }
   }
 
-  [data-reach-accordion-item] {
+  details {
     margin-bottom: 12px;
-  }
 
-  [data-reach-accordion-panel] {
-    padding-left: 12px;
+    ul {
+      padding-left: 12px;
+    }
   }
 }
 

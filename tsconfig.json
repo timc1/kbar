@@ -3,8 +3,10 @@
     "jsx": "react",
     "declaration": true,
     "target": "es5",
+    // the source already relies on Map, WeakSet, Array#find/findIndex/includes;
+    // this was previously masked by @types/node being auto-included.
     "lib": [
-      "es5",
+      "es2017",
       "DOM"
     ],
     "strict": true,
@@ -18,6 +20,12 @@
     "typeRoots": [
       "src/types",
       "node_modules/@types"
+    ],
+    // kbar is a browser library; only jest's globals are needed for the tests.
+    // Without this, @types/node is auto-included and its modern syntax fails
+    // to parse on this TypeScript version.
+    "types": [
+      "jest"
     ],
   },
   "include": [
