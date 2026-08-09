@@ -108,6 +108,25 @@ function WithLongNamesComponent() {
   );
 }
 
+function MultiWordComponent() {
+  const twitter = createAction({
+    name: "Twitter",
+    keywords: "social contact dm",
+  });
+  const contact = createAction({
+    name: "Contact",
+    keywords: "email hello",
+  });
+  const gettingStarted = createAction({ name: "Getting started" });
+
+  return (
+    <KBarProvider actions={[twitter, contact, gettingStarted]}>
+      <Search />
+      <Results />
+    </KBarProvider>
+  );
+}
+
 const setup = (Component: React.ComponentType) => {
   const utils = render(<Component />);
   const input = utils.getByLabelText("search-input");
@@ -179,6 +198,47 @@ describe("useMatches", () => {
       expect(results[1].textContent).toEqual(
         "Action: This is a long name also ending by toto"
       );
+    });
+  });
+
+  describe("With multi word queries", () => {
+    let utils: Utils;
+    beforeEach(() => {
+      utils = setup(MultiWordComponent);
+    });
+
+    const names = () =>
+      utils.getAllByRole("listitem").map((el) => el.textContent);
+
+    it("matches a query spanning both the name and the keywords", () => {
+      // "social" is a keyword of Twitter, "twitter" is its name; neither field
+      // contains both words.
+      fireEvent.change(utils.input, { target: { value: "social twitter" } });
+      expect(names()).toEqual(["Twitter"]);
+    });
+
+    it("matches regardless of the order the words are typed in", () => {
+      fireEvent.change(utils.input, { target: { value: "contact email" } });
+      expect(names()).toEqual(["Contact"]);
+    });
+
+    it("matches when each word is only a prefix", () => {
+      fireEvent.change(utils.input, { target: { value: "get sta" } });
+      expect(names()).toEqual(["Getting started"]);
+    });
+
+    it("narrows rather than widens as words are added", () => {
+      fireEvent.change(utils.input, { target: { value: "contact" } });
+      // "contact" is Contact's name and one of Twitter's keywords.
+      expect(names()).toEqual(expect.arrayContaining(["Contact", "Twitter"]));
+
+      fireEvent.change(utils.input, { target: { value: "contact hello" } });
+      expect(names()).toEqual(["Contact"]);
+    });
+
+    it("returns nothing when a word matches no action", () => {
+      fireEvent.change(utils.input, { target: { value: "contact zzzzz" } });
+      expect(utils.queryAllByRole("listitem")).toEqual([]);
     });
   });
 });
