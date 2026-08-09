@@ -3,13 +3,19 @@ import type { ActionImpl } from "./action/ActionImpl";
 import { useKBar } from "./useKBar";
 import { Priority, useThrottledValue } from "./utils";
 import Fuse from "fuse.js";
+import type { IFuseOptions } from "fuse.js";
 
 export const NO_GROUP = {
   name: "none",
   priority: Priority.NORMAL,
 };
 
-const fuseOptions: Fuse.IFuseOptions<ActionImpl> = {
+const fuseOptions: IFuseOptions<ActionImpl> = {
+  /**
+   * Weights are relative; Fuse normalizes them to sum to 1. Every key needs an
+   * explicit weight — a bare string key defaults to 1, which previously left
+   * `subtitle` outweighing `name` twice over.
+   */
   keys: [
     {
       name: "name",
@@ -18,13 +24,16 @@ const fuseOptions: Fuse.IFuseOptions<ActionImpl> = {
     {
       name: "keywords",
       getFn: (item) => (item.keywords ?? "").split(","),
-      weight: 0.5,
+      weight: 0.3,
     },
-    "subtitle",
+    {
+      name: "subtitle",
+      weight: 0.2,
+    },
   ],
   ignoreLocation: true,
+  ignoreDiacritics: true,
   includeScore: true,
-  includeMatches: true,
   threshold: 0.2,
   minMatchCharLength: 1,
 };
