@@ -7,7 +7,8 @@ export function swallowEvent(event) {
 }
 
 export function useOuterClick(
-  dom: React.RefObject<HTMLElement>,
+  // React 19 types `useRef<T>(null)` as `RefObject<T | null>`.
+  dom: React.RefObject<HTMLElement | null>,
   cb: () => void
 ) {
   const cbRef = React.useRef(cb);

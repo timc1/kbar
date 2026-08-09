@@ -1,10 +1,4 @@
 import * as React from "react";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionPanel,
-  AccordionItem,
-} from "@reach/accordion";
 import styles from "./styles.module.scss";
 import { Link, Switch, useLocation, Route } from "react-router-dom";
 import data from "./data";
@@ -35,42 +29,40 @@ export default function Docs() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.toc}>
-        <Accordion collapsible multiple defaultIndex={[0, 1, 2]}>
-          {Object.keys(data).map((key) => {
-            const section = data[key];
-            return (
-              <AccordionItem key={key}>
-                <h3>
-                  <AccordionButton>{section.name}</AccordionButton>
-                </h3>
-                {Object.keys(section.children).length > 0 ? (
-                  <AccordionPanel>
-                    <ul>
-                      {Object.keys(section.children).map((key) => {
-                        const child = section.children[key];
-                        return (
-                          <li key={key}>
-                            <Link
-                              to={child.slug}
-                              className={classnames(
-                                !child.component && styles.comingSoon,
-                                (location.pathname + location.hash).includes(
-                                  child.slug
-                                ) && styles.active
-                              )}
-                            >
-                              {child.name}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </AccordionPanel>
-                ) : null}
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
+        {Object.keys(data).map((key, index) => {
+          const section = data[key];
+          const childKeys = Object.keys(section.children);
+          return (
+            // the first three sections start expanded
+            <details key={key} open={index < 3}>
+              <summary>
+                <h3>{section.name}</h3>
+              </summary>
+              {childKeys.length > 0 ? (
+                <ul>
+                  {childKeys.map((key) => {
+                    const child = section.children[key];
+                    return (
+                      <li key={key}>
+                        <Link
+                          to={child.slug}
+                          className={classnames(
+                            !child.component && styles.comingSoon,
+                            (location.pathname + location.hash).includes(
+                              child.slug
+                            ) && styles.active
+                          )}
+                        >
+                          {child.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </details>
+          );
+        })}
       </div>
       <Switch>{routes}</Switch>
     </div>

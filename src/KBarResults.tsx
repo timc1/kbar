@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useVirtual } from "react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { ActionImpl } from "./action/ActionImpl";
 import { getListboxItemId, KBAR_LISTBOX } from "./KBarSearch";
 import { useKBar } from "./useKBar";
@@ -19,17 +19,20 @@ interface KBarResultsProps {
 }
 
 export const KBarResults: React.FC<KBarResultsProps> = (props) => {
-  const activeRef = React.useRef<HTMLDivElement>(null);
-  const parentRef = React.useRef(null);
+  const activeRef = React.useRef<HTMLDivElement | null>(null);
+  const parentRef = React.useRef<HTMLDivElement>(null);
 
   // store a ref to all items so we do not have to pass
   // them as a dependency when setting up event listeners.
   const itemsRef = React.useRef(props.items);
   itemsRef.current = props.items;
 
-  const rowVirtualizer = useVirtual({
-    size: itemsRef.current.length,
-    parentRef,
+  const rowVirtualizer = useVirtualizer({
+    count: itemsRef.current.length,
+    getScrollElement: () => parentRef.current,
+    // rows are measured for real via `measureElement` below; this is only
+    // the estimate used before that first measurement lands.
+    estimateSize: () => 50,
   });
 
   const { query, search, currentRootActionId, activeIndex, options } = useKBar(
@@ -172,11 +175,11 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
         role="listbox"
         id={KBAR_LISTBOX}
         style={{
-          height: `${rowVirtualizer.totalSize}px`,
+          height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
         }}
       >
-        {rowVirtualizer.virtualItems.map((virtualRow) => {
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const item = itemsRef.current[virtualRow.index];
           const handlers = typeof item !== "string" && {
             onPointerMove: () =>
@@ -190,10 +193,19 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
 
           return (
             <div
-              ref={active ? activeRef : null}
+              ref={(node) => {
+                // the virtualizer measures this wrapper, so `onRender` is free
+                // to return an element that does not accept a ref.
+                rowVirtualizer.measureElement(node);
+                if (active) activeRef.current = node;
+              }}
+              data-index={virtualRow.index}
               id={getListboxItemId(virtualRow.index)}
               role="option"
               aria-selected={active}
+              // no `getItemKey` is configured, so the virtualizer's key is the
+              // index; using it directly keeps the type portable across the
+              // React versions we support.
               key={virtualRow.index}
               style={{
                 position: "absolute",
@@ -204,15 +216,10 @@ export const KBarResults: React.FC<KBarResultsProps> = (props) => {
               }}
               {...handlers}
             >
-              {React.cloneElement(
-                props.onRender({
-                  item,
-                  active,
-                }),
-                {
-                  ref: virtualRow.measureRef,
-                }
-              )}
+              {props.onRender({
+                item,
+                active,
+              })}
             </div>
           );
         })}

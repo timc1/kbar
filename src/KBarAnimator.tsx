@@ -68,7 +68,7 @@ export const KBarAnimator: React.FC<
   }, [options, visualState, enterMs, exitMs]);
 
   // Height animation
-  const previousHeight = React.useRef<number>();
+  const previousHeight = React.useRef<number | undefined>(undefined);
   React.useEffect(() => {
     // Only animate if we're actually showing
     if (visualState === VisualState.showing) {
