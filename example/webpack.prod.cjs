@@ -31,7 +31,21 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              // sass-loader defaults this to true, which makes sass prepend a
+              // BOM whenever the output contains a non-ASCII character (the
+              // emoji in Docs/styles.module.scss). style-loader injects the
+              // result as the text of a <style> tag, where that BOM is not
+              // stripped - it invalidates the very first rule in the sheet.
+              sassOptions: { charset: false },
+            },
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
