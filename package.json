@@ -4,7 +4,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./lib & tsc",
+    "build": "rm -rf ./lib && tsc",
+    "prepublishOnly": "npm run build",
     "build:example": "webpack --config ./example/webpack.prod.cjs",
     "dev": "webpack-dev-server --config ./example/webpack.config.cjs --hot",
     "test": "jest src",
