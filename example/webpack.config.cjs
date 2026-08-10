@@ -36,7 +36,18 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              // see webpack.prod.cjs - avoids a BOM that would invalidate the
+              // first rule of every stylesheet containing non-ASCII characters.
+              sassOptions: { charset: false },
+            },
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
