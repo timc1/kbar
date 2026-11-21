@@ -5,6 +5,7 @@ module.exports = {
   mode: "production",
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    extensionAlias: { ".js": [".js", ".ts", ".tsx"] },
   },
   entry: path.resolve(__dirname, "src/index.tsx"),
   output: {
